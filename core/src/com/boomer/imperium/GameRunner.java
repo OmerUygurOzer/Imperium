@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.boomer.imperium.core.GameStateManager;
 import com.boomer.imperium.game.RunningGame;
+import com.boomer.imperium.game.configs.GameConfigs;
+import com.boomer.imperium.game.configs.WorldSize;
 
 public class GameRunner extends ApplicationAdapter {
 
@@ -16,10 +18,10 @@ public class GameRunner extends ApplicationAdapter {
 
     @Override
     public void create() {
+        //Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
         batch = new SpriteBatch();
         gameStateManager = new GameStateManager();
-        gameStateManager.pushGameState(new RunningGame());
-        //Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        gameStateManager.pushGameState(new RunningGame(batch,new GameConfigs(64f,0f,WorldSize.MEDIUM)));
     }
 
     @Override

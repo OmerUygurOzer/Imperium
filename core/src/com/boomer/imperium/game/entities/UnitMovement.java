@@ -4,49 +4,49 @@ import com.badlogic.gdx.math.Vector2;
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.Bounds;
 import com.boomer.imperium.game.Direction;
-import com.boomer.imperium.game.Tile;
+import com.boomer.imperium.game.configs.GameConfigs;
 
 public class UnitMovement implements TimedUpdateable {
 
-    public static void adjustMovementForTarget(UnitMovement unitMovement, Bounds from, Bounds to){
+    public static void adjustMovementForTarget(GameConfigs gameConfigs, UnitMovement unitMovement, Bounds from, Bounds to){
         if(to.center.x>from.center.x && to.center.y>from.center.y){
             unitMovement.setDirection(Direction.NE);
-            unitMovement.setLength(Tile.CROSS);
+            unitMovement.setLength(gameConfigs.tileSizeCross);
             return;
         }
         if(to.center.x>from.center.x && to.center.y==from.center.y){
             unitMovement.setDirection(Direction.E);
-            unitMovement.setLength(Tile.SIZE);
+            unitMovement.setLength(gameConfigs.tileSize);
             return;
         }
         if(to.center.x>from.center.x && to.center.y<from.center.y){
             unitMovement.setDirection(Direction.SE);
-            unitMovement.setLength(Tile.CROSS);
+            unitMovement.setLength(gameConfigs.tileSizeCross);
             return;
         }
         if(to.center.x==from.center.x && to.center.y<from.center.y){
             unitMovement.setDirection(Direction.S);
-            unitMovement.setLength(Tile.SIZE);
+            unitMovement.setLength(gameConfigs.tileSize);
             return;
         }
         if(to.center.x<from.center.x && to.center.y<from.center.y){
             unitMovement.setDirection(Direction.SW);
-            unitMovement.setLength(Tile.CROSS);
+            unitMovement.setLength(gameConfigs.tileSizeCross);
             return;
         }
         if(to.center.x<from.center.x && to.center.y==from.center.y){
             unitMovement.setDirection(Direction.W);
-            unitMovement.setLength(Tile.SIZE);
+            unitMovement.setLength(gameConfigs.tileSize);
             return;
         }
         if(to.center.x<from.center.x && to.center.y>from.center.y){
             unitMovement.setDirection(Direction.NW);
-            unitMovement.setLength(Tile.CROSS);
+            unitMovement.setLength(gameConfigs.tileSizeCross);
             return;
         }
         if(to.center.x==from.center.x && to.center.y>from.center.y){
             unitMovement.setDirection(Direction.N);
-            unitMovement.setLength(Tile.SIZE);
+            unitMovement.setLength(gameConfigs.tileSize);
             return;
         }
     }
@@ -72,9 +72,9 @@ public class UnitMovement implements TimedUpdateable {
         this.lengthAccumulated = 0;
     }
 
-    public boolean updateBounds(Unit unit){
-        unit.bounds.center.add(speedVector);
-        return lengthAccumulated>=length;
+    public float updateBounds(Unit unit){
+        unit.bounds.add(speedVector);
+        return lengthAccumulated/length;
     }
 
     @Override

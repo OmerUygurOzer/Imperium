@@ -1,7 +1,10 @@
 package com.boomer.imperium.game.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.boomer.imperium.game.*;
+import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.graphics.FrameCounter;
 import com.boomer.imperium.game.graphics.UnitSpriteAnimator;
 
@@ -10,13 +13,14 @@ public class Unit implements Entity {
     private final GameWorld gameWorld;
     public final Bounds bounds;
     private final UnitMovement unitMovement;
+    private final UnitOrders unitOrders;
     private UnitState state;
     private int memoryIndex;
     private Layer unitLayer;
     private UnitSpriteAnimator unitSpriteAnimator;
     private FrameCounter frameCounter;
     private Direction facing;
-    private int tileX,tileY;
+    private int tileX, tileY;
 
     private float movementSpeed;
     private boolean canRangeAttack;
@@ -29,28 +33,39 @@ public class Unit implements Entity {
     private int hp;
     private float attackSpeed;
 
-    public Unit(GameWorld gameWorld,UnitSpriteAnimator spriteAnimator, Layer layer){
+    public Unit(GameConfigs gameConfigs, GameWorld gameWorld, UnitSpriteAnimator spriteAnimator, Layer layer) {
         this.gameWorld = gameWorld;
-        this.unitMovement = new UnitMovement(Tile.SIZE,1f);
+        this.unitOrders = new UnitOrders();
+        this.unitMovement = new UnitMovement(gameConfigs.tileSize, 1f);
         this.facing = Direction.NE;
         this.unitLayer = layer;
         this.state = UnitState.MOVING;
         this.unitSpriteAnimator = spriteAnimator;
-        Tile tile = gameWorld.map.getTileAt(0,0);
-        this.bounds = new Bounds(tile.bounds.center.x,tile.bounds.center.y,Tile.SIZE,Tile.SIZE);
         this.tileX = 0;
         this.tileY = 0;
-        this.frameCounter = new FrameCounter(8f,8);
-        UnitMovement.adjustMovementForTarget(unitMovement,bounds,gameWorld.map.getTileAt(1,1).bounds);
+        this.frameCounter = new FrameCounter(8f, 8);
+        Tile tile = gameWorld.map.getTileAt(MathUtils.random(1, 30), MathUtils.random(1, 30));
+        this.bounds = new Bounds(tile.bounds.center.x, tile.bounds.center.y, gameConfigs.tileSize, gameConfigs.tileSize);
+        this.unitOrders.targetTileX = tile.tileX + 1;
+        this.unitOrders.targetTileY = tile.tileY + 1;
+        UnitMovement.adjustMovementForTarget(gameConfigs,unitMovement, bounds, gameWorld.map.getTileAt(tile.tileX() + 1, tile.tileY() + 1).bounds);
     }
+
     @Override
     public void update(float deltaTime) {
         frameCounter.update(deltaTime);
-        if(state.equals(UnitState.MOVING)){
+        if (state.equals(UnitState.MOVING)) {
             unitMovement.update(deltaTime);
-            if(unitMovement.updateBounds(this)){
+            float mov = unitMovement.updateBounds(this);
+            if (mov >= 0.5f && tileX != unitOrders.targetTileX && tileY != unitOrders.targetTileY) {
+                gameWorld.map.getTileAt(tileX, tileY).getEntitiesContained().remove(this);
+                tileX = unitOrders.targetTileX;
+                tileY = unitOrders.targetTileY;
+                gameWorld.map.getTileAt(tileX, tileY).getEntitiesContained().add(this);
+            } else if (mov >= 1f) {
                 unitMovement.setLength(0);
                 state = UnitState.IDLE;
+                bounds.setCenterTile(gameWorld.map.getTileAt(unitOrders.targetTileX, unitOrders.targetTileY));
             }
         }
 
@@ -58,7 +73,7 @@ public class Unit implements Entity {
 
     @Override
     public void render(SpriteBatch spriteBatch) {
-        unitSpriteAnimator.draw(spriteBatch,frameCounter.currentFrame,bounds,facing,state);
+        unitSpriteAnimator.draw(spriteBatch, frameCounter.currentFrame, bounds, facing, state);
     }
 
     @Override
@@ -69,6 +84,11 @@ public class Unit implements Entity {
     @Override
     public int tileY() {
         return tileY;
+    }
+
+    @Override
+    public Bounds getBounds() {
+        return bounds;
     }
 
     public void setFacing(Direction facing) {

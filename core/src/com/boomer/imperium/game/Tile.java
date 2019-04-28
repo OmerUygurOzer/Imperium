@@ -2,38 +2,35 @@ package com.boomer.imperium.game;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.boomer.imperium.game.entities.Unit;
+import com.boomer.imperium.game.configs.GameConfigs;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class Tile implements Entity {
 
-    public static final float SIZE = 64f;
-    public static final float CROSS = (float)Math.sqrt(Math.pow(SIZE,2)+Math.pow(SIZE,2));
-
     public final Bounds bounds;
     private final Sprite tileSprite;
-    private final LinkedList<Unit> unitsContained;
+    private final ArrayList<Entity> entitiesContained;
     public final int tileX,tileY;
     public boolean isPassable;
     public boolean isVacant;
     public boolean isBeingLeft;
 
-    public Tile(Sprite sprite, int tileX, int tileY,float posX, float posY) {
+    public Tile(GameConfigs gameConfigs, Sprite sprite,float posX, float posY) {
         this.tileSprite = sprite;
-        this.unitsContained = new LinkedList<Unit>();
-        this.tileX = tileX;
-        this.tileY = tileY;
-        this.bounds = new Bounds(posX,posY,Tile.SIZE,Tile.SIZE);
+        this.entitiesContained = new ArrayList<Entity>();
+        this.tileX = (int)Math.floor(posX/gameConfigs.tileSize);
+        this.tileY = (int)Math.floor(posY/gameConfigs.tileSize);
+        this.bounds = new Bounds(posX,posY,gameConfigs.tileSize,gameConfigs.tileSize);
     }
 
     @Override
     public void render(SpriteBatch spriteBatch) {
-        spriteBatch.draw(tileSprite, bounds.center.x - (Tile.SIZE / 2), bounds.center.y - (Tile.SIZE / 2), Tile.SIZE, Tile.SIZE);
+        spriteBatch.draw(tileSprite, bounds.center.x - (bounds.width / 2), bounds.center.y - (bounds.height / 2), bounds.width, bounds.height);
     }
 
-    public LinkedList<Unit> getUnitsContained(){
-        return unitsContained;
+    public ArrayList<Entity> getEntitiesContained(){
+        return entitiesContained;
     }
 
     @Override
@@ -69,5 +66,10 @@ public class Tile implements Entity {
     @Override
     public void update(float deltaTime) {
 
+    }
+
+    @Override
+    public Bounds getBounds() {
+        return bounds;
     }
 }

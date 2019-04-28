@@ -1,9 +1,11 @@
 package com.boomer.imperium.game;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.TimedUpdateable;
+import com.boomer.imperium.game.map.Bound;
 
-public interface Entity extends Renderable,TimedUpdateable {
+public interface Entity extends Renderable,TimedUpdateable,Bound {
     void setMemoryIndex(int index);
     int getMemoryIndex();
     Layer getLayer();
