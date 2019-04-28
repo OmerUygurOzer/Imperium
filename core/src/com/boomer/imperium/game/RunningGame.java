@@ -5,13 +5,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boomer.imperium.core.GameState;
 import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.configs.WorldSize;
+import com.boomer.imperium.game.gui.Cursor;
 import com.boomer.imperium.game.gui.GameGui;
 
 public class RunningGame extends GameState {
@@ -28,37 +27,41 @@ public class RunningGame extends GameState {
     private final WorldSize worldSize;
     private final GameGui gui;
 
-    private float camX,camY;
+    private float camX, camY;
+    private final Cursor cursor;
 
-    public RunningGame(SpriteBatch spriteBatch,GameConfigs gameConfigs) {
+    public RunningGame(SpriteBatch spriteBatch, GameConfigs gameConfigs) {
         this.configs = gameConfigs;
         this.worldSize = WorldSize.MEDIUM;
         this.camera = new OrthographicCamera();
-        this.viewPort = new FitViewport(WIDTH_IN_TILES*gameConfigs.tileSize,HEIGHT_IN_TILES*gameConfigs.tileSize, camera);
-        this.camera.position.x = viewPort.getWorldWidth()/2f;
-        this.camera.position.y = viewPort.getWorldHeight()/2f;
+        this.viewPort = new FitViewport(WIDTH_IN_TILES * gameConfigs.tileSize, HEIGHT_IN_TILES * gameConfigs.tileSize, camera);
+        this.camera.position.x = viewPort.getWorldWidth() / 2f;
+        this.camera.position.y = viewPort.getWorldHeight() / 2f;
         this.resources = new Resources();
-        this.gameWorld = new GameWorld(resources, gameConfigs);
-        this.gui = new GameGui(gameConfigs,viewPort,spriteBatch,resources);
+        this.cursor = new Cursor(viewPort, configs, resources.inGameCursor);
+        this.gameWorld = new GameWorld(cursor, resources, gameConfigs);
+        this.gui = new GameGui(gameConfigs, viewPort, spriteBatch, resources);
     }
 
     @Override
     public void update() {
-        if(Gdx.input.isKeyPressed(Input.Keys.W)){
-            camY = 5f;
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            camY = 4f;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.S)){
-            camY = -5f;
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            camY = -4f;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.A)){
-            camX = -5f;
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            camX = -4f;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.D)){
-            camX = 5f;
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            camX = 4f;
         }
         camera.translate(camX,camY);
         camera.update();
-        gameWorld.update(Gdx.graphics.getDeltaTime());
+        float delta = Gdx.graphics.getDeltaTime();
+        gameWorld.update(delta);
+        gui.update(delta);
     }
 
     @Override
@@ -76,7 +79,8 @@ public class RunningGame extends GameState {
     @Override
     public void resize(int width, int height) {
         viewPort.update(width, height);
-        gui.resize(width,height);
+        cursor.resize(width, height);
+        gui.resize(width, height);
         scale = (float) width / (worldSize.getRadius(configs) * 2f);
 //        System.out.println(width);
 //        System.out.println(height);
@@ -101,11 +105,11 @@ public class RunningGame extends GameState {
 
     @Override
     public boolean keyUp(int keycode) {
-        if(keycode==Input.Keys.W || keycode==Input.Keys.S){
-            camY=0f;
+        if (keycode == Input.Keys.W || keycode == Input.Keys.S) {
+            camY = 0f;
         }
-        if(keycode==Input.Keys.A || keycode==Input.Keys.D){
-            camX=0f;
+        if (keycode == Input.Keys.A || keycode == Input.Keys.D) {
+            camX = 0f;
         }
 
         return false;
@@ -118,6 +122,10 @@ public class RunningGame extends GameState {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT) {
+            gameWorld.mouseClicked(cursor.hover(screenX,screenY));
+            return true;
+        }
         return false;
     }
 
@@ -133,7 +141,6 @@ public class RunningGame extends GameState {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        System.out.println("mouse:"+screenX+"/"+screenY);
         return false;
     }
 

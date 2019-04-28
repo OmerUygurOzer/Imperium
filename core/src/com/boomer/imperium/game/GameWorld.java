@@ -1,13 +1,16 @@
 package com.boomer.imperium.game;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.entities.Unit;
+import com.boomer.imperium.game.gui.Cursor;
+import com.boomer.imperium.game.gui.GameGui;
 import com.boomer.imperium.game.map.Map;
 
-public class GameWorld implements Renderable, TimedUpdateable {
+public class GameWorld implements Renderable, TimedUpdateable,Cursor.MouseListener {
 
     private static final int START_INDEX = 0;
     private static final int COUNT = 1;
@@ -19,22 +22,26 @@ public class GameWorld implements Renderable, TimedUpdateable {
             {0, 0},
             {0, 0},
             {0, 0},
-            {0, 0}};
+            {0, 0},
+            {0, 0}
+    };
     private final Entity[] entities;
     public final Map map;
 
-    public GameWorld(Resources resources, GameConfigs configs) {
-        worldResources = resources;
-        entities = new Entity[(int)((configs.worldSize.getRadius(configs) * 2) * (configs.worldSize.getRadius(configs) * 2) / configs.tileSize) * 6];
+    public GameWorld(Cursor cursor,Resources resources, GameConfigs configs) {
+        this.worldResources = resources;
+        this.entities = new Entity[(int) ((configs.worldSize.getRadius(configs) * 2) * (configs.worldSize.getRadius(configs) * 2) / configs.tileSize) * 7];
         layerStartAndCounts[Layer.TILES.getPriority()][START_INDEX] = 0;
-        layerStartAndCounts[Layer.TILES_OVERLAY.getPriority()][START_INDEX] = (entities.length / 6);
-        layerStartAndCounts[Layer.GROUND.getPriority()][START_INDEX] = (entities.length / 6) * 2;
-        layerStartAndCounts[Layer.GROUND_OVERLAY.getPriority()][START_INDEX] = (entities.length / 6) * 3;
-        layerStartAndCounts[Layer.AIR.getPriority()][START_INDEX] = (entities.length / 6) * 4;
-        layerStartAndCounts[Layer.AIR_OVERLAY.getPriority()][START_INDEX] = (entities.length / 6) * 5;
+        layerStartAndCounts[Layer.TILES_OVERLAY.getPriority()][START_INDEX] = (entities.length / 7);
+        layerStartAndCounts[Layer.GROUND.getPriority()][START_INDEX] = (entities.length / 7) * 2;
+        layerStartAndCounts[Layer.GROUND_OVERLAY.getPriority()][START_INDEX] = (entities.length / 7) * 3;
+        layerStartAndCounts[Layer.AIR.getPriority()][START_INDEX] = (entities.length / 7) * 4;
+        layerStartAndCounts[Layer.AIR_OVERLAY.getPriority()][START_INDEX] = (entities.length / 7) * 5;
+        layerStartAndCounts[Layer.GUI.getPriority()][START_INDEX] = (entities.length / 7) * 6;
         map = new Map(resources, configs);
-        for(int i = 0 ; i < 200 ; i++)
-            addEntity(new Unit(configs,this,resources.man,Layer.GROUND));
+        for (int i = 0; i < 10; i++)
+            addEntity(new Unit(configs, resources,this, resources.man, Layer.GROUND));
+
     }
 
     @Override
@@ -42,7 +49,7 @@ public class GameWorld implements Renderable, TimedUpdateable {
         for (int i = 0; i < Layer.values().length; i++) {
             for (int j = layerStartAndCounts[i][START_INDEX]; j
                     < layerStartAndCounts[i][START_INDEX] + layerStartAndCounts[i][COUNT]; j++) {
-                if(entities[j]!=null)
+                if (entities[j] != null)
                     map.quadTree.attach(entities[j]);
             }
         }
@@ -62,7 +69,7 @@ public class GameWorld implements Renderable, TimedUpdateable {
                     nullTracker++;
                 }
             }
-            layerStartAndCounts[i][COUNT] = nullTracker-layerStartAndCounts[i][START_INDEX];
+            layerStartAndCounts[i][COUNT] = nullTracker - layerStartAndCounts[i][START_INDEX];
         }
         map.quadTree.clear();
     }
@@ -82,14 +89,26 @@ public class GameWorld implements Renderable, TimedUpdateable {
         int priority = entity.getLayer().getPriority();
         entities[layerStartAndCounts[priority][START_INDEX] + layerStartAndCounts[priority][COUNT]] = entity;
         entity.setMemoryIndex(layerStartAndCounts[priority][START_INDEX] + layerStartAndCounts[priority][COUNT]);
-        map.getTileAt(entity.tileX(),entity.tileY()).getEntitiesContained().add(entity);
+        map.getTileAt(entity.tileX(), entity.tileY()).getEntitiesContained().add(entity);
         return layerStartAndCounts[priority][START_INDEX] + layerStartAndCounts[priority][COUNT]++;
     }
 
     public void removeEntity(Entity entity) {
         entities[entity.getMemoryIndex()] = null;
-        map.getTileAt(entity.tileX(),entity.tileY()).getEntitiesContained().remove(entity);
+        map.getTileAt(entity.tileX(), entity.tileY()).getEntitiesContained().remove(entity);
     }
 
 
+    @Override
+    public void mousePoint(Vector2 point) {
+
+    }
+
+    @Override
+    public void mouseClicked(Vector2 point) {
+        Tile tile = map.findTile(point);
+        for(GameGui.Selectable selectable : tile.getEntitiesContained()){
+            selectable.select();
+        }
+    }
 }

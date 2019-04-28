@@ -1,7 +1,9 @@
 package com.boomer.imperium.game.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.boomer.imperium.game.*;
 import com.boomer.imperium.game.configs.GameConfigs;
@@ -33,7 +35,11 @@ public class Unit implements Entity {
     private int hp;
     private float attackSpeed;
 
-    public Unit(GameConfigs gameConfigs, GameWorld gameWorld, UnitSpriteAnimator spriteAnimator, Layer layer) {
+    //temp
+    private boolean selected;
+    private Sprite selectedSprite;
+
+    public Unit(GameConfigs gameConfigs, Resources resources,GameWorld gameWorld, UnitSpriteAnimator spriteAnimator, Layer layer) {
         this.gameWorld = gameWorld;
         this.unitOrders = new UnitOrders();
         this.unitMovement = new UnitMovement(gameConfigs.tileSize, 1f);
@@ -44,11 +50,12 @@ public class Unit implements Entity {
         this.tileX = 0;
         this.tileY = 0;
         this.frameCounter = new FrameCounter(8f, 8);
-        Tile tile = gameWorld.map.getTileAt(MathUtils.random(1, 30), MathUtils.random(1, 30));
+        Tile tile = gameWorld.map.getTileAt(MathUtils.random(1, 5), MathUtils.random(5, 10));
         this.bounds = new Bounds(tile.bounds.center.x, tile.bounds.center.y, gameConfigs.tileSize, gameConfigs.tileSize);
         this.unitOrders.targetTileX = tile.tileX + 1;
         this.unitOrders.targetTileY = tile.tileY + 1;
         UnitMovement.adjustMovementForTarget(gameConfigs,unitMovement, bounds, gameWorld.map.getTileAt(tile.tileX() + 1, tile.tileY() + 1).bounds);
+        this.selectedSprite = resources.inGameCursor;
     }
 
     @Override
@@ -74,6 +81,20 @@ public class Unit implements Entity {
     @Override
     public void render(SpriteBatch spriteBatch) {
         unitSpriteAnimator.draw(spriteBatch, frameCounter.currentFrame, bounds, facing, state);
+        if(selected){
+            spriteBatch.draw(selectedSprite,bounds.boundRectangle.x,bounds.boundRectangle.y,bounds.width,bounds.height);
+        }
+    }
+
+    @Override
+    public void select() {
+        selected = true;
+        System.out.println("SELECTED UNIT");
+    }
+
+    @Override
+    public void deSelect() {
+
     }
 
     @Override
@@ -154,6 +175,7 @@ public class Unit implements Entity {
     public boolean shouldRemove() {
         return state.equals(UnitState.DEAD);
     }
+
 
 
 }

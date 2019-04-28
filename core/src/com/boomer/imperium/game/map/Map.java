@@ -3,6 +3,7 @@ package com.boomer.imperium.game.map;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.game.*;
 import com.boomer.imperium.game.configs.GameConfigs;
@@ -10,6 +11,7 @@ import com.boomer.imperium.game.configs.WorldSize;
 
 public class Map implements Renderable {
 
+    private final GameConfigs configs;
     private final Resources mapResources;
     private final int sizeInTiles;
     private final Tile[] tiles;
@@ -17,6 +19,7 @@ public class Map implements Renderable {
     public final QuadNode<Entity> quadTree;
 
     public Map(Resources resources, GameConfigs gameConfigs) {
+        this.configs = gameConfigs;
         this.mapResources = resources;
         this.sizeInTiles = (int) ((gameConfigs.worldSize.getRadius(gameConfigs) * 2) / gameConfigs.tileSize);
         this.tiles = new Tile[sizeInTiles * sizeInTiles];
@@ -46,6 +49,10 @@ public class Map implements Renderable {
             return null;
         }
         return tiles[x + (y * sizeInTiles)];
+    }
+
+    public Tile findTile(Vector2 point) {
+        return getTileAt((int)Math.floor(point.x/configs.tileSize),(int)Math.floor(point.y/configs.tileSize));
     }
 
     @Override

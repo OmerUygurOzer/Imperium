@@ -1,8 +1,8 @@
 package com.boomer.imperium.game;
 
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Bounds {
     public final Vector2 center;
@@ -23,6 +23,10 @@ public class Bounds {
         this.center.x = tile.bounds.center.x;
         this.center.y = tile.bounds.center.y;
         this.boundRectangle.setCenter(center);
-        new Actor();
+    }
+    public void setCenter(Vector2 vector2){
+        this.center.x = vector2.x;
+        this.center.y = vector2.y;
+        this.boundRectangle.setCenter(center);
     }
 }

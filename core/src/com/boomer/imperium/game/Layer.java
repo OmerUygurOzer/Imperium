@@ -6,7 +6,8 @@ public enum Layer {
     GROUND(2),
     GROUND_OVERLAY(3),
     AIR(4),
-    AIR_OVERLAY(5);
+    AIR_OVERLAY(5),
+    GUI(6);
 
     private int priority;
 

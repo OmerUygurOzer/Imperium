@@ -5,7 +5,10 @@ public class GameConfigs {
     public final float tileSize;
     public final float tileSizeCross;
     public final float aspectRatio;
-    public final float guiWidth = 200f;
+    public final float guiWidth = 300f;
+
+    public final float yellowHPBarThreshold = 100f;
+    public final float purpeHPBarThreshold = 150f;
 
     public GameConfigs(float tileSize,float aspectRatio,WorldSize worldSize) {
         this.tileSize = tileSize;

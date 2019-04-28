@@ -72,4 +72,14 @@ public class Tile implements Entity {
     public Bounds getBounds() {
         return bounds;
     }
+
+    @Override
+    public void select() {
+
+    }
+
+    @Override
+    public void deSelect() {
+
+    }
 }
