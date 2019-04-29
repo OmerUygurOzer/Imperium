@@ -1,21 +1,22 @@
 package com.boomer.imperium.game.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.boomer.imperium.game.*;
 import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.graphics.FrameCounter;
 import com.boomer.imperium.game.graphics.UnitSpriteAnimator;
+import com.boomer.imperium.game.map.Path;
+import com.boomer.imperium.game.map.PathFinder;
 
 public class Unit implements Entity {
 
     private final GameWorld gameWorld;
-    public final Bounds bounds;
+    public final Rectangle bounds;
     private final UnitMovement unitMovement;
     private final UnitOrders unitOrders;
+    private final Path unitPath;
     private UnitState state;
     private int memoryIndex;
     private Layer unitLayer;
@@ -25,9 +26,6 @@ public class Unit implements Entity {
     private int tileX, tileY;
 
     private float movementSpeed;
-    private boolean canRangeAttack;
-    private boolean canMeleeAttack;
-    private boolean canWieldShield;
     private int rangeAttackDamage;
     private int meleeAttackDamage;
     private int armor;
@@ -39,22 +37,17 @@ public class Unit implements Entity {
     private boolean selected;
     private Sprite selectedSprite;
 
-    public Unit(GameConfigs gameConfigs, Resources resources,GameWorld gameWorld, UnitSpriteAnimator spriteAnimator, Layer layer) {
+    public Unit(GameConfigs gameConfigs, Resources resources, GameWorld gameWorld) {
         this.gameWorld = gameWorld;
         this.unitOrders = new UnitOrders();
-        this.unitMovement = new UnitMovement(gameConfigs.tileSize, 1f);
-        this.facing = Direction.NE;
-        this.unitLayer = layer;
-        this.state = UnitState.MOVING;
-        this.unitSpriteAnimator = spriteAnimator;
+        this.unitMovement = new UnitMovement(gameConfigs,gameConfigs.tileSize, 1f);
+        this.unitPath = new Path(gameConfigs);
         this.tileX = 0;
         this.tileY = 0;
         this.frameCounter = new FrameCounter(8f, 8);
-        Tile tile = gameWorld.map.getTileAt(MathUtils.random(1, 5), MathUtils.random(5, 10));
-        this.bounds = new Bounds(tile.bounds.center.x, tile.bounds.center.y, gameConfigs.tileSize, gameConfigs.tileSize);
-        this.unitOrders.targetTileX = tile.tileX + 1;
-        this.unitOrders.targetTileY = tile.tileY + 1;
-        UnitMovement.adjustMovementForTarget(gameConfigs,unitMovement, bounds, gameWorld.map.getTileAt(tile.tileX() + 1, tile.tileY() + 1).bounds);
+        this.state = UnitState.IDLE;
+        Tile tile = gameWorld.map.getTileAt(0, 0);
+        this.bounds = new Rectangle(tile.bounds.x, tile.bounds.y, gameConfigs.tileSize, gameConfigs.tileSize);
         this.selectedSprite = resources.inGameCursor;
     }
 
@@ -71,8 +64,8 @@ public class Unit implements Entity {
                 gameWorld.map.getTileAt(tileX, tileY).getEntitiesContained().add(this);
             } else if (mov >= 1f) {
                 unitMovement.setLength(0);
+                bounds.set(gameWorld.map.getTileAt(unitOrders.targetTileX, unitOrders.targetTileY).bounds);
                 state = UnitState.IDLE;
-                bounds.setCenterTile(gameWorld.map.getTileAt(unitOrders.targetTileX, unitOrders.targetTileY));
             }
         }
 
@@ -81,20 +74,26 @@ public class Unit implements Entity {
     @Override
     public void render(SpriteBatch spriteBatch) {
         unitSpriteAnimator.draw(spriteBatch, frameCounter.currentFrame, bounds, facing, state);
-        if(selected){
-            spriteBatch.draw(selectedSprite,bounds.boundRectangle.x,bounds.boundRectangle.y,bounds.width,bounds.height);
+        if (selected) {
+            spriteBatch.draw(selectedSprite, bounds.x, bounds.y, bounds.width, bounds.height);
         }
+    }
+
+    @Override
+    public void targetTile(Tile tile) {
+        PathFinder.findPath(unitPath,gameWorld.map, gameWorld.map.getTileAt(tileX,tileY),tile);
+        System.out.println(unitPath.tasks);
+        //state = UnitState.MOVING;
     }
 
     @Override
     public void select() {
         selected = true;
-        System.out.println("SELECTED UNIT");
     }
 
     @Override
     public void deSelect() {
-
+        selected = false;
     }
 
     @Override
@@ -107,25 +106,25 @@ public class Unit implements Entity {
         return tileY;
     }
 
+
+
     @Override
-    public Bounds getBounds() {
+    public void receiveDamage(Entity from, int damage) {
+        if(!state.equals(UnitState.DYING)|!state.equals(UnitState.DEAD))
+            return;
+        hp=-damage;
+        if(hp<=0){
+            state = UnitState.DYING;
+        }
+    }
+
+    @Override
+    public Rectangle getBounds() {
         return bounds;
     }
 
     public void setFacing(Direction facing) {
         this.facing = facing;
-    }
-
-    public void setCanRangeAttack(boolean canRangeAttack) {
-        this.canRangeAttack = canRangeAttack;
-    }
-
-    public void setCanMeleeAttack(boolean canMeleeAttack) {
-        this.canMeleeAttack = canMeleeAttack;
-    }
-
-    public void setCanWieldShield(boolean canWieldShield) {
-        this.canWieldShield = canWieldShield;
     }
 
     public void setRangeAttackDamage(int rangeAttackDamage) {
@@ -156,6 +155,21 @@ public class Unit implements Entity {
         this.state = state;
     }
 
+    public void setUnitLayer(Layer unitLayer) {
+        this.unitLayer = unitLayer;
+    }
+
+    public void setUnitSpriteAnimator(UnitSpriteAnimator unitSpriteAnimator) {
+        this.unitSpriteAnimator = unitSpriteAnimator;
+    }
+
+    public void placeInTile(int tileX , int tileY){
+        Tile tile = gameWorld.map.getTileAt(tileX,tileY);
+        this.tileX = tile.tileX;
+        this.tileY = tile.tileY;
+        bounds.set(tile.bounds);
+    }
+
     @Override
     public void setMemoryIndex(int index) {
         memoryIndex = index;
@@ -176,6 +190,29 @@ public class Unit implements Entity {
         return state.equals(UnitState.DEAD);
     }
 
+    @Override
+    public void setTypeFlags(int typeFlags) {
+
+    }
+
+    @Override
+    public int getTypeFlags() {
+        return 0;
+    }
+
+    @Override
+    public void setComponentFlags() {
+
+    }
+
+    @Override
+    public int getComponentFlags() {
+        return 0;
+    }
 
 
+    @Override
+    public void reset() {
+
+    }
 }

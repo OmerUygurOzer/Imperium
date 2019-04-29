@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boomer.imperium.core.GameState;
@@ -30,7 +31,7 @@ public class RunningGame extends GameState {
     private float camX, camY;
     private final Cursor cursor;
 
-    public RunningGame(SpriteBatch spriteBatch, GameConfigs gameConfigs) {
+    public RunningGame(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, GameConfigs gameConfigs) {
         this.configs = gameConfigs;
         this.worldSize = WorldSize.MEDIUM;
         this.camera = new OrthographicCamera();
@@ -38,9 +39,11 @@ public class RunningGame extends GameState {
         this.camera.position.x = viewPort.getWorldWidth() / 2f;
         this.camera.position.y = viewPort.getWorldHeight() / 2f;
         this.resources = new Resources();
-        this.cursor = new Cursor(viewPort, configs, resources.inGameCursor);
-        this.gameWorld = new GameWorld(cursor, resources, gameConfigs);
         this.gui = new GameGui(gameConfigs, viewPort, spriteBatch, resources);
+        this.gameWorld = new GameWorld(resources, gameConfigs,gui);
+        this.cursor = new Cursor(shapeRenderer,viewPort, configs,gameWorld);
+        addProcessor(gui);
+        addProcessor(cursor);
     }
 
     @Override
@@ -73,6 +76,7 @@ public class RunningGame extends GameState {
         viewPort.apply();
         gameWorld.render(spriteBatch);
         spriteBatch.end();
+        cursor.render(spriteBatch);
         gui.render(spriteBatch);
     }
 
@@ -112,40 +116,6 @@ public class RunningGame extends GameState {
             camX = 0f;
         }
 
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (button == Input.Buttons.LEFT) {
-            gameWorld.mouseClicked(cursor.hover(screenX,screenY));
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
         return false;
     }
 

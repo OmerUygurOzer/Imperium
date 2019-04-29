@@ -6,7 +6,9 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.boomer.imperium.core.GameStateManager;
+import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.RunningGame;
 import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.configs.WorldSize;
@@ -14,14 +16,16 @@ import com.boomer.imperium.game.configs.WorldSize;
 public class GameRunner extends ApplicationAdapter {
 
     private SpriteBatch batch;
+    private ShapeRenderer shapeRenderer;
     private GameStateManager gameStateManager;
 
     @Override
     public void create() {
         //Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
-        batch = new SpriteBatch();
-        gameStateManager = new GameStateManager();
-        gameStateManager.pushGameState(new RunningGame(batch,new GameConfigs(64f,0f,WorldSize.MEDIUM)));
+        this.batch = new SpriteBatch();
+        this.shapeRenderer = new ShapeRenderer();
+        this.gameStateManager = new GameStateManager();
+        this.gameStateManager.pushGameState(new RunningGame(batch,shapeRenderer,new GameConfigs(64f,0f,WorldSize.MEDIUM)));
     }
 
     @Override

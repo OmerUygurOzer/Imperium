@@ -1,6 +1,5 @@
 package com.boomer.imperium.game.gui;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -8,26 +7,26 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.ScreenSensitive;
 import com.boomer.imperium.core.TimedUpdateable;
+import com.boomer.imperium.game.Entity;
+import com.boomer.imperium.game.GameWorld;
 import com.boomer.imperium.game.Resources;
 import com.boomer.imperium.game.configs.GameConfigs;
 
-public class GameGui implements TimedUpdateable,ScreenSensitive,Renderable {
+import java.util.List;
+
+public class GameGui extends Stage implements TimedUpdateable,ScreenSensitive,Renderable,GameWorld.EntitySelectionListener {
 
     private final float guiWidth;
-    private final Stage stage;
     private final Viewport gameViewport;
     private final Rectangle gameBounds;
     private final Rectangle leftSideGUIBounds;
     private final Rectangle rightSideGUIBounds;
-    private final Viewport guiViewport;
-    private final OrthographicCamera guiCamera;
     private final Skin skin;
 
     private final Table leftSideTable;
@@ -36,12 +35,10 @@ public class GameGui implements TimedUpdateable,ScreenSensitive,Renderable {
     private final Sprite test;
 
     public GameGui(GameConfigs gameConfigs, Viewport gameViewport , SpriteBatch spriteBatch, Resources resources){
+        super(new ExtendViewport(gameViewport.getWorldWidth(),gameViewport.getWorldHeight(), new OrthographicCamera()),spriteBatch);
         this.guiWidth = gameConfigs.guiWidth;
         this.gameViewport = gameViewport;
-        this.guiCamera = new OrthographicCamera();
-        this.guiViewport = new ExtendViewport(gameViewport.getWorldWidth(),gameViewport.getWorldHeight(), guiCamera);
-        guiViewport.apply();
-        this.stage = new Stage(guiViewport,spriteBatch);
+        getViewport().apply();
         this.gameBounds = new Rectangle();
         this.leftSideGUIBounds = new Rectangle();
         this.rightSideGUIBounds = new Rectangle();
@@ -53,7 +50,7 @@ public class GameGui implements TimedUpdateable,ScreenSensitive,Renderable {
     }
 
     private void setGUIActors(){
-        stage.addActor(leftSideTable);
+        addActor(leftSideTable);
         TextButton startButton = new TextButton("START GAME",skin);
         TextButton endButton = new TextButton("END GAME",skin);
 
@@ -69,31 +66,36 @@ public class GameGui implements TimedUpdateable,ScreenSensitive,Renderable {
 
     @Override
     public void update(float deltaTime) {
-        this.stage.act(deltaTime);
+        act(deltaTime);
     }
 
     @Override
     public void resize(int width, int height) {
-        guiViewport.update(width,height);
-        guiCamera.position.x = guiViewport.getWorldWidth()/2f;
-        guiCamera.position.y = guiViewport.getWorldHeight()/2f;
-        guiCamera.update();
-        float gameLeftX = (guiViewport.getWorldWidth()/2f)-(gameViewport.getWorldWidth()/2f);
-        float gameRightX = (guiViewport.getWorldWidth()/2f)+(gameViewport.getWorldWidth()/2f);
+        getViewport().update(width,height);
+        getCamera().position.x = getViewport().getWorldWidth()/2f;
+        getCamera().position.y = getViewport().getWorldHeight()/2f;
+        getCamera().update();
+        float gameLeftX = (getViewport().getWorldWidth()/2f)-(gameViewport.getWorldWidth()/2f);
+        float gameRightX = (getViewport().getWorldWidth()/2f)+(gameViewport.getWorldWidth()/2f);
         leftSideGUIBounds.set(Math.max(0f,gameLeftX-guiWidth),0f,guiWidth,gameViewport.getWorldHeight());
-        rightSideGUIBounds.set(Math.min(gameRightX,guiViewport.getWorldWidth()-guiWidth),0f,guiWidth,gameViewport.getWorldHeight());
+        rightSideGUIBounds.set(Math.min(gameRightX,getViewport().getWorldWidth()-guiWidth),0f,guiWidth,gameViewport.getWorldHeight());
         updateGUIActors(width,height);
     }
 
 
     @Override
     public void render(SpriteBatch spriteBatch) {
-        guiViewport.apply();
-        stage.draw();
+        getViewport().apply();
+        draw();
     }
 
-    public interface Selectable{
-        void select();
-        void deSelect();
+    @Override
+    public void selectedEntities(List<Entity> entities) {
+
+    }
+
+    @Override
+    public void entitiesDeSelected() {
+
     }
 }

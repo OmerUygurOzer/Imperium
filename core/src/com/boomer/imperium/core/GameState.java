@@ -1,9 +1,10 @@
 package com.boomer.imperium.core;
 
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.utils.Disposable;
 
-public abstract class GameState implements Renderable,Updateable,InputProcessor,Disposable,ScreenSensitive {
+public abstract class GameState extends InputMultiplexer implements Renderable,Updateable,Disposable,ScreenSensitive {
 
     protected boolean isRunning = false;
 

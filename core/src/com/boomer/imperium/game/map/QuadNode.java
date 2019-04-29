@@ -8,7 +8,7 @@ import java.util.List;
 
 public class QuadNode<T extends Bound> {
 
-    private final int maxDepth;
+    private final float minSize;
     private final Rectangle area;
     private final Rectangle topRightArea;
     private final Rectangle topLeftArea;
@@ -20,9 +20,9 @@ public class QuadNode<T extends Bound> {
     private QuadNode<T> botLeftNode;
     private QuadNode<T> botRightNode;
 
-    public QuadNode(Rectangle area, int maxDepth) {
+    public QuadNode(Rectangle area, float minSize) {
         this.area = area;
-        this.maxDepth = maxDepth;
+        this.minSize = minSize;
         float subWidth = area.width / 2f;
         float subHeight = area.height / 2f;
         this.topRightArea = new Rectangle(area.x + subWidth, area.y + subHeight, subWidth, subHeight);
@@ -32,62 +32,65 @@ public class QuadNode<T extends Bound> {
     }
 
     public void attach(T object) {
-        attach(object, 0);
+        attach(object, area.width);
     }
 
-    private List<T> findObjectsWithinRect(Rectangle rectangle) {
+    public List<T> findObjectsWithinRect(Rectangle rectangle) {
         LinkedList<T> found = new LinkedList<T>();
-        findObjectsWithinRect(rectangle, 0, found);
+        findObjectsWithinRect(rectangle, area.width, found);
         return found;
     }
 
-    private void attach(T object, int depth) {
-        if (maxDepth == depth - 1) {
+    private void attach(T object, float curWidth) {
+        float nextWidth = curWidth/2f;
+        if (nextWidth < minSize) {
             objects.add(object);
             return;
         }
-        if (topRightArea.overlaps(object.getBounds().boundRectangle)) {
+        Rectangle boundRect = object.getBounds();
+        if (topRightArea.overlaps(boundRect)) {
             if (topRightNode == null) {
-                topRightNode = new QuadNode<T>(topRightArea, maxDepth);
+                topRightNode = new QuadNode<T>(topRightArea, minSize);
             }
-            topRightNode.attach(object, depth + 1);
+            topRightNode.attach(object, nextWidth);
         }
-        if (topLeftArea.overlaps(object.getBounds().boundRectangle)) {
+        if (topLeftArea.overlaps(boundRect)) {
             if (topLeftNode == null) {
-                topLeftNode = new QuadNode<T>(topLeftArea, maxDepth);
+                topLeftNode = new QuadNode<T>(topLeftArea, minSize);
             }
-            topLeftNode.attach(object, depth + 1);
+            topLeftNode.attach(object, nextWidth);
         }
-        if (botRightArea.overlaps(object.getBounds().boundRectangle)) {
+        if (botRightArea.overlaps(boundRect)) {
             if (botRightNode == null) {
-                botRightNode = new QuadNode<T>(botRightArea, maxDepth);
+                botRightNode = new QuadNode<T>(botRightArea, minSize);
             }
-            botRightNode.attach(object, depth + 1);
+            botRightNode.attach(object, nextWidth);
         }
-        if (botLeftArea.overlaps(object.getBounds().boundRectangle)) {
+        if (botLeftArea.overlaps(boundRect)) {
             if (botLeftNode == null) {
-                botLeftNode = new QuadNode<T>(botLeftArea, maxDepth);
+                botLeftNode = new QuadNode<T>(botLeftArea, minSize);
             }
-            botLeftNode.attach(object, depth + 1);
+            botLeftNode.attach(object, nextWidth);
         }
     }
 
-    private void findObjectsWithinRect(Rectangle rectangle, int depth, LinkedList<T> found) {
-        if (maxDepth == depth - 1) {
+    private void findObjectsWithinRect(Rectangle rectangle, float curWidth, LinkedList<T> found) {
+        float nextWidth = curWidth/2f;
+        if (nextWidth < minSize) {
             found.addAll(objects);
             return;
         }
-        if (topRightArea.overlaps(rectangle)) {
-            topRightNode.findObjectsWithinRect(rectangle, depth + 1, found);
+        if (topRightArea.overlaps(rectangle) && topRightNode != null) {
+            topRightNode.findObjectsWithinRect(rectangle, nextWidth, found);
         }
-        if (topLeftArea.overlaps(rectangle)) {
-            topLeftNode.findObjectsWithinRect(rectangle, depth + 1, found);
+        if (topLeftArea.overlaps(rectangle) && topLeftNode != null) {
+            topLeftNode.findObjectsWithinRect(rectangle, nextWidth, found);
         }
-        if (botRightArea.overlaps(rectangle)) {
-            botRightNode.findObjectsWithinRect(rectangle, depth + 1, found);
+        if (botRightArea.overlaps(rectangle) && botRightNode != null) {
+            botRightNode.findObjectsWithinRect(rectangle, nextWidth, found);
         }
-        if (botLeftArea.overlaps(rectangle)) {
-            botLeftNode.findObjectsWithinRect(rectangle, depth + 1, found);
+        if (botLeftArea.overlaps(rectangle) && botLeftNode != null) {
+            botLeftNode.findObjectsWithinRect(rectangle, nextWidth, found);
         }
     }
 

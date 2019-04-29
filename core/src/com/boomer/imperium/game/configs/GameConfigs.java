@@ -6,6 +6,7 @@ public class GameConfigs {
     public final float tileSizeCross;
     public final float aspectRatio;
     public final float guiWidth = 300f;
+    public final int calculatePathPerTask = 32;
 
     public final float yellowHPBarThreshold = 100f;
     public final float purpeHPBarThreshold = 150f;

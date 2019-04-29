@@ -1,14 +1,20 @@
 package com.boomer.imperium.game;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.entities.Unit;
+import com.boomer.imperium.game.entities.UnitPool;
 import com.boomer.imperium.game.gui.Cursor;
 import com.boomer.imperium.game.gui.GameGui;
 import com.boomer.imperium.game.map.Map;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameWorld implements Renderable, TimedUpdateable,Cursor.MouseListener {
 
@@ -27,8 +33,12 @@ public class GameWorld implements Renderable, TimedUpdateable,Cursor.MouseListen
     };
     private final Entity[] entities;
     public final Map map;
+    private final ArrayList<Entity> selectedEntities;
+    private final EntitySelectionListener entitySelectionListener;
 
-    public GameWorld(Cursor cursor,Resources resources, GameConfigs configs) {
+    private final UnitPool unitPool;
+
+    public GameWorld(Resources resources, GameConfigs configs, EntitySelectionListener entitySelectionListener) {
         this.worldResources = resources;
         this.entities = new Entity[(int) ((configs.worldSize.getRadius(configs) * 2) * (configs.worldSize.getRadius(configs) * 2) / configs.tileSize) * 7];
         layerStartAndCounts[Layer.TILES.getPriority()][START_INDEX] = 0;
@@ -38,14 +48,24 @@ public class GameWorld implements Renderable, TimedUpdateable,Cursor.MouseListen
         layerStartAndCounts[Layer.AIR.getPriority()][START_INDEX] = (entities.length / 7) * 4;
         layerStartAndCounts[Layer.AIR_OVERLAY.getPriority()][START_INDEX] = (entities.length / 7) * 5;
         layerStartAndCounts[Layer.GUI.getPriority()][START_INDEX] = (entities.length / 7) * 6;
-        map = new Map(resources, configs);
-        for (int i = 0; i < 10; i++)
-            addEntity(new Unit(configs, resources,this, resources.man, Layer.GROUND));
+        this.map = new Map(resources, configs);
+        this.selectedEntities = new ArrayList<Entity>(12);
+        this.entitySelectionListener = entitySelectionListener;
+        this.unitPool = new UnitPool(configs,resources,this);
+        for (int i = 0; i < 100; i++){
+            Unit unit = unitPool.obtain();
+            unit.setUnitSpriteAnimator(resources.man);
+            unit.setUnitLayer(Layer.GROUND);
+            unit.setFacing(Direction.NE);
+            unit.placeInTile(MathUtils.random(0,42),MathUtils.random(0,42));
+            addEntity(unit);
+        }
 
     }
 
     @Override
     public void update(float deltaTime) {
+        map.quadTree.clear();
         for (int i = 0; i < Layer.values().length; i++) {
             for (int j = layerStartAndCounts[i][START_INDEX]; j
                     < layerStartAndCounts[i][START_INDEX] + layerStartAndCounts[i][COUNT]; j++) {
@@ -71,7 +91,6 @@ public class GameWorld implements Renderable, TimedUpdateable,Cursor.MouseListen
             }
             layerStartAndCounts[i][COUNT] = nullTracker - layerStartAndCounts[i][START_INDEX];
         }
-        map.quadTree.clear();
     }
 
     @Override
@@ -98,17 +117,47 @@ public class GameWorld implements Renderable, TimedUpdateable,Cursor.MouseListen
         map.getTileAt(entity.tileX(), entity.tileY()).getEntitiesContained().remove(entity);
     }
 
-
     @Override
-    public void mousePoint(Vector2 point) {
+    public void mouseHover(Vector2 point) {
 
     }
 
     @Override
-    public void mouseClicked(Vector2 point) {
+    public void mouseLeftClicked(Vector2 point) {
+        selectedEntities.clear();
+        selectedEntities.addAll(map.findTile(point).getEntitiesContained());
+        for(Entity entity: selectedEntities)
+            entity.select();
+        entitySelectionListener.selectedEntities(selectedEntities);
+    }
+
+    @Override
+    public void mouseRightClick(Vector2 point) {
         Tile tile = map.findTile(point);
-        for(GameGui.Selectable selectable : tile.getEntitiesContained()){
-            selectable.select();
+        for(Entity entity: selectedEntities){
+            entity.targetTile(tile);
+            entity.deSelect();
         }
+        selectedEntities.clear();
+        entitySelectionListener.entitiesDeSelected();
+    }
+
+    @Override
+    public void mouseDrag(Rectangle rectangle) {
+        selectedEntities.clear();
+        selectedEntities.addAll(map.quadTree.findObjectsWithinRect(rectangle));
+        for(Entity entity : selectedEntities){
+            entity.select();
+        }
+    }
+
+    public interface EntitySelectionListener{
+        void selectedEntities(List<Entity> entities);
+        void entitiesDeSelected();
+    }
+
+    public interface Selectable{
+        void select();
+        void deSelect();
     }
 }

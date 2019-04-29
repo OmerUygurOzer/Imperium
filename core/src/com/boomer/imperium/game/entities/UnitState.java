@@ -2,6 +2,7 @@ package com.boomer.imperium.game.entities;
 
 public enum UnitState {
 
+    CONTAINED(-1),
     IDLE(0),
     MOVING(1),
     ATTACKING_MELEE(9),

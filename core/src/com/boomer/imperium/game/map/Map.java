@@ -55,6 +55,10 @@ public class Map implements Renderable {
         return getTileAt((int)Math.floor(point.x/configs.tileSize),(int)Math.floor(point.y/configs.tileSize));
     }
 
+    public Tile findTile(float x, float y) {
+        return getTileAt((int)Math.floor(x/configs.tileSize),(int)Math.floor(y/configs.tileSize));
+    }
+
     @Override
     public void render(SpriteBatch spriteBatch) {
         for (int i = 0; i < tiles.length; i++) {

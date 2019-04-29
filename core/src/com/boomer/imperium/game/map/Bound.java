@@ -1,7 +1,7 @@
 package com.boomer.imperium.game.map;
 
-import com.boomer.imperium.game.Bounds;
+import com.badlogic.gdx.math.Rectangle;
 
 public interface Bound {
-    Bounds getBounds();
+    Rectangle getBounds();
 }
