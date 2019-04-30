@@ -10,7 +10,6 @@ import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.entities.Unit;
 import com.boomer.imperium.game.entities.UnitPool;
 import com.boomer.imperium.game.gui.Cursor;
-import com.boomer.imperium.game.gui.GameGui;
 import com.boomer.imperium.game.map.Map;
 
 import java.util.ArrayList;
@@ -52,12 +51,12 @@ public class GameWorld implements Renderable, TimedUpdateable,Cursor.MouseListen
         this.selectedEntities = new ArrayList<Entity>(12);
         this.entitySelectionListener = entitySelectionListener;
         this.unitPool = new UnitPool(configs,resources,this);
-        for (int i = 0; i < 100; i++){
+        for (int i = 0; i < 30; i++){
             Unit unit = unitPool.obtain();
             unit.setUnitSpriteAnimator(resources.man);
             unit.setUnitLayer(Layer.GROUND);
             unit.setFacing(Direction.NE);
-            unit.placeInTile(MathUtils.random(0,42),MathUtils.random(0,42));
+            unit.placeInTile(MathUtils.random(0,47),MathUtils.random(0,47));
             addEntity(unit);
         }
 

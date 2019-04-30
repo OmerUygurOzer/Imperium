@@ -89,8 +89,8 @@ public final class PathFinder {
 
     private static void deConstructPath(Path path,Node node){
         Node cur = node;
-         while (cur!=null){
-            path.addTask(node.direction);
+         while (cur.previous!=null){
+            path.addTask(cur.direction);
             cur = cur.previous;
         }
         path.reverse();

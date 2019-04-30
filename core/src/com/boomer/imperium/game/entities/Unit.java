@@ -9,6 +9,7 @@ import com.boomer.imperium.game.graphics.FrameCounter;
 import com.boomer.imperium.game.graphics.UnitSpriteAnimator;
 import com.boomer.imperium.game.map.Path;
 import com.boomer.imperium.game.map.PathFinder;
+import com.boomer.imperium.game.map.PathTracker;
 
 public class Unit implements Entity {
 
@@ -17,6 +18,7 @@ public class Unit implements Entity {
     private final UnitMovement unitMovement;
     private final UnitOrders unitOrders;
     private final Path unitPath;
+    private final PathTracker pathTracker;
     private UnitState state;
     private int memoryIndex;
     private Layer unitLayer;
@@ -40,7 +42,7 @@ public class Unit implements Entity {
     public Unit(GameConfigs gameConfigs, Resources resources, GameWorld gameWorld) {
         this.gameWorld = gameWorld;
         this.unitOrders = new UnitOrders();
-        this.unitMovement = new UnitMovement(gameConfigs,gameConfigs.tileSize, 1f);
+        this.unitMovement = new UnitMovement(gameConfigs,this,gameConfigs.tileSize, 5f);
         this.unitPath = new Path(gameConfigs);
         this.tileX = 0;
         this.tileY = 0;
@@ -49,24 +51,14 @@ public class Unit implements Entity {
         Tile tile = gameWorld.map.getTileAt(0, 0);
         this.bounds = new Rectangle(tile.bounds.x, tile.bounds.y, gameConfigs.tileSize, gameConfigs.tileSize);
         this.selectedSprite = resources.inGameCursor;
+        this.pathTracker = new PathTracker(this,gameWorld.map,unitMovement);
     }
 
     @Override
     public void update(float deltaTime) {
         frameCounter.update(deltaTime);
         if (state.equals(UnitState.MOVING)) {
-            unitMovement.update(deltaTime);
-            float mov = unitMovement.updateBounds(this);
-            if (mov >= 0.5f && tileX != unitOrders.targetTileX && tileY != unitOrders.targetTileY) {
-                gameWorld.map.getTileAt(tileX, tileY).getEntitiesContained().remove(this);
-                tileX = unitOrders.targetTileX;
-                tileY = unitOrders.targetTileY;
-                gameWorld.map.getTileAt(tileX, tileY).getEntitiesContained().add(this);
-            } else if (mov >= 1f) {
-                unitMovement.setLength(0);
-                bounds.set(gameWorld.map.getTileAt(unitOrders.targetTileX, unitOrders.targetTileY).bounds);
-                state = UnitState.IDLE;
-            }
+            pathTracker.update(deltaTime);
         }
 
     }
@@ -74,16 +66,16 @@ public class Unit implements Entity {
     @Override
     public void render(SpriteBatch spriteBatch) {
         unitSpriteAnimator.draw(spriteBatch, frameCounter.currentFrame, bounds, facing, state);
-        if (selected) {
+        if (selected)
             spriteBatch.draw(selectedSprite, bounds.x, bounds.y, bounds.width, bounds.height);
-        }
+
     }
 
     @Override
     public void targetTile(Tile tile) {
         PathFinder.findPath(unitPath,gameWorld.map, gameWorld.map.getTileAt(tileX,tileY),tile);
-        System.out.println(unitPath.tasks);
-        //state = UnitState.MOVING;
+        pathTracker.activate(unitPath);
+        state = UnitState.MOVING;
     }
 
     @Override
@@ -168,6 +160,11 @@ public class Unit implements Entity {
         this.tileX = tile.tileX;
         this.tileY = tile.tileY;
         bounds.set(tile.bounds);
+    }
+
+    public void setTile(int x, int y){
+        this.tileX = x;
+        this.tileY = y;
     }
 
     @Override

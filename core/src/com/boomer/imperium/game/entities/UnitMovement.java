@@ -20,23 +20,26 @@ public class UnitMovement implements TimedUpdateable {
     }
 
     private GameConfigs configs;
+    private Unit unit;
     private final Vector2 speedVector;
     private float speed;
     private float length;
     private float lengthAccumulated;
     private float timeAccumulated = 0f;
 
-    public UnitMovement(GameConfigs gameConfigs,float tileSize, float secondsPerTile) {
+    public UnitMovement(GameConfigs gameConfigs, Unit unit, float tileSize, float secondsPerTile) {
+        this.unit = unit;
         this.configs = gameConfigs;
         this.speedVector = new Vector2(0f, 0f);
-        this.speed = tileSize / (1000f * secondsPerTile);
+        this.speed =  secondsPerTile/tileSize;
     }
 
     public void setDirection(Direction facing) { //seconds per tile
         this.speedVector.x = facing.cos;
         this.speedVector.y = facing.sin;
-        this.setLength(getMovementLengthForDirection(facing,configs));
+        this.setLength(getMovementLengthForDirection(facing, configs));
         this.lengthAccumulated = 0f;
+        this.timeAccumulated = 0f;
     }
 
     public void setLength(float length) {
@@ -44,17 +47,21 @@ public class UnitMovement implements TimedUpdateable {
         this.lengthAccumulated = 0;
     }
 
-    public float updateBounds(Unit unit) {
-        unit.bounds.x = unit.bounds.x + speedVector.x;
-        unit.bounds.y = unit.bounds.y + speedVector.y;
+    public float updateBounds(float deltaTime) {
+        timeAccumulated = timeAccumulated + deltaTime;
+        if (timeAccumulated >= speed) {
+            lengthAccumulated = lengthAccumulated + 1f;
+            unit.bounds.x = unit.bounds.x + speedVector.x;
+            unit.bounds.y = unit.bounds.y + speedVector.y;
+            timeAccumulated = 0f;
+        }
         return lengthAccumulated / length;
     }
 
     @Override
     public void update(float deltaTime) {
-        timeAccumulated = timeAccumulated + deltaTime;
-        if (timeAccumulated >= speed)
-            lengthAccumulated = lengthAccumulated + 1f;
+
+
     }
 
 }
