@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.boomer.imperium.game.*;
 import com.boomer.imperium.game.configs.GameConfigs;
+import com.boomer.imperium.game.configs.GameContext;
+import com.boomer.imperium.game.configs.GameContextInterface;
+import com.boomer.imperium.game.events.EventManager;
 import com.boomer.imperium.game.graphics.FrameCounter;
 import com.boomer.imperium.game.graphics.UnitSpriteAnimator;
 import com.boomer.imperium.game.map.Path;
@@ -13,7 +16,7 @@ import com.boomer.imperium.game.map.PathTracker;
 
 public class Unit implements Entity {
 
-    private final GameWorld gameWorld;
+    private final GameContextInterface gameContext;
     public final Rectangle bounds;
     private final UnitMovement unitMovement;
     private final UnitOrders unitOrders;
@@ -39,19 +42,20 @@ public class Unit implements Entity {
     private boolean selected;
     private Sprite selectedSprite;
 
-    public Unit(GameConfigs gameConfigs, Resources resources, GameWorld gameWorld) {
-        this.gameWorld = gameWorld;
+    public Unit(GameContextInterface gameContext) {
+        this.gameContext = gameContext;
         this.unitOrders = new UnitOrders();
-        this.unitMovement = new UnitMovement(gameConfigs,this,gameConfigs.tileSize, 5f);
-        this.unitPath = new Path(gameConfigs);
+        this.unitMovement = new UnitMovement(gameContext, this, gameContext.getGameConfigs().tileSize, 5f);
+        this.unitPath = new Path(gameContext.getGameConfigs());
         this.tileX = 0;
         this.tileY = 0;
         this.frameCounter = new FrameCounter(8f, 8);
         this.state = UnitState.IDLE;
-        Tile tile = gameWorld.map.getTileAt(0, 0);
-        this.bounds = new Rectangle(tile.bounds.x, tile.bounds.y, gameConfigs.tileSize, gameConfigs.tileSize);
-        this.selectedSprite = resources.inGameCursor;
-        this.pathTracker = new PathTracker(this,gameWorld.map,unitMovement);
+        Tile tile = gameContext.getGameWorld().map.getTileAt(0, 0);
+        this.bounds = new Rectangle(tile.bounds.x, tile.bounds.y, gameContext.getGameConfigs().tileSize,
+                gameContext.getGameConfigs().tileSize);
+        this.selectedSprite = gameContext.getGameResources().inGameCursor;
+        this.pathTracker = new PathTracker(gameContext, this, gameContext.getGameWorld().map, unitMovement);
     }
 
     @Override
@@ -73,7 +77,7 @@ public class Unit implements Entity {
 
     @Override
     public void targetTile(Tile tile) {
-        PathFinder.findPath(unitPath,gameWorld.map, gameWorld.map.getTileAt(tileX,tileY),tile);
+        PathFinder.findPath(unitPath, gameContext.getGameWorld().map, gameContext.getGameWorld().map.getTileAt(tileX, tileY), tile);
         pathTracker.activate(unitPath);
         state = UnitState.MOVING;
     }
@@ -99,13 +103,12 @@ public class Unit implements Entity {
     }
 
 
-
     @Override
     public void receiveDamage(Entity from, int damage) {
-        if(!state.equals(UnitState.DYING)|!state.equals(UnitState.DEAD))
+        if (!state.equals(UnitState.DYING) | !state.equals(UnitState.DEAD))
             return;
-        hp=-damage;
-        if(hp<=0){
+        hp = -damage;
+        if (hp <= 0) {
             state = UnitState.DYING;
         }
     }
@@ -155,14 +158,14 @@ public class Unit implements Entity {
         this.unitSpriteAnimator = unitSpriteAnimator;
     }
 
-    public void placeInTile(int tileX , int tileY){
-        Tile tile = gameWorld.map.getTileAt(tileX,tileY);
+    public void placeInTile(int tileX, int tileY) {
+        Tile tile = gameContext.getGameWorld().map.getTileAt(tileX, tileY);
         this.tileX = tile.tileX;
         this.tileY = tile.tileY;
         bounds.set(tile.bounds);
     }
 
-    public void setTile(int x, int y){
+    public void setTile(int x, int y) {
         this.tileX = x;
         this.tileY = y;
     }

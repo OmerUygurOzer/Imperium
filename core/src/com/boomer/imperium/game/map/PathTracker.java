@@ -2,13 +2,16 @@ package com.boomer.imperium.game.map;
 
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.Direction;
+import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.Unit;
 import com.boomer.imperium.game.entities.UnitMovement;
 import com.boomer.imperium.game.entities.UnitState;
+import com.boomer.imperium.game.events.EventManager;
 
 public class PathTracker implements TimedUpdateable {
 
-    private Unit unit;
+    private EventManager eventManager;
+    private final Unit unit;
     private final Map map;
     private Path path;
     private final UnitMovement unitMovement;
@@ -21,7 +24,8 @@ public class PathTracker implements TimedUpdateable {
         IDLE
     }
 
-    public PathTracker(Unit unit, Map map,UnitMovement unitMovement) {
+    public PathTracker(GameContextInterface gameContext, Unit unit, Map map, UnitMovement unitMovement) {
+        this.eventManager = gameContext.getEventManager();
         this.unit = unit;
         this.map = map;
         this.unitMovement = unitMovement;

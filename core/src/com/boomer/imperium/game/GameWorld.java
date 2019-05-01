@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.configs.GameConfigs;
+import com.boomer.imperium.game.configs.GameContext;
+import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.Unit;
 import com.boomer.imperium.game.entities.UnitPool;
 import com.boomer.imperium.game.gui.Cursor;
@@ -15,12 +17,12 @@ import com.boomer.imperium.game.map.Map;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameWorld implements Renderable, TimedUpdateable,Cursor.MouseListener {
+public final class GameWorld implements Renderable, TimedUpdateable {
 
     private static final int START_INDEX = 0;
     private static final int COUNT = 1;
 
-    private final Resources worldResources;
+    private GameContextInterface gameContext;
     private final int[][] layerStartAndCounts = new int[][]{
             {0, 0},
             {0, 0},
@@ -33,13 +35,14 @@ public class GameWorld implements Renderable, TimedUpdateable,Cursor.MouseListen
     private final Entity[] entities;
     public final Map map;
     private final ArrayList<Entity> selectedEntities;
-    private final EntitySelectionListener entitySelectionListener;
 
     private final UnitPool unitPool;
 
-    public GameWorld(Resources resources, GameConfigs configs, EntitySelectionListener entitySelectionListener) {
-        this.worldResources = resources;
-        this.entities = new Entity[(int) ((configs.worldSize.getRadius(configs) * 2) * (configs.worldSize.getRadius(configs) * 2) / configs.tileSize) * 7];
+    public GameWorld(GameContext gameContext) {
+        gameContext.setGameWorld(this);
+        this.gameContext = gameContext;
+        this.entities = new Entity[(int) ((gameContext.getGameConfigs().worldSize.getRadius(gameContext.getGameConfigs()) * 2) *
+                (gameContext.getGameConfigs().worldSize.getRadius(gameContext.getGameConfigs()) * 2) / gameContext.getGameConfigs().tileSize) * 7];
         layerStartAndCounts[Layer.TILES.getPriority()][START_INDEX] = 0;
         layerStartAndCounts[Layer.TILES_OVERLAY.getPriority()][START_INDEX] = (entities.length / 7);
         layerStartAndCounts[Layer.GROUND.getPriority()][START_INDEX] = (entities.length / 7) * 2;
@@ -47,13 +50,12 @@ public class GameWorld implements Renderable, TimedUpdateable,Cursor.MouseListen
         layerStartAndCounts[Layer.AIR.getPriority()][START_INDEX] = (entities.length / 7) * 4;
         layerStartAndCounts[Layer.AIR_OVERLAY.getPriority()][START_INDEX] = (entities.length / 7) * 5;
         layerStartAndCounts[Layer.GUI.getPriority()][START_INDEX] = (entities.length / 7) * 6;
-        this.map = new Map(resources, configs);
+        this.map = new Map(gameContext.getGameResources(), gameContext.getGameConfigs());
         this.selectedEntities = new ArrayList<Entity>(12);
-        this.entitySelectionListener = entitySelectionListener;
-        this.unitPool = new UnitPool(configs,resources,this);
+        this.unitPool = new UnitPool(gameContext);
         for (int i = 0; i < 30; i++){
             Unit unit = unitPool.obtain();
-            unit.setUnitSpriteAnimator(resources.man);
+            unit.setUnitSpriteAnimator(gameContext.getGameResources().man);
             unit.setUnitLayer(Layer.GROUND);
             unit.setFacing(Direction.NE);
             unit.placeInTile(MathUtils.random(0,47),MathUtils.random(0,47));
@@ -116,47 +118,49 @@ public class GameWorld implements Renderable, TimedUpdateable,Cursor.MouseListen
         map.getTileAt(entity.tileX(), entity.tileY()).getEntitiesContained().remove(entity);
     }
 
-    @Override
-    public void mouseHover(Vector2 point) {
-
-    }
-
-    @Override
-    public void mouseLeftClicked(Vector2 point) {
-        selectedEntities.clear();
-        selectedEntities.addAll(map.findTile(point).getEntitiesContained());
+    public void selectEntities(List<Entity> entities){
+        this.selectedEntities.addAll(entities);
         for(Entity entity: selectedEntities)
-            entity.select();
-        entitySelectionListener.selectedEntities(selectedEntities);
+                entity.select();
     }
 
-    @Override
-    public void mouseRightClick(Vector2 point) {
-        Tile tile = map.findTile(point);
-        for(Entity entity: selectedEntities){
-            entity.targetTile(tile);
+    public void clearSelection() {
+        for (Entity entity : selectedEntities) {
             entity.deSelect();
         }
-        selectedEntities.clear();
-        entitySelectionListener.entitiesDeSelected();
+        this.selectedEntities.clear();
     }
+//    @Override
+//    public void mouseHover(Vector2 point) {
+//
+//    }
+//
+//    @Override
+//    public void mouseLeftClicked(Vector2 point) {
+//        selectedEntities.clear();
+//        selectedEntities.addAll(map.findTile(point).getEntitiesContained());
+//        for(Entity entity: selectedEntities)
+//            entity.select();
+//
+//    }
+//
+//    @Override
+//    public void mouseRightClick(Vector2 point) {
+//        Tile tile = map.findTile(point);
+//        for(Entity entity: selectedEntities){
+//            entity.targetTile(tile);
+//            entity.deSelect();
+//        }
+//        selectedEntities.clear();
+//    }
+//
+//    @Override
+//    public void mouseDrag(Rectangle rectangle) {
+//        selectedEntities.clear();
+//        selectedEntities.addAll(map.quadTree.findObjectsWithinRect(rectangle));
+//        for(Entity entity : selectedEntities){
+//            entity.select();
+//        }
+//    }
 
-    @Override
-    public void mouseDrag(Rectangle rectangle) {
-        selectedEntities.clear();
-        selectedEntities.addAll(map.quadTree.findObjectsWithinRect(rectangle));
-        for(Entity entity : selectedEntities){
-            entity.select();
-        }
-    }
-
-    public interface EntitySelectionListener{
-        void selectedEntities(List<Entity> entities);
-        void entitiesDeSelected();
-    }
-
-    public interface Selectable{
-        void select();
-        void deSelect();
-    }
 }

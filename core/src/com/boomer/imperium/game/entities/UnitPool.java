@@ -4,23 +4,21 @@ import com.badlogic.gdx.utils.Pool;
 import com.boomer.imperium.game.GameWorld;
 import com.boomer.imperium.game.Resources;
 import com.boomer.imperium.game.configs.GameConfigs;
+import com.boomer.imperium.game.configs.GameContext;
+import com.boomer.imperium.game.configs.GameContextInterface;
 
 public class UnitPool extends Pool<Unit> {
 
-    private final GameConfigs configs;
-    private final Resources resources;
-    private final GameWorld gameWorld;
+   private GameContextInterface gameContext;
 
-    public UnitPool(GameConfigs gameConfigs, Resources resources, GameWorld gameWorld){
+    public UnitPool(GameContextInterface gameContext){
         super(200);
-        this.configs = gameConfigs;
-        this.resources = resources;
-        this.gameWorld = gameWorld;
+       this.gameContext = gameContext;
     }
 
     @Override
     protected Unit newObject() {
-        return new Unit(configs,resources,gameWorld);
+        return new Unit(gameContext);
     }
 
 }

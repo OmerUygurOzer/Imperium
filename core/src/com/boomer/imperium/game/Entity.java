@@ -5,7 +5,7 @@ import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.map.Bound;
 
-public interface Entity extends Renderable,TimedUpdateable,Bound,GameWorld.Selectable,Pool.Poolable {
+public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable {
     void setMemoryIndex(int index);
     int getMemoryIndex();
     Layer getLayer();
@@ -18,4 +18,6 @@ public interface Entity extends Renderable,TimedUpdateable,Bound,GameWorld.Selec
     int getTypeFlags();
     void setComponentFlags();
     int getComponentFlags();
+    void select();
+    void deSelect();
 }

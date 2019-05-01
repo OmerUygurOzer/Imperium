@@ -17,10 +17,13 @@ import com.boomer.imperium.game.Entity;
 import com.boomer.imperium.game.GameWorld;
 import com.boomer.imperium.game.Resources;
 import com.boomer.imperium.game.configs.GameConfigs;
+import com.boomer.imperium.game.configs.GameContext;
+import com.boomer.imperium.game.events.Event;
+import com.boomer.imperium.game.events.EventManager;
 
 import java.util.List;
 
-public class GameGui extends Stage implements TimedUpdateable,ScreenSensitive,Renderable,GameWorld.EntitySelectionListener {
+public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, Renderable {
 
     private final float guiWidth;
     private final Viewport gameViewport;
@@ -29,30 +32,37 @@ public class GameGui extends Stage implements TimedUpdateable,ScreenSensitive,Re
     private final Rectangle rightSideGUIBounds;
     private final Skin skin;
 
+    private EventManager eventManager;
+
     private final Table leftSideTable;
     private final Table rightSideTable;
 
     private final Sprite test;
 
-    public GameGui(GameConfigs gameConfigs, Viewport gameViewport , SpriteBatch spriteBatch, Resources resources){
-        super(new ExtendViewport(gameViewport.getWorldWidth(),gameViewport.getWorldHeight(), new OrthographicCamera()),spriteBatch);
-        this.guiWidth = gameConfigs.guiWidth;
+    public GameGui(GameContext gameContext, Viewport gameViewport, SpriteBatch spriteBatch) {
+        super(new ExtendViewport(gameViewport.getWorldWidth(), gameViewport.getWorldHeight(), new OrthographicCamera()), spriteBatch);
+        gameContext.setGameGui(this);
+        this.guiWidth = gameContext.getGameConfigs().guiWidth;
         this.gameViewport = gameViewport;
         getViewport().apply();
         this.gameBounds = new Rectangle();
         this.leftSideGUIBounds = new Rectangle();
         this.rightSideGUIBounds = new Rectangle();
-        this.skin = resources.skin;
+        this.skin = gameContext.getGameResources().skin;
         this.leftSideTable = new Table(skin);
         this.rightSideTable = new Table(skin);
-        this.test = new Sprite(resources.desert);
+        this.test = new Sprite(gameContext.getGameResources().desert);
         setGUIActors();
     }
 
-    private void setGUIActors(){
+    public void setEventManager(EventManager eventManager){
+        this.eventManager = eventManager;
+    }
+
+    private void setGUIActors() {
         addActor(leftSideTable);
-        TextButton startButton = new TextButton("START GAME",skin);
-        TextButton endButton = new TextButton("END GAME",skin);
+        TextButton startButton = new TextButton("START GAME", skin);
+        TextButton endButton = new TextButton("END GAME", skin);
 
         leftSideTable.row();
         leftSideTable.add(startButton);
@@ -60,8 +70,8 @@ public class GameGui extends Stage implements TimedUpdateable,ScreenSensitive,Re
         leftSideTable.add(endButton);
     }
 
-    public void updateGUIActors(int width,int height){
-        leftSideTable.setBounds(leftSideGUIBounds.x,leftSideGUIBounds.y,leftSideGUIBounds.width,leftSideGUIBounds.height);
+    public void updateGUIActors(int width, int height) {
+        leftSideTable.setBounds(leftSideGUIBounds.x, leftSideGUIBounds.y, leftSideGUIBounds.width, leftSideGUIBounds.height);
     }
 
     @Override
@@ -71,15 +81,15 @@ public class GameGui extends Stage implements TimedUpdateable,ScreenSensitive,Re
 
     @Override
     public void resize(int width, int height) {
-        getViewport().update(width,height);
-        getCamera().position.x = getViewport().getWorldWidth()/2f;
-        getCamera().position.y = getViewport().getWorldHeight()/2f;
+        getViewport().update(width, height);
+        getCamera().position.x = getViewport().getWorldWidth() / 2f;
+        getCamera().position.y = getViewport().getWorldHeight() / 2f;
         getCamera().update();
-        float gameLeftX = (getViewport().getWorldWidth()/2f)-(gameViewport.getWorldWidth()/2f);
-        float gameRightX = (getViewport().getWorldWidth()/2f)+(gameViewport.getWorldWidth()/2f);
-        leftSideGUIBounds.set(Math.max(0f,gameLeftX-guiWidth),0f,guiWidth,gameViewport.getWorldHeight());
-        rightSideGUIBounds.set(Math.min(gameRightX,getViewport().getWorldWidth()-guiWidth),0f,guiWidth,gameViewport.getWorldHeight());
-        updateGUIActors(width,height);
+        float gameLeftX = (getViewport().getWorldWidth() / 2f) - (gameViewport.getWorldWidth() / 2f);
+        float gameRightX = (getViewport().getWorldWidth() / 2f) + (gameViewport.getWorldWidth() / 2f);
+        leftSideGUIBounds.set(Math.max(0f, gameLeftX - guiWidth), 0f, guiWidth, gameViewport.getWorldHeight());
+        rightSideGUIBounds.set(Math.min(gameRightX, getViewport().getWorldWidth() - guiWidth), 0f, guiWidth, gameViewport.getWorldHeight());
+        updateGUIActors(width, height);
     }
 
 
@@ -89,12 +99,12 @@ public class GameGui extends Stage implements TimedUpdateable,ScreenSensitive,Re
         draw();
     }
 
-    @Override
+
     public void selectedEntities(List<Entity> entities) {
 
     }
 
-    @Override
+
     public void entitiesDeSelected() {
 
     }

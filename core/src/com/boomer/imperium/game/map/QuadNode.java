@@ -41,6 +41,12 @@ public class QuadNode<T extends Bound> {
         return found;
     }
 
+    public List<T> findObjectsWithinRect(float x, float y, float width, float height) {
+        LinkedList<T> found = new LinkedList<T>();
+        findObjectsWithinRect(new Rectangle(x,y,width,height), area.width, found);
+        return found;
+    }
+
     private void attach(T object, float curWidth) {
         float nextWidth = curWidth/2f;
         if (nextWidth < minSize) {

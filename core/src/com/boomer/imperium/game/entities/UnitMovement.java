@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.Direction;
 import com.boomer.imperium.game.configs.GameConfigs;
+import com.boomer.imperium.game.configs.GameContextInterface;
 
 public class UnitMovement implements TimedUpdateable {
 
@@ -27,9 +28,9 @@ public class UnitMovement implements TimedUpdateable {
     private float lengthAccumulated;
     private float timeAccumulated = 0f;
 
-    public UnitMovement(GameConfigs gameConfigs, Unit unit, float tileSize, float secondsPerTile) {
+    public UnitMovement(GameContextInterface gameContext, Unit unit, float tileSize, float secondsPerTile) {
         this.unit = unit;
-        this.configs = gameConfigs;
+        this.configs = gameContext.getGameConfigs();
         this.speedVector = new Vector2(0f, 0f);
         this.speed =  secondsPerTile/tileSize;
     }

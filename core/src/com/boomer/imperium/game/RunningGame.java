@@ -6,26 +6,32 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boomer.imperium.core.GameState;
 import com.boomer.imperium.game.configs.GameConfigs;
+import com.boomer.imperium.game.configs.GameContext;
 import com.boomer.imperium.game.configs.WorldSize;
+import com.boomer.imperium.game.events.Event;
+import com.boomer.imperium.game.events.EventManager;
+import com.boomer.imperium.game.events.Trigger;
 import com.boomer.imperium.game.gui.Cursor;
 import com.boomer.imperium.game.gui.GameGui;
 
-public class RunningGame extends GameState {
+public final class RunningGame extends GameState {
 
-    private static final int WIDTH_IN_TILES = 20;
-    private static final int HEIGHT_IN_TILES = 18;
+    private static final int SCREEN_WIDTH_IN_TILES = 20;
+    private static final int SCREEN_HEIGHT_IN_TILES = 18;
 
+    private GameContext gameContext;
     private final GameConfigs configs;
     private float scale;
     private final OrthographicCamera camera;
     private final Viewport viewPort;
+
+    private final EventManager eventManager;
     private final GameWorld gameWorld;
-    private final Resources resources;
-    private final WorldSize worldSize;
     private final GameGui gui;
 
     private float camX, camY;
@@ -33,15 +39,30 @@ public class RunningGame extends GameState {
 
     public RunningGame(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, GameConfigs gameConfigs) {
         this.configs = gameConfigs;
-        this.worldSize = WorldSize.MEDIUM;
         this.camera = new OrthographicCamera();
-        this.viewPort = new FitViewport(WIDTH_IN_TILES * gameConfigs.tileSize, HEIGHT_IN_TILES * gameConfigs.tileSize, camera);
+        this.viewPort = new FitViewport(SCREEN_WIDTH_IN_TILES * gameConfigs.tileSize, SCREEN_HEIGHT_IN_TILES * gameConfigs.tileSize, camera);
         this.camera.position.x = viewPort.getWorldWidth() / 2f;
         this.camera.position.y = viewPort.getWorldHeight() / 2f;
-        this.resources = new Resources();
-        this.gui = new GameGui(gameConfigs, viewPort, spriteBatch, resources);
-        this.gameWorld = new GameWorld(resources, gameConfigs,gui);
-        this.cursor = new Cursor(shapeRenderer,viewPort, configs,gameWorld);
+        this.gameContext = new GameContext();
+        this.gameContext.setGameResources(new Resources());
+        this.gameContext.setGameConfigs(gameConfigs);
+        this.gameWorld = new GameWorld(gameContext);
+        this.gui = new GameGui(gameContext, viewPort, spriteBatch);
+        this.gameContext.setGameGui(gui);
+        this.eventManager = new EventManager(gameContext,
+                new Pool<Event>(gameConfigs.eventsInitialCapacity) {
+                    @Override
+                    protected Event newObject() {
+                        return new Event(gameWorld, gui);
+                    }
+                },
+                new Pool<Trigger>(gameConfigs.eventsInitialCapacity) {
+                    @Override
+                    protected Trigger newObject() {
+                        return new Trigger(gameWorld);
+                    }
+                });
+        this.cursor = new Cursor(gameContext, shapeRenderer, viewPort);
         addProcessor(gui);
         addProcessor(cursor);
     }
@@ -60,11 +81,12 @@ public class RunningGame extends GameState {
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             camX = 4f;
         }
-        camera.translate(camX,camY);
+        camera.translate(camX, camY);
         camera.update();
         float delta = Gdx.graphics.getDeltaTime();
         gameWorld.update(delta);
         gui.update(delta);
+        eventManager.update(delta);
     }
 
     @Override
@@ -85,7 +107,7 @@ public class RunningGame extends GameState {
         viewPort.update(width, height);
         cursor.resize(width, height);
         gui.resize(width, height);
-        scale = (float) width / (worldSize.getRadius(configs) * 2f);
+        scale = (float) width / (gameContext.getGameConfigs().worldSize.getRadius(configs) * 2f);
 //        System.out.println(width);
 //        System.out.println(height);
 //        System.out.println(worldSize.getRadius(configs) * 2f);
@@ -94,7 +116,7 @@ public class RunningGame extends GameState {
 
     @Override
     public void dispose() {
-        resources.dispose();
+        gameContext.getGameResources().dispose();
     }
 
     @Override
