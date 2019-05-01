@@ -1,6 +1,6 @@
 package com.boomer.imperium.game.configs;
 
-public class GameConfigs {
+public final class GameConfigs {
     public final WorldSize worldSize;
     public final float tileSize;
     public final float tileSizeCross;

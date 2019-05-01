@@ -13,6 +13,7 @@ public final class Event implements Pool.Poolable {
     private final GameGui gameGui;
     private final float[] params;
     private EventType eventType;
+    private int paramIndex = 0;
 
 
     public Event(GameWorld gameWorld, GameGui gameGui) {
@@ -23,6 +24,14 @@ public final class Event implements Pool.Poolable {
 
     public Event setParams(int param, float value) {
         this.params[param] = value;
+        return this;
+    }
+
+    public Event setParams(float value) {
+        if(paramIndex==params.length){
+            throw new RuntimeException("MAX allowed params per event exceeded.");
+        }
+        this.params[paramIndex++] = value;
         return this;
     }
 
@@ -41,6 +50,7 @@ public final class Event implements Pool.Poolable {
 
     @Override
     public void reset() {
+        this.paramIndex = 0;
         this.eventType = EventType.NULL;
     }
 
@@ -59,6 +69,12 @@ public final class Event implements Pool.Poolable {
                 List<Entity> foundEntities = gameWorld.map.quadTree.findObjectsWithinRect(params[0], params[1], params[2], params[3]);
                 gameWorld.selectEntities(foundEntities);
                 gameGui.selectedEntities(foundEntities);
+                break;
+            case UNIT_SWITCH_TILES:
+                System.out.println("tile switch");
+                break;
+            case UNIT_ARRIVED_AT_TILE:
+                System.out.println("tile arrive");
                 break;
         }
     }

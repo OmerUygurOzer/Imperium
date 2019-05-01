@@ -5,7 +5,7 @@ import com.boomer.imperium.game.Resources;
 import com.boomer.imperium.game.events.EventManager;
 import com.boomer.imperium.game.gui.GameGui;
 
-public class GameContext implements GameContextInterface {
+public final class GameContext implements GameContextInterface {
 
     private GameWorld gameWorld;
     private GameGui gameGui;

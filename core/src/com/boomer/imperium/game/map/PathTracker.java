@@ -7,6 +7,7 @@ import com.boomer.imperium.game.entities.Unit;
 import com.boomer.imperium.game.entities.UnitMovement;
 import com.boomer.imperium.game.entities.UnitState;
 import com.boomer.imperium.game.events.EventManager;
+import com.boomer.imperium.game.events.EventType;
 
 public class PathTracker implements TimedUpdateable {
 
@@ -19,7 +20,7 @@ public class PathTracker implements TimedUpdateable {
     private int tileX, tileY;
     private State state;
 
-    private enum State{
+    private enum State {
         ACTIVE,
         IDLE
     }
@@ -42,6 +43,12 @@ public class PathTracker implements TimedUpdateable {
             map.getTileAt(unit.tileX(), unit.tileY()).getEntitiesContained().remove(unit);
             unit.setTile(tileX, tileY);
             map.getTileAt(tileX, tileY).getEntitiesContained().add(unit);
+            eventManager.raiseEvent(EventType.UNIT_SWITCH_TILES)
+                    .setParams(unit.getMemoryIndex())
+                    .setParams(unit.tileX())
+                    .setParams(unit.tileY())
+                    .setParams(tileX)
+                    .setParams(tileY);
         } else if (mov >= 1f) {
             curPath++;
             unitMovement.setLength(0);
@@ -54,10 +61,14 @@ public class PathTracker implements TimedUpdateable {
             unit.setFacing(path.tasks.get(curPath));
             setTargetForDirection(path.tasks.get(curPath));
             unitMovement.setDirection(path.tasks.get(curPath));
+            eventManager.raiseEvent(EventType.UNIT_ARRIVED_AT_TILE)
+                    .setParams(unit.getMemoryIndex())
+                    .setParams(tileX)
+                    .setParams(tileY);
         }
     }
 
-    public void activate(Path path){
+    public void activate(Path path) {
         this.path = path;
         this.curPath = 0;
         this.state = State.ACTIVE;
@@ -66,8 +77,8 @@ public class PathTracker implements TimedUpdateable {
         unit.setFacing(path.tasks.get(curPath));
     }
 
-    private void setTargetForDirection(Direction direction){
-        this.tileX = unit.tileX() + (int)direction.directionVector.x;
-        this.tileY = unit.tileY() + (int)direction.directionVector.y;
+    private void setTargetForDirection(Direction direction) {
+        this.tileX = unit.tileX() + (int) direction.directionVector.x;
+        this.tileY = unit.tileY() + (int) direction.directionVector.y;
     }
 }
