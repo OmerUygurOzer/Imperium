@@ -65,7 +65,12 @@ public class Tile implements Entity {
     }
 
     @Override
-    public void receiveDamage(Entity from, int damage) {
+    public void receiveDamage(int damage) {
+
+    }
+
+    @Override
+    public void setPosition(int tileX, int tileY) {
 
     }
 
@@ -85,12 +90,152 @@ public class Tile implements Entity {
     }
 
     @Override
-    public void setComponentFlags() {
+    public void setComponentFlags(int componentFlags) {
 
     }
 
     @Override
     public int getComponentFlags() {
+        return 0;
+    }
+
+    @Override
+    public void setStateFlags(int stateFlags) {
+
+    }
+
+    @Override
+    public int getStateFlags() {
+        return 0;
+    }
+
+    @Override
+    public void setPlayer(Player player) {
+
+    }
+
+    @Override
+    public Player getPlayer() {
+        return null;
+    }
+
+    @Override
+    public void setNation(Nation nation) {
+
+    }
+
+    @Override
+    public Nation getNation() {
+        return null;
+    }
+
+    @Override
+    public void setCenterInTiles(int tileCount) {
+
+    }
+
+    @Override
+    public int getCenterInTiles() {
+        return 0;
+    }
+
+    @Override
+    public void setHp(int hp) {
+
+    }
+
+    @Override
+    public int getHp() {
+        return 0;
+    }
+
+    @Override
+    public void setMaxHp(int maxHp) {
+
+    }
+
+    @Override
+    public int getMaxHp() {
+        return 0;
+    }
+
+    @Override
+    public void setHpRegen(float regenPerSecond) {
+
+    }
+
+    @Override
+    public float getHpRegen() {
+        return 0;
+    }
+
+    @Override
+    public void setMeleeAttackSpeed(float attackPerSecond) {
+
+    }
+
+    @Override
+    public float getMeleeAttackSpeed() {
+        return 0;
+    }
+
+    @Override
+    public void setRangeAttackSpeed(float attackPerSecond) {
+
+    }
+
+    @Override
+    public void setAttackRange(int range) {
+
+    }
+
+    @Override
+    public void setAttackAOE(int aoe) {
+
+    }
+
+    @Override
+    public void setProjectileSpeed(float tilePersecond) {
+
+    }
+
+    @Override
+    public void setMovementSpeed(float tilePerSecond) {
+
+    }
+
+    @Override
+    public void setArmor(int armor) {
+
+    }
+
+    @Override
+    public float getRangeAttackSpeed() {
+        return 0;
+    }
+
+    @Override
+    public int getAttackRange() {
+        return 0;
+    }
+
+    @Override
+    public int getAttackAOE() {
+        return 0;
+    }
+
+    @Override
+    public float getProjectileSpeed() {
+        return 0;
+    }
+
+    @Override
+    public float getMovementSpeed() {
+        return 0;
+    }
+
+    @Override
+    public int getArmor() {
         return 0;
     }
 

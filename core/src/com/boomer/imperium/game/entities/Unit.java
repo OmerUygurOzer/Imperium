@@ -14,7 +14,7 @@ import com.boomer.imperium.game.map.Path;
 import com.boomer.imperium.game.map.PathFinder;
 import com.boomer.imperium.game.map.PathTracker;
 
-public class Unit implements Entity {
+public final class Unit implements Entity {
 
     private final GameContextInterface gameContext;
     public final Rectangle bounds;
@@ -22,21 +22,37 @@ public class Unit implements Entity {
     private final UnitOrders unitOrders;
     private final Path unitPath;
     private final PathTracker pathTracker;
-    private UnitState state;
     private int memoryIndex;
-    private Layer unitLayer;
+
     private UnitSpriteAnimator unitSpriteAnimator;
     private FrameCounter frameCounter;
     private Direction facing;
     private int tileX, tileY;
 
+
+    private UnitState state;
+    private int tileCount;  //width and height in tiles
+    private Layer unitLayer;
+
+    private Nation nation;
+    private Player player;
+
+    private int typeFlags;
+    private int componentFlags;
+    private int stateFlags;
+
     private float movementSpeed;
     private int rangeAttackDamage;
     private int meleeAttackDamage;
     private int armor;
-    private int hpRegen;
+    private float hpRegen;
     private int hp;
-    private float attackSpeed;
+    private int maxHp;
+    private float meleeAttackSpeed;
+    private float rangeAttackSpeed;
+    private int rangeAttackAoe;
+    private int rangeAttackRange;
+    private float projectileSpeed;
 
     //temp
     private boolean selected;
@@ -104,13 +120,21 @@ public class Unit implements Entity {
 
 
     @Override
-    public void receiveDamage(Entity from, int damage) {
+    public void receiveDamage(int damage) {
         if (!state.equals(UnitState.DYING) | !state.equals(UnitState.DEAD))
             return;
         hp = -damage;
         if (hp <= 0) {
             state = UnitState.DYING;
         }
+    }
+
+    @Override
+    public void setPosition(int tileX, int tileY) {
+        Tile tile = gameContext.getGameWorld().map.getTileAt(tileX, tileY);
+        this.tileX = tile.tileX;
+        this.tileY = tile.tileY;
+        bounds.set(tile.bounds);
     }
 
     @Override
@@ -122,29 +146,191 @@ public class Unit implements Entity {
         this.facing = facing;
     }
 
-    public void setRangeAttackDamage(int rangeAttackDamage) {
-        this.rangeAttackDamage = rangeAttackDamage;
-    }
-
-    public void setMeleeAttackDamage(int meleeAttackDamage) {
-        this.meleeAttackDamage = meleeAttackDamage;
-    }
-
+    @Override
     public void setArmor(int armor) {
         this.armor = armor;
     }
 
-    public void setHpRegen(int hpRegen) {
-        this.hpRegen = hpRegen;
+    @Override
+    public void setLayer(Layer layer) {
+        this.unitLayer = layer;
     }
 
+    @Override
     public void setHp(int hp) {
         this.hp = hp;
     }
 
-    public void setAttackSpeed(float attackSpeed) {
-        this.attackSpeed = attackSpeed;
+    @Override
+    public void setRangeAttackDamage(int rangeAttackDamage) {
+        this.rangeAttackDamage = rangeAttackDamage;
     }
+
+    @Override
+    public void setMeleeAttackDamage(int meleeAttackDamage) {
+        this.meleeAttackDamage = meleeAttackDamage;
+    }
+
+    @Override
+    public int getHp() {
+        return this.hp;
+    }
+
+    @Override
+    public void setMaxHp(int maxHp) {
+        this.maxHp = maxHp;
+    }
+
+    @Override
+    public int getMaxHp() {
+        return this.maxHp;
+    }
+
+    @Override
+    public void setHpRegen(float regenPerSecond) {
+        this.hpRegen = regenPerSecond;
+    }
+
+    @Override
+    public float getHpRegen() {
+        return this.hpRegen;
+    }
+
+    @Override
+    public void setMeleeAttackSpeed(float attackPerSecond) {
+        this.meleeAttackSpeed = attackPerSecond;
+    }
+
+    @Override
+    public float getMeleeAttackSpeed() {
+        return this.meleeAttackSpeed;
+    }
+
+    @Override
+    public void setRangeAttackSpeed(float attackPerSecond) {
+        this.rangeAttackSpeed = attackPerSecond;
+    }
+
+    @Override
+    public void setAttackRange(int range) {
+        this.rangeAttackRange = range;
+    }
+
+    @Override
+    public void setAttackAOE(int aoe) {
+        this.rangeAttackAoe = aoe;
+    }
+
+    @Override
+    public void setProjectileSpeed(float tilePersecond) {
+        this.projectileSpeed = tilePersecond;
+    }
+
+    @Override
+    public void setMovementSpeed(float tilePerSecond) {
+        this.movementSpeed = tilePerSecond;
+    }
+
+    @Override
+    public float getRangeAttackSpeed() {
+        return this.rangeAttackSpeed;
+    }
+
+    @Override
+    public int getAttackRange() {
+        return this.rangeAttackRange;
+    }
+
+    @Override
+    public int getAttackAOE() {
+        return rangeAttackAoe;
+    }
+
+    @Override
+    public float getProjectileSpeed() {
+        return this.projectileSpeed;
+    }
+
+    @Override
+    public float getMovementSpeed() {
+        return this.movementSpeed;
+    }
+
+    @Override
+    public int getArmor() {
+        return this.armor;
+    }
+
+    @Override
+    public void setTypeFlags(int typeFlags) {
+        this.typeFlags = typeFlags;
+    }
+
+    @Override
+    public int getTypeFlags() {
+        return this.typeFlags;
+    }
+
+    @Override
+    public void setComponentFlags(int componentFlags) {
+        this.componentFlags = componentFlags;
+    }
+
+    @Override
+    public int getComponentFlags() {
+        return this.componentFlags;
+    }
+
+    @Override
+    public void setStateFlags(int stateFlags) {
+        this.stateFlags = stateFlags;
+    }
+
+    @Override
+    public int getStateFlags() {
+        return this.stateFlags;
+    }
+
+    @Override
+    public int getMeleeAttackDamage() {
+        return this.meleeAttackDamage;
+    }
+
+    @Override
+    public int getRangeAttackDamage() {
+        return this.rangeAttackDamage;
+    }
+
+    @Override
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return this.player;
+    }
+
+    @Override
+    public void setNation(Nation nation) {
+        this.nation = nation;
+    }
+
+    @Override
+    public Nation getNation() {
+        return this.nation;
+    }
+
+    @Override
+    public void setCenterInTiles(int tileCount) {
+        this.tileCount = tileCount;
+    }
+
+    @Override
+    public int getCenterInTiles() {
+        return this.tileCount;
+    }
+
 
     public void setState(UnitState state) {
         this.state = state;
@@ -190,29 +376,33 @@ public class Unit implements Entity {
         return state.equals(UnitState.DEAD);
     }
 
-    @Override
-    public void setTypeFlags(int typeFlags) {
-
-    }
-
-    @Override
-    public int getTypeFlags() {
-        return 0;
-    }
-
-    @Override
-    public void setComponentFlags() {
-
-    }
-
-    @Override
-    public int getComponentFlags() {
-        return 0;
-    }
 
 
     @Override
     public void reset() {
+//width and height in tiles
+        this.state = UnitState.IDLE;
+        this.tileCount = 0;
+        this.unitLayer = Layer.TILES;
 
+        this.nation = null;
+        this.player = null;
+
+        this.typeFlags = 0;
+        this.componentFlags = 0;
+        this.stateFlags = 0;
+
+        this.movementSpeed = 0f;
+        this.rangeAttackDamage = 0;
+        this.meleeAttackDamage = 0;
+        this.armor = 0;
+        this.hpRegen = 0f;
+        this.hp = 0;
+        this.maxHp = 0;
+        this.meleeAttackSpeed = 0f;
+        this.rangeAttackSpeed= 0f;
+        this.rangeAttackAoe = 0;
+        this.rangeAttackRange = 0;
+        this.projectileSpeed = 0f;
     }
 }

@@ -57,7 +57,7 @@ public class PathTracker implements TimedUpdateable {
                 state = State.IDLE;
                 return;
             }
-            unit.placeInTile(tileX, tileY);
+            unit.setPosition(tileX, tileY);
             unit.setFacing(path.tasks.get(curPath));
             setTargetForDirection(path.tasks.get(curPath));
             unitMovement.setDirection(path.tasks.get(curPath));

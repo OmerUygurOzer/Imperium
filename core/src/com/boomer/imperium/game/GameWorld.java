@@ -36,7 +36,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
     public final Map map;
     private final ArrayList<Entity> selectedEntities;
 
-    private final UnitPool unitPool;
+    public final UnitPool unitPool;
 
     public GameWorld(GameContext gameContext) {
         gameContext.setGameWorld(this);
@@ -130,37 +130,12 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         }
         this.selectedEntities.clear();
     }
-//    @Override
-//    public void mouseHover(Vector2 point) {
-//
-//    }
-//
-//    @Override
-//    public void mouseLeftClicked(Vector2 point) {
-//        selectedEntities.clear();
-//        selectedEntities.addAll(map.findTile(point).getEntitiesContained());
-//        for(Entity entity: selectedEntities)
-//            entity.select();
-//
-//    }
-//
-//    @Override
-//    public void mouseRightClick(Vector2 point) {
-//        Tile tile = map.findTile(point);
-//        for(Entity entity: selectedEntities){
-//            entity.targetTile(tile);
-//            entity.deSelect();
-//        }
-//        selectedEntities.clear();
-//    }
-//
-//    @Override
-//    public void mouseDrag(Rectangle rectangle) {
-//        selectedEntities.clear();
-//        selectedEntities.addAll(map.quadTree.findObjectsWithinRect(rectangle));
-//        for(Entity entity : selectedEntities){
-//            entity.select();
-//        }
-//    }
 
+    public Nation getNation(int nationIndex){
+        return null;
+    }
+
+    public Player getPlayer(int playerIndex){
+        return null;
+    }
 }

@@ -7,7 +7,7 @@ public final class GameConfigs {
     public final float aspectRatio;
     public final float guiWidth = 300f;
     public final int calculatePathPerTask = 32;
-    public final int eventsInitialCapacity = 100;
+    public final int eventsInitialCapacity = 400;
 
     public final float yellowHPBarThreshold = 100f;
     public final float purpeHPBarThreshold = 150f;

@@ -39,11 +39,14 @@ public final class GameFlags {
     public static final int CIVILIAN        = 1 << 21;
     public static final int AURA            = 1 << 22;
     public static final int AOE_ATTACK      = 1 << 23;
+    public static final int ARMOR           = 1 << 24;
 
-
-
-    //public static final int
-
+    //State Flags
+    public static final int INVULNERABLE    = 1;
+    public static final int RENDERABLE      = 1 << 1;
+    public static final int SELECTABLE      = 1 << 2;
+    public static final int NO_ROOM         = 1 << 3;
+    public static final int MOVABLE         = 1 << 4;
 
 
 
