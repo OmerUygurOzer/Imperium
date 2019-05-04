@@ -2,8 +2,6 @@ package com.boomer.imperium.game.map;
 
 import com.boomer.imperium.game.Direction;
 import com.boomer.imperium.game.configs.GameConfigs;
-import com.boomer.imperium.game.entities.UnitMovement;
-import com.boomer.imperium.game.entities.UnitOrders;
 
 import java.util.ArrayList;
 import java.util.Collections;

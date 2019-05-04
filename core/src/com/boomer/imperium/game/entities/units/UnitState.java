@@ -1,4 +1,4 @@
-package com.boomer.imperium.game.entities;
+package com.boomer.imperium.game.entities.units;
 
 public enum UnitState {
 

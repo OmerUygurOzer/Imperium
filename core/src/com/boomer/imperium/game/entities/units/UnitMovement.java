@@ -1,4 +1,4 @@
-package com.boomer.imperium.game.entities;
+package com.boomer.imperium.game.entities.units;
 
 import com.badlogic.gdx.math.Vector2;
 import com.boomer.imperium.core.TimedUpdateable;

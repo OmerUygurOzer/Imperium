@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.game.*;
 import com.boomer.imperium.game.configs.GameConfigs;
-import com.boomer.imperium.game.configs.WorldSize;
+import com.boomer.imperium.game.entities.Entity;
 
 public class Map implements Renderable {
 
@@ -37,7 +37,7 @@ public class Map implements Renderable {
                 }
 
                 itr = j + (i * sizeInTiles);
-                tiles[itr] = new Tile(gameConfigs,sprite,x, y);
+                tiles[itr] = new Tile(gameConfigs,sprite,null,x, y);
             }
         }
         this.mapRectangle = new Rectangle(0, 0, gameConfigs.worldSize.getRadius(gameConfigs) * 2, gameConfigs.worldSize.getRadius(gameConfigs) * 2);

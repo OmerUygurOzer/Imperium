@@ -2,16 +2,13 @@ package com.boomer.imperium.game;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.TimedUpdateable;
-import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.configs.GameContext;
 import com.boomer.imperium.game.configs.GameContextInterface;
-import com.boomer.imperium.game.entities.Unit;
-import com.boomer.imperium.game.entities.UnitPool;
-import com.boomer.imperium.game.gui.Cursor;
+import com.boomer.imperium.game.entities.Entity;
+import com.boomer.imperium.game.entities.units.Unit;
+import com.boomer.imperium.game.entities.units.UnitPool;
 import com.boomer.imperium.game.map.Map;
 
 import java.util.ArrayList;

@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.boomer.imperium.game.Direction;
-import com.boomer.imperium.game.entities.UnitState;
+import com.boomer.imperium.game.entities.units.UnitState;
 
 public class UnitSpriteAnimator {
 

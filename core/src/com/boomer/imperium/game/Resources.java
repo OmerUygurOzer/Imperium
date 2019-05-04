@@ -14,10 +14,14 @@ public class Resources implements Disposable {
     public final Texture tilesTexture;
     public final TextureRegion[][] manTextureRegions;
     public final TextureRegion[][] cursors;
+    public final Texture buttonsTexture;
 
     public final Sprite grassland;
     public final Sprite desert;
     public final Sprite water;
+
+    public final Sprite buildButton;
+    public final Sprite townButton;
 
     public final UnitSpriteAnimator man;
 
@@ -27,6 +31,7 @@ public class Resources implements Disposable {
 
     public Resources(){
         this.tilesTexture = new Texture("tiles_grid.png");
+        this.buttonsTexture = new Texture("buttons.png");
         this.manTextureRegions = new TextureRegion(new Texture("test_man.png")).split(138,138);
         this.cursors = new TextureRegion(new Texture("cursors.png")).split(32,32);
         this.grassland = new Sprite(tilesTexture,0,0,64,64);
@@ -36,7 +41,8 @@ public class Resources implements Disposable {
         this.skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         this.inGameCursor = new Sprite(cursors[0][0]);
         this.cursors[0][0].getTexture().getTextureData().prepare();
-
+        this.buildButton = new Sprite(buttonsTexture,0,0,109,93);
+        this.townButton = new Sprite(buttonsTexture,109,0,109,93);
     }
 
     @Override

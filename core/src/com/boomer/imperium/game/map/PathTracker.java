@@ -3,9 +3,9 @@ package com.boomer.imperium.game.map;
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.Direction;
 import com.boomer.imperium.game.configs.GameContextInterface;
-import com.boomer.imperium.game.entities.Unit;
-import com.boomer.imperium.game.entities.UnitMovement;
-import com.boomer.imperium.game.entities.UnitState;
+import com.boomer.imperium.game.entities.units.Unit;
+import com.boomer.imperium.game.entities.units.UnitMovement;
+import com.boomer.imperium.game.entities.units.UnitState;
 import com.boomer.imperium.game.events.EventManager;
 import com.boomer.imperium.game.events.EventType;
 

@@ -1,10 +1,10 @@
 package com.boomer.imperium.game.events;
 
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
-import com.boomer.imperium.game.Entity;
+import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.GameWorld;
-import com.boomer.imperium.game.Layer;
-import com.boomer.imperium.game.entities.UnitBuilder;
 import com.boomer.imperium.game.gui.GameGui;
 
 import java.util.List;
@@ -13,27 +13,48 @@ public final class Event implements Pool.Poolable {
 
     private final GameWorld gameWorld;
     private final GameGui gameGui;
-    private final float[] params;
     private EventType eventType;
     private int paramIndex = 0;
-
+    private final Parameter[] params;
 
     public Event(GameWorld gameWorld, GameGui gameGui) {
         this.gameWorld = gameWorld;
         this.gameGui = gameGui;
-        this.params = new float[22];
-    }
+        this.params = new Parameter[22];
+        for(int i = 0 ; i < 20 ; i++)
+            this.params[i] = new Parameter();
 
-    public Event setParams(int param, float value) {
-        this.params[param] = value;
-        return this;
     }
 
     public Event setParams(float value) {
         if (paramIndex == params.length) {
             throw new RuntimeException("MAX allowed params per event exceeded.");
         }
-        this.params[paramIndex++] = value;
+        this.params[paramIndex++].setFloatVal(value);
+        return this;
+    }
+
+    public Event setParams(int value) {
+        if (paramIndex == params.length) {
+            throw new RuntimeException("MAX allowed params per event exceeded.");
+        }
+        this.params[paramIndex++].setIntVal(value);
+        return this;
+    }
+
+    public Event setParams(Vector2 value) {
+        if (paramIndex == params.length) {
+            throw new RuntimeException("MAX allowed params per event exceeded.");
+        }
+        this.params[paramIndex++].setVectVal(value);
+        return this;
+    }
+
+    public Event setParams(Rectangle value) {
+        if (paramIndex == params.length) {
+            throw new RuntimeException("MAX allowed params per event exceeded.");
+        }
+        this.params[paramIndex++].setRectVal(value);
         return this;
     }
 
@@ -46,7 +67,7 @@ public final class Event implements Pool.Poolable {
         return eventType;
     }
 
-    public float[] getParams() {
+    public Parameter[] getParams() {
         return params;
     }
 
@@ -54,8 +75,6 @@ public final class Event implements Pool.Poolable {
     public void reset() {
         this.paramIndex = 0;
         this.eventType = EventType.NULL;
-        for(int i = 0; i < params.length ; i++)
-            params[i] = Float.MIN_VALUE;
     }
 
     public void fire() {
@@ -65,40 +84,40 @@ public final class Event implements Pool.Poolable {
                 gameWorld.clearSelection();
                 break;
             case MOUSE_LEFT_CLICK:
-                List<Entity> entitiesContained = gameWorld.map.findTile(params[0], params[1]).getEntitiesContained();
+                List<Entity> entitiesContained = gameWorld.map.findTile(params[0].vectVal).getEntitiesContained();
                 gameWorld.selectEntities(entitiesContained);
                 gameGui.selectedEntities(entitiesContained);
                 break;
             case MOUSE_DRAG:
-                List<Entity> foundEntities = gameWorld.map.quadTree.findObjectsWithinRect(params[0], params[1], params[2], params[3]);
+                List<Entity> foundEntities = gameWorld.map.quadTree.findObjectsWithinRect(params[0].rectVal);
                 gameWorld.selectEntities(foundEntities);
                 gameGui.selectedEntities(foundEntities);
                 break;
             case UNIT_CREATED:
-                gameWorld.addEntity(
-                        UnitBuilder.newUnit(gameWorld.unitPool.obtain())
-                                .setTypeFlags((int) params[0])
-                                .setComponentFlags((int) params[1])
-                                .setStateFlags((int) params[2])
-                                .setMeleeAttackDamage((int)params[3])
-                                .setRangeAttackDamage((int)params[4])
-                                .setMaxHp((int)params[5])
-                                .setPlayer(gameWorld.getPlayer((int)params[6]))
-                                .setNation(gameWorld.getNation((int)params[7]))
-                                .setCenterInTiles((int)params[8])
-                                .setHp((int)params[9])
-                                .setHpRegen(params[10])
-                                .setMeleeAttackSpeed(params[11])
-                                .setRangeAttackSpeed(params[12])
-                                .setAttackRange((int)params[13])
-                                .setRangeAttackAOE((int)params[14])
-                                .setProjectileSpeed(params[15])
-                                .setMovementSpeed(params[16])
-                                .setArmor((int)params[17])
-                                .setLayer(Layer.values()[(int)params[18]])
-                                .setPosition((int)params[19],(int)params[20])
-                                .build()
-                );
+//                gameWorld.addEntity(
+//                        UnitBuilder.newUnit(gameWorld.unitPool.obtain())
+//                                .setTypeFlags((int) params[0])
+//                                .setComponentFlags((int) params[1])
+//                                .setStateFlags((int) params[2])
+//                                .setMeleeAttackDamage((int)params[3])
+//                                .setRangeAttackDamage((int)params[4])
+//                                .setMaxHp((int)params[5])
+//                                .setPlayer(gameWorld.getPlayer((int)params[6]))
+//                                .setNation(gameWorld.getNation((int)params[7]))
+//                                .setCenterInTiles((int)params[8])
+//                                .setHp((int)params[9])
+//                                .setHpRegen(params[10])
+//                                .setMeleeAttackSpeed(params[11])
+//                                .setRangeAttackSpeed(params[12])
+//                                .setAttackRange((int)params[13])
+//                                .setRangeAttackAOE((int)params[14])
+//                                .setProjectileSpeed(params[15])
+//                                .setMovementSpeed(params[16])
+//                                .setArmor((int)params[17])
+//                                .setLayer(Layer.values()[(int)params[18]])
+//                                .setPosition((int)params[19],(int)params[20])
+//                                .build()
+//                );
 
                 break;
             case UNIT_SWITCH_TILES:

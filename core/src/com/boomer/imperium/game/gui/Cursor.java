@@ -11,12 +11,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.ScreenSensitive;
-import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.configs.GameContext;
-import com.boomer.imperium.game.events.EventManager;
 import com.boomer.imperium.game.events.EventType;
 
 public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
+
+    private enum State{
+        DRAGGING
+    }
 
     private final ShapeRenderer shapeRenderer;
     private final Viewport gameViewport;
@@ -85,14 +87,12 @@ public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
         hover(screenX, screenY);
         if (button == Input.Buttons.LEFT) {
             gameContext.getEventManager().raiseEvent(EventType.MOUSE_LEFT_CLICK)
-                    .setParams(0, gameLocation.x)
-                    .setParams(1, gameLocation.y);
+                    .setParams(gameLocation);
             return true;
         }
         if (button == Input.Buttons.RIGHT) {
             gameContext.getEventManager().raiseEvent(EventType.MOUSE_RIGHT_CLICK)
-                    .setParams(0, gameLocation.x)
-                    .setParams(1, gameLocation.y);
+                    .setParams(gameLocation.x);
             return true;
         }
 
@@ -105,10 +105,7 @@ public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
         if (isDragging) {
             isDragging = false;
             gameContext.getEventManager().raiseEvent(EventType.MOUSE_DRAG)
-                    .setParams(0, dragRectangle.x)
-                    .setParams(1, dragRectangle.y)
-                    .setParams(2, dragRectangle.width)
-                    .setParams(3, dragRectangle.height);
+                    .setParams(dragRectangle);
         }
         return false;
     }
@@ -120,6 +117,8 @@ public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
             isDragging = true;
             dragStart.x = gameLocation.x;
             dragStart.y = gameLocation.y;
+            dragRectangle.width = 0f;
+            dragRectangle.height = 0f;
         } else {
             dragRectangle.x = Math.min(gameLocation.x, dragStart.x);
             dragRectangle.y = Math.min(gameLocation.y, dragStart.y);

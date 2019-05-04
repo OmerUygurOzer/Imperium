@@ -10,23 +10,19 @@ public final class Trigger implements Pool.Poolable {
 
     private GameWorld gameWorld;
     private Condition condition;
-    private List<Event> results;
+    private List<Action> results;
 
     public Trigger(GameWorld gameWorld){
-        this.results = new ArrayList<Event>();
+        this.results = new ArrayList<Action>();
         this.gameWorld = gameWorld;
     }
 
-    private Condition check(){
-        return condition;
-    }
-
-    public List<Event> results(){
+    public List<Action> results(){
         return results;
     }
 
-    public Trigger addResult(Event event){
-        this.results.add(event);
+    public Trigger addResult(Action action){
+        this.results.add(action);
         return this;
     }
 

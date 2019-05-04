@@ -18,4 +18,16 @@ public final class GameConfigs {
         this.aspectRatio = aspectRatio;
         this.worldSize = worldSize;
     }
+
+    public int getMaxUnitHP(){
+        return 200;
+    }
+
+    public int getMaxUnitCombat(){
+        return 100;
+    }
+
+    public int getMaxUnitLeadership(){
+        return 100;
+    }
 }

@@ -1,0 +1,520 @@
+package com.boomer.imperium.game.entities.units;
+
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+import com.boomer.imperium.game.*;
+import com.boomer.imperium.game.configs.GameContextInterface;
+import com.boomer.imperium.game.entities.*;
+import com.boomer.imperium.game.entities.buildings.Buildable;
+import com.boomer.imperium.game.entities.buildings.Building;
+import com.boomer.imperium.game.graphics.FrameCounter;
+import com.boomer.imperium.game.graphics.UnitSpriteAnimator;
+import com.boomer.imperium.game.map.Path;
+import com.boomer.imperium.game.map.PathFinder;
+import com.boomer.imperium.game.map.PathTracker;
+
+import java.util.List;
+
+public final class Unit implements Entity {
+
+    private final GameContextInterface gameContext;
+    public final Rectangle bounds;
+    private final UnitMovement unitMovement;
+    private final UnitOrders unitOrders;
+    private final Path unitPath;
+    private final PathTracker pathTracker;
+    private int memoryIndex;
+
+    private UnitSpriteAnimator unitSpriteAnimator;
+    private FrameCounter frameCounter;
+    private Direction facing;
+    private int tileX, tileY;
+
+
+    private UnitState state;
+    private int tileCount = 1;  //width and height in tiles
+    private Layer unitLayer;
+
+    private Nation nation;
+    private Player player;
+
+    private int typeFlags;
+    private int componentFlags;
+    private int stateFlags;
+    private String name;
+
+    private List<Buildable> buildables;
+
+    private float movementSpeed;
+    private int rangeAttackDamage;
+    private int meleeAttackDamage;
+    private int armor;
+    private float hpRegen;
+    private float hp;
+    private float maxHp;
+    private float meleeAttackSpeed;
+    private float rangeAttackSpeed;
+    private int rangeAttackRange;
+    private float projectileSpeed;
+    private float aoeRadius;
+
+    private float leadership;
+    private float combat;
+    private float sneak;
+    private float research;
+    private float mining;
+    private float manufacturing;
+    private float farming;
+    private float artisanship;
+    private float tradesmanship;
+    private float construction;
+
+    private int unitCapacity;
+
+    //temp
+    private boolean selected;
+    private Sprite selectedSprite;
+
+    public Unit(GameContextInterface gameContext) {
+        this.gameContext = gameContext;
+        this.unitOrders = new UnitOrders();
+        this.unitMovement = new UnitMovement(gameContext, this, gameContext.getGameConfigs().tileSize, 5f);
+        this.unitPath = new Path(gameContext.getGameConfigs());
+        this.tileX = 0;
+        this.tileY = 0;
+        this.frameCounter = new FrameCounter(8f, 8);
+        this.state = UnitState.IDLE;
+        Tile tile = gameContext.getGameWorld().map.getTileAt(0, 0);
+        this.bounds = new Rectangle(tile.bounds.x, tile.bounds.y, gameContext.getGameConfigs().tileSize,
+                gameContext.getGameConfigs().tileSize);
+        this.selectedSprite = gameContext.getGameResources().inGameCursor;
+        this.pathTracker = new PathTracker(gameContext, this, gameContext.getGameWorld().map, unitMovement);
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        frameCounter.update(deltaTime);
+        if (state.equals(UnitState.MOVING)) {
+            pathTracker.update(deltaTime);
+        }
+
+    }
+
+    @Override
+    public void render(SpriteBatch spriteBatch) {
+        unitSpriteAnimator.draw(spriteBatch, frameCounter.currentFrame, bounds, facing, state);
+        if (selected)
+            spriteBatch.draw(selectedSprite, bounds.x, bounds.y, bounds.width, bounds.height);
+
+    }
+
+    public void targetTile(Tile tile) {
+        PathFinder.findPath(unitPath, gameContext.getGameWorld().map, gameContext.getGameWorld().map.getTileAt(tileX, tileY), tile);
+        pathTracker.activate(unitPath);
+        state = UnitState.MOVING;
+    }
+
+    @Override
+    public void select() {
+        selected = true;
+    }
+
+    @Override
+    public void deSelect() {
+        selected = false;
+    }
+
+    @Override
+    public int tileX() {
+        return tileX;
+    }
+
+    @Override
+    public int tileY() {
+        return tileY;
+    }
+
+
+    @Override
+    public void receiveDamage(int damage) {
+        if (!state.equals(UnitState.DYING) | !state.equals(UnitState.DEAD))
+            return;
+        hp = -damage;
+        if (hp <= 0) {
+            state = UnitState.DYING;
+        }
+    }
+
+    @Override
+    public void setPosition(int tileX, int tileY) {
+        Tile tile = gameContext.getGameWorld().map.getTileAt(tileX, tileY);
+        this.tileX = tile.tileX;
+        this.tileY = tile.tileY;
+        bounds.set(tile.bounds);
+    }
+
+    @Override
+    public Rectangle getBounds() {
+        return bounds;
+    }
+
+    public void setFacing(Direction facing) {
+        this.facing = facing;
+    }
+
+    @Override
+    public void setLayer(Layer layer) {
+        this.unitLayer = layer;
+    }
+
+    @Override
+    public Player getPlayer() {
+        return this.player;
+    }
+
+    @Override
+    public void setPlayer(Player player) {
+
+    }
+
+    @Override
+    public void setNation(Nation nation) {
+        this.nation = nation;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public Nation getNation() {
+        return this.nation;
+    }
+
+    @Override
+    public int getTypeFlags() {
+        return 0;
+    }
+
+    @Override
+    public int getComponentFlags() {
+        return 0;
+    }
+
+    @Override
+    public int getStateFlags() {
+        return 0;
+    }
+
+    @Override
+    public void setCenterInTiles(int tileCount) {
+        this.tileCount = tileCount;
+    }
+
+    @Override
+    public int getCenterInTiles() {
+        return this.tileCount;
+    }
+
+    public void setState(UnitState state) {
+        this.state = state;
+    }
+
+    public void setUnitLayer(Layer unitLayer) {
+        this.unitLayer = unitLayer;
+    }
+
+    public void setUnitSpriteAnimator(UnitSpriteAnimator unitSpriteAnimator) {
+        this.unitSpriteAnimator = unitSpriteAnimator;
+    }
+
+    public void placeInTile(int tileX, int tileY) {
+        Tile tile = gameContext.getGameWorld().map.getTileAt(tileX, tileY);
+        this.tileX = tile.tileX;
+        this.tileY = tile.tileY;
+        bounds.set(tile.bounds);
+    }
+
+    public void setTile(int x, int y) {
+        this.tileX = x;
+        this.tileY = y;
+    }
+
+    @Override
+    public void setMemoryIndex(int index) {
+        memoryIndex = index;
+    }
+
+    @Override
+    public int getMemoryIndex() {
+        return memoryIndex;
+    }
+
+    @Override
+    public Layer getLayer() {
+        return unitLayer;
+    }
+
+
+    @Override
+    public Unit asUnit() {
+        return this;
+    }
+
+    @Override
+    public Doodad asDoodad() {
+        return null;
+    }
+
+    @Override
+    public Building asBuilding() {
+        return null;
+    }
+
+    @Override
+    public Projectile asProjectile() {
+        return null;
+    }
+
+    @Override
+    public Town asTown() {
+        return null;
+    }
+
+    @Override
+    public boolean shouldRemove() {
+        return state.equals(UnitState.DEAD);
+    }
+
+
+    @Override
+    public void reset() {
+        //width and height in tiles
+        this.state = UnitState.IDLE;
+        this.tileCount = 0;  //width and height in tiles
+        this.unitLayer = null;
+
+        this.nation = null;
+        this.player = null;
+
+        this.typeFlags = 0;
+        this.componentFlags = 0;
+        this.stateFlags = 0;
+
+        this.buildables.clear();
+
+        this.movementSpeed = 0f;
+        this.rangeAttackDamage = 0;
+        this.meleeAttackDamage = 0;
+        this.armor = 0;
+        this.hpRegen = 0f;
+        this.hp = 0f;
+        this.maxHp = 0f;
+        this.meleeAttackSpeed = 0f;
+        this.rangeAttackSpeed = 0f;
+        this.rangeAttackRange = 0;
+        this.projectileSpeed = 0f;
+        this.aoeRadius = 0f;
+
+        this.leadership = 0f;
+        this.combat = 0f;
+        this.sneak = 0f;
+        this.research = 0f;
+        this.mining = 0f;
+        this.manufacturing = 0f;
+        this.farming = 0f;
+        this.artisanship = 0f;
+        this.tradesmanship = 0f;
+
+        this.unitCapacity = 0;
+    }
+
+    public List<Buildable> getBuildables() { return buildables; }
+
+    public void setBuildables(List<Buildable> buildables) {
+        this.buildables = buildables;
+    }
+
+    public float getMovementSpeed() { return movementSpeed; }
+
+    public void setMovementSpeed(float movementSpeed) {
+        this.movementSpeed = movementSpeed;
+    }
+
+    public int getRangeAttackDamage() {
+        return rangeAttackDamage;
+    }
+
+    public void setRangeAttackDamage(int rangeAttackDamage) {
+        this.rangeAttackDamage = rangeAttackDamage;
+    }
+
+    public int getMeleeAttackDamage() {
+        return meleeAttackDamage;
+    }
+
+    public void setMeleeAttackDamage(int meleeAttackDamage) {
+        this.meleeAttackDamage = meleeAttackDamage;
+    }
+
+    public int getArmor() {
+        return armor;
+    }
+
+    public void setArmor(int armor) {
+        this.armor = armor;
+    }
+
+    public float getHpRegen() {
+        return hpRegen;
+    }
+
+    public void setHpRegen(float hpRegen) {
+        this.hpRegen = hpRegen;
+    }
+
+    public float getHp() {
+        return hp;
+    }
+
+    public void setHp(float hp) {
+        this.hp = hp;
+    }
+
+    public float getMaxHp() {
+        return maxHp;
+    }
+
+    public void setMaxHp(float maxHp) {
+        this.maxHp = maxHp;
+    }
+
+    public float getMeleeAttackSpeed() {
+        return meleeAttackSpeed;
+    }
+
+    public void setMeleeAttackSpeed(float meleeAttackSpeed) {
+        this.meleeAttackSpeed = meleeAttackSpeed;
+    }
+
+    public float getRangeAttackSpeed() {
+        return rangeAttackSpeed;
+    }
+
+    public void setRangeAttackSpeed(float rangeAttackSpeed) {
+        this.rangeAttackSpeed = rangeAttackSpeed;
+    }
+
+    public int getRangeAttackRange() {
+        return rangeAttackRange;
+    }
+
+    public void setRangeAttackRange(int rangeAttackRange) {
+        this.rangeAttackRange = rangeAttackRange;
+    }
+
+    public float getProjectileSpeed() {
+        return projectileSpeed;
+    }
+
+    public void setProjectileSpeed(float projectileSpeed) {
+        this.projectileSpeed = projectileSpeed;
+    }
+
+    public float getAoeRadius() {
+        return aoeRadius;
+    }
+
+    public void setAoeRadius(float aoeRadius) {
+        this.aoeRadius = aoeRadius;
+    }
+
+    public float getLeadership() {
+        return leadership;
+    }
+
+    public void setLeadership(float leadership) {
+        this.leadership = leadership;
+    }
+
+    public float getCombat() {
+        return combat;
+    }
+
+    public void setCombat(float combat) {
+        this.combat = combat;
+    }
+
+    public float getSneak() { return sneak; }
+
+    public void setSneak(float sneak) {
+        this.sneak = sneak;
+    }
+
+    public float getResearch() {
+        return research;
+    }
+
+    public void setResearch(float research) {
+        this.research = research;
+    }
+
+    public float getMining() {
+        return mining;
+    }
+
+    public void setMining(float mining) {
+        this.mining = mining;
+    }
+
+    public float getManufacturing() {
+        return manufacturing;
+    }
+
+    public void setManufacturing(float manufacturing) {
+        this.manufacturing = manufacturing;
+    }
+
+    public float getFarming() {
+        return farming;
+    }
+
+    public void setFarming(float farming) {
+        this.farming = farming;
+    }
+
+    public float getArtisanship() {
+        return artisanship;
+    }
+
+    public void setArtisanship(float artisanship) {
+        this.artisanship = artisanship;
+    }
+
+    public float getTradesmanship() {
+        return tradesmanship;
+    }
+
+    public void setTradesmanship(float tradesmanship) {
+        this.tradesmanship = tradesmanship;
+    }
+
+    public float getConstruction() { return construction; }
+
+    public void setConstruction(float construction) { this.construction = construction; }
+
+    public int getUnitCapacity() {
+        return unitCapacity;
+    }
+
+    public void setUnitCapacity(int unitCapacity) {
+        this.unitCapacity = unitCapacity;
+    }
+}
