@@ -2,16 +2,21 @@ package com.boomer.imperium.game;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.configs.GameContext;
 import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.Entity;
+import com.boomer.imperium.game.entities.buildings.Buildable;
+import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.entities.units.UnitPool;
 import com.boomer.imperium.game.map.Map;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class GameWorld implements Renderable, TimedUpdateable {
@@ -19,7 +24,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
     private static final int START_INDEX = 0;
     private static final int COUNT = 1;
 
-    private GameContextInterface gameContext;
+    private final GameContextInterface gameContext;
     private final int[][] layerStartAndCounts = new int[][]{
             {0, 0},
             {0, 0},
@@ -35,7 +40,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
 
     public final UnitPool unitPool;
 
-    public GameWorld(GameContext gameContext) {
+    public GameWorld(final GameContext gameContext) {
         gameContext.setGameWorld(this);
         this.gameContext = gameContext;
         this.entities = new Entity[(int) ((gameContext.getGameConfigs().worldSize.getRadius(gameContext.getGameConfigs()) * 2) *
@@ -52,10 +57,62 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         this.unitPool = new UnitPool(gameContext);
         for (int i = 0; i < 30; i++){
             Unit unit = unitPool.obtain();
+            unit.setTypeFlags(GameFlags.UNIT);
             unit.setUnitSpriteAnimator(gameContext.getGameResources().man);
             unit.setUnitLayer(Layer.GROUND);
             unit.setFacing(Direction.NE);
             unit.placeInTile(MathUtils.random(0,47),MathUtils.random(0,47));
+            unit.setBuildables(Arrays.<Buildable>asList(new Buildable() {
+                @Override
+                public String getName() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getCursorFillerSprite() {
+                    return null;
+                }
+
+                @Override
+                public Rectangle getCursorFillerRectangle() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getUIIcon() {
+                    return gameContext.getGameResources().fortButtonDrawable;
+                }
+
+                @Override
+                public Building build() {
+                    return null;
+                }
+            }, new Buildable() {
+                @Override
+                public String getName() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getCursorFillerSprite() {
+                    return null;
+                }
+
+                @Override
+                public Rectangle getCursorFillerRectangle() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getUIIcon() {
+                    return gameContext.getGameResources().factoryButtonDrawable;
+                }
+
+                @Override
+                public Building build() {
+                    return null;
+                }
+            }));
             addEntity(unit);
         }
 

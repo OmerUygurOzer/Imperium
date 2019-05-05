@@ -1,5 +1,6 @@
 package com.boomer.imperium.game;
 
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.entities.buildings.defaults.DefaultBuildings;
 import com.boomer.imperium.game.entities.units.UnitBuilders;
 import com.boomer.imperium.game.graphics.UnitSpriteAnimator;
@@ -29,7 +30,6 @@ public class Nation {
     private DefaultBuildings defaultBuildings;
     private UnitBuilders unitBuilders;
 
-
     public UnitBuilders getUnitBuilders() {
         return unitBuilders;
     }
@@ -41,6 +41,8 @@ public class Nation {
     public UnitSpriteAnimator getSpriteAnimator(String unitName){
         return null;
     }
+
+    public Drawable getBuildableImageDrawable(String name){ return null; }
 
     public float getDefaultMovementSpeed() {
         return defaultMovementSpeed;

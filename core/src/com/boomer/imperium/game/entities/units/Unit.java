@@ -200,17 +200,32 @@ public final class Unit implements Entity {
 
     @Override
     public int getTypeFlags() {
-        return 0;
+        return this.typeFlags;
     }
 
     @Override
     public int getComponentFlags() {
-        return 0;
+        return this.componentFlags;
     }
 
     @Override
     public int getStateFlags() {
-        return 0;
+        return this.stateFlags;
+    }
+
+    @Override
+    public void setTypeFlags(int typeFlags) {
+        this.typeFlags = typeFlags;
+    }
+
+    @Override
+    public void setComponentFlags(int componentFlags) {
+        this.componentFlags = componentFlags;
+    }
+
+    @Override
+    public void setStateFlags(int stateFlags) {
+        this.stateFlags = stateFlags;
     }
 
     @Override

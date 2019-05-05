@@ -1,9 +1,8 @@
 package com.boomer.imperium.game.entities.buildings.defaults;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.Nation;
-import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.entities.buildings.Building;
@@ -16,7 +15,7 @@ public class DefaultBuildings {
     private final Nation nation;
     private final GameContextInterface gameContext;
 
-    public DefaultBuildings(GameContextInterface gameContextInterface, Nation nation){
+    public DefaultBuildings(GameContextInterface gameContextInterface, Nation nation) {
         this.gameContext = gameContextInterface;
         this.nation = nation;
     }
@@ -28,7 +27,7 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getCursorFillerSprite() {
+        public Drawable getCursorFillerSprite() {
             return null;
         }
 
@@ -38,8 +37,8 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getUIIcon() {
-            return null;
+        public Drawable getUIIcon() {
+            return nation.getBuildableImageDrawable(getName());
         }
 
         @Override
@@ -55,7 +54,7 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getCursorFillerSprite() {
+        public Drawable getCursorFillerSprite() {
             return null;
         }
 
@@ -65,8 +64,8 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getUIIcon() {
-            return null;
+        public Drawable getUIIcon() {
+            return nation.getBuildableImageDrawable(getName());
         }
 
         @Override
@@ -82,7 +81,7 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getCursorFillerSprite() {
+        public Drawable getCursorFillerSprite() {
             return null;
         }
 
@@ -92,8 +91,8 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getUIIcon() {
-            return null;
+        public Drawable getUIIcon() {
+            return nation.getBuildableImageDrawable(getName());
         }
 
         @Override
@@ -109,7 +108,7 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getCursorFillerSprite() {
+        public Drawable getCursorFillerSprite() {
             return null;
         }
 
@@ -119,8 +118,8 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getUIIcon() {
-            return null;
+        public Drawable getUIIcon() {
+            return nation.getBuildableImageDrawable(getName());
         }
 
         @Override
@@ -136,7 +135,7 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getCursorFillerSprite() {
+        public Drawable getCursorFillerSprite() {
             return null;
         }
 
@@ -146,8 +145,8 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getUIIcon() {
-            return null;
+        public Drawable getUIIcon() {
+            return nation.getBuildableImageDrawable(getName());
         }
 
         @Override
@@ -163,7 +162,7 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getCursorFillerSprite() {
+        public Drawable getCursorFillerSprite() {
             return null;
         }
 
@@ -173,8 +172,8 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getUIIcon() {
-            return null;
+        public Drawable getUIIcon() {
+            return nation.getBuildableImageDrawable(getName());
         }
 
         @Override
@@ -190,7 +189,7 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getCursorFillerSprite() {
+        public Drawable getCursorFillerSprite() {
             return null;
         }
 
@@ -200,8 +199,8 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getUIIcon() {
-            return null;
+        public Drawable getUIIcon() {
+            return nation.getBuildableImageDrawable(getName());
         }
 
         @Override
@@ -217,7 +216,7 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getCursorFillerSprite() {
+        public Drawable getCursorFillerSprite() {
             return null;
         }
 
@@ -227,8 +226,8 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getUIIcon() {
-            return null;
+        public Drawable getUIIcon() {
+            return nation.getBuildableImageDrawable(getName());
         }
 
         @Override
@@ -244,7 +243,7 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getCursorFillerSprite() {
+        public Drawable getCursorFillerSprite() {
             return null;
         }
 
@@ -254,8 +253,8 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getUIIcon() {
-            return null;
+        public Drawable getUIIcon() {
+            return nation.getBuildableImageDrawable(getName());
         }
 
         @Override
@@ -271,7 +270,7 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getCursorFillerSprite() {
+        public Drawable getCursorFillerSprite() {
             return null;
         }
 
@@ -281,8 +280,8 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Sprite getUIIcon() {
-            return null;
+        public Drawable getUIIcon() {
+            return nation.getBuildableImageDrawable(getName());
         }
 
         @Override
@@ -291,7 +290,34 @@ public class DefaultBuildings {
         }
     };
 
-    public final List<Buildable> ALL = Arrays.asList(FORT,MINE,FACTORY,FARMLAND,GUILD,MARKET,UNIVERSITY,INN,HARBOR,TEMPLE);
+    public final Buildable WAR_FACTORY = new Buildable() {
+        @Override
+        public String getName() {
+            return "War Factory";
+        }
+
+        @Override
+        public Drawable getCursorFillerSprite() {
+            return null;
+        }
+
+        @Override
+        public Rectangle getCursorFillerRectangle() {
+            return null;
+        }
+
+        @Override
+        public Drawable getUIIcon() {
+            return nation.getBuildableImageDrawable(getName());
+        }
+
+        @Override
+        public Building build() {
+            return null;
+        }
+    };
+
+    public final List<Buildable> ALL = Arrays.asList(FORT, MINE, FACTORY, FARMLAND, GUILD, MARKET, UNIVERSITY, INN, HARBOR, TEMPLE, WAR_FACTORY);
 
 
 }

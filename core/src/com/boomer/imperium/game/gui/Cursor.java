@@ -16,10 +16,7 @@ import com.boomer.imperium.game.events.EventType;
 
 public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
 
-    private enum State{
-        DRAGGING
-    }
-
+    private final GuiHolder guiHolder;
     private final ShapeRenderer shapeRenderer;
     private final Viewport gameViewport;
     private final Camera gameCamera;
@@ -34,12 +31,13 @@ public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
     private final Rectangle dragRectangle;
     private final Vector2 dragStart;
 
-    public Cursor(GameContext gameContext, ShapeRenderer shapeRenderer, Viewport gameViewport) {
+    public Cursor(GameContext gameContext, GuiHolder guiHolder ,ShapeRenderer shapeRenderer, Viewport gameViewport) {
+        this.guiHolder = guiHolder;
         this.gameContext = gameContext;
         this.shapeRenderer = shapeRenderer;
         this.gameViewport = gameViewport;
         this.gameCamera = gameViewport.getCamera();
-        this.gameScreenBounds = new Rectangle();
+        this.gameScreenBounds = guiHolder.getGameScreenBounds();
         this.gameLocation = new Vector2();
         this.bounds = new Rectangle(0f, 0f, gameContext.getGameConfigs().tileSize, gameContext.getGameConfigs().tileSize);
         this.dragRectangle = new Rectangle();
@@ -48,16 +46,9 @@ public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
 
     @Override
     public void resize(int width, int height) {
-        screenHeight = height;
-        float gameAspectRatio = gameViewport.getWorldHeight() / gameViewport.getWorldWidth();
-        float screenAspectRatio = (float) height / (float) width;
-        if (screenAspectRatio <= gameAspectRatio) {
-            gameScreenBounds.set((width - gameViewport.getScreenWidth()) / 2f, 0f, gameViewport.getScreenWidth(), gameViewport.getScreenHeight());
-        } else {
-            gameScreenBounds.set(0, (height - gameViewport.getScreenHeight()) / 2f, gameViewport.getScreenWidth(), gameViewport.getScreenHeight());
-        }
-        virtualXRatio = gameViewport.getWorldWidth() / (float) gameViewport.getScreenWidth();
-        virtualYRatio = gameViewport.getWorldHeight() / (float) gameViewport.getScreenHeight();
+        this.screenHeight = height;
+       this.virtualXRatio = guiHolder.getVirtualXRatio();
+       this.virtualYRatio = guiHolder.getVirtualYRatio();
     }
 
     @Override

@@ -125,6 +125,21 @@ public final class Building implements Entity {
     }
 
     @Override
+    public void setTypeFlags(int typeFlags) {
+
+    }
+
+    @Override
+    public void setComponentFlags(int componentFlags) {
+
+    }
+
+    @Override
+    public void setStateFlags(int stateFlags) {
+
+    }
+
+    @Override
     public Unit asUnit() {
         return null;
     }

@@ -21,7 +21,7 @@ public class GameRunner extends ApplicationAdapter {
 
     @Override
     public void create() {
-        //Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+//        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
         this.gameStateManager = new GameStateManager();

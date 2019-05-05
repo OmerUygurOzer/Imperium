@@ -1,11 +1,14 @@
 package com.boomer.imperium.game.entities.units;
 
 import com.badlogic.gdx.utils.Pool;
+import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.Nation;
 import com.boomer.imperium.game.Player;
 import com.boomer.imperium.game.configs.GameConfigs;
 
 import java.util.Arrays;
+
+import static com.boomer.imperium.game.GameFlags.*;
 
 public class UnitBuilders {
 
@@ -20,6 +23,7 @@ public class UnitBuilders {
     }
 
    private void setBasics(Unit unit,Nation nation){
+        unit.setTypeFlags(UNIT);
         unit.setMaxHp(nation.getDefaultMaxHp());
         unit.setHp(nation.getDefaultHp());
         unit.setHpRegen(nation.getDefaultHpRegen());
@@ -29,6 +33,8 @@ public class UnitBuilders {
    public Unit createMeleeSoldier(){
         Unit soldier = unitPool.obtain();
         setBasics(soldier,nation);
+        soldier.setComponentFlags(MELEE_ATTACK | ARMOR);
+        soldier.setStateFlags(RENDERABLE | SELECTABLE | MOVABLE);
         soldier.setNation(nation);
         soldier.setArmor(nation.getDefaultArmor());
         soldier.setCombat(nation.getDefaultCombat());
@@ -42,6 +48,8 @@ public class UnitBuilders {
 
     public Unit createRangedSoldier(){
         Unit soldier = unitPool.obtain();
+        soldier.setComponentFlags(RANGE_ATTACK | ARMOR);
+        soldier.setStateFlags(RENDERABLE | SELECTABLE | MOVABLE);
         setBasics(soldier,nation);
         soldier.setNation(nation);
         soldier.setArmor(nation.getDefaultArmor());
@@ -58,6 +66,8 @@ public class UnitBuilders {
 
     public Unit createBuilder(){
         Unit builder = unitPool.obtain();
+        builder.setComponentFlags(BUILDER);
+        builder.setStateFlags(RENDERABLE | SELECTABLE | MOVABLE);
         setBasics(builder,nation);
         builder.setConstruction(nation.getDefaultConstruction());
         builder.setBuildables(nation.getDefaultBuildings().ALL);

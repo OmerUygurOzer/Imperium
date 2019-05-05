@@ -5,7 +5,7 @@ public final class GameConfigs {
     public final float tileSize;
     public final float tileSizeCross;
     public final float aspectRatio;
-    public final float guiWidth = 300f;
+    public final float guiWidth = 400f;
     public final int calculatePathPerTask = 32;
     public final int eventsInitialCapacity = 400;
 

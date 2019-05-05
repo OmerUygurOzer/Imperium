@@ -37,6 +37,9 @@ public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable {
     int getTypeFlags();
     int getComponentFlags();
     int getStateFlags();
+    void setTypeFlags(int typeFlags);
+    void setComponentFlags(int componentFlags);
+    void setStateFlags(int stateFlags);
 
     Unit asUnit();
     Doodad asDoodad();

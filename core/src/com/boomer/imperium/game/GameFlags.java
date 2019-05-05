@@ -1,5 +1,7 @@
 package com.boomer.imperium.game;
 
+import com.boomer.imperium.game.entities.Entity;
+
 public final class GameFlags {
 
     //Type Flags
@@ -48,9 +50,17 @@ public final class GameFlags {
     public static final int NO_ROOM         = 1 << 3;
     public static final int MOVABLE         = 1 << 4;
 
+    public static boolean checkTypeFlag(Entity entity, int flag){
+        return (entity.getTypeFlags() & flag) == flag;
+    }
 
+    public static boolean checkComponentFlag(Entity entity, int flag){
+        return (entity.getComponentFlags() & flag) == flag;
+    }
 
-
+    public static boolean checkStateFlag(Entity entity, int flag){
+        return (entity.getStateFlags() & flag) == flag;
+    }
 
 
 

@@ -18,6 +18,7 @@ import com.boomer.imperium.game.events.EventManager;
 import com.boomer.imperium.game.events.Trigger;
 import com.boomer.imperium.game.gui.Cursor;
 import com.boomer.imperium.game.gui.GameGui;
+import com.boomer.imperium.game.gui.GuiHolder;
 
 public final class RunningGame extends GameState {
 
@@ -32,10 +33,9 @@ public final class RunningGame extends GameState {
 
     private final EventManager eventManager;
     private final GameWorld gameWorld;
-    private final GameGui gui;
+    private final GuiHolder guiHolder;
 
     private float camX, camY;
-    private final Cursor cursor;
 
     public RunningGame(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, GameConfigs gameConfigs) {
         this.configs = gameConfigs;
@@ -47,13 +47,13 @@ public final class RunningGame extends GameState {
         this.gameContext.setGameResources(new Resources());
         this.gameContext.setGameConfigs(gameConfigs);
         this.gameWorld = new GameWorld(gameContext);
-        this.gui = new GameGui(gameContext, viewPort, spriteBatch);
-        this.gameContext.setGameGui(gui);
+        this.guiHolder = new GuiHolder(gameContext, shapeRenderer,viewPort, spriteBatch);
+        this.gameContext.setGameGui(guiHolder.getGUI());
         this.eventManager = new EventManager(gameContext,
                 new Pool<Event>(gameConfigs.eventsInitialCapacity) {
                     @Override
                     protected Event newObject() {
-                        return new Event(gameWorld, gui);
+                        return new Event(gameWorld, guiHolder.getGUI());
                     }
                 },
                 new Pool<Trigger>(gameConfigs.eventsInitialCapacity) {
@@ -62,9 +62,8 @@ public final class RunningGame extends GameState {
                         return new Trigger(gameWorld);
                     }
                 });
-        this.cursor = new Cursor(gameContext, shapeRenderer, viewPort);
-        addProcessor(gui);
-        addProcessor(cursor);
+        addProcessor(guiHolder.getGUI());
+        addProcessor(guiHolder.getCursor());
     }
 
     @Override
@@ -85,7 +84,7 @@ public final class RunningGame extends GameState {
         camera.update();
         float delta = Gdx.graphics.getDeltaTime();
         gameWorld.update(delta);
-        gui.update(delta);
+        guiHolder.update(delta);
         eventManager.update(delta);
     }
 
@@ -98,15 +97,13 @@ public final class RunningGame extends GameState {
         viewPort.apply();
         gameWorld.render(spriteBatch);
         spriteBatch.end();
-        cursor.render(spriteBatch);
-        gui.render(spriteBatch);
+        guiHolder.render(spriteBatch);
     }
 
     @Override
     public void resize(int width, int height) {
         viewPort.update(width, height);
-        cursor.resize(width, height);
-        gui.resize(width, height);
+        guiHolder.resize(width, height);
         scale = (float) width / (gameContext.getGameConfigs().worldSize.getRadius(configs) * 2f);
 //        System.out.println(width);
 //        System.out.println(height);
