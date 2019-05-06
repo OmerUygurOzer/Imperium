@@ -81,7 +81,7 @@ public final class Unit implements Entity {
     public Unit(GameContextInterface gameContext) {
         this.gameContext = gameContext;
         this.unitOrders = new UnitOrders();
-        this.unitMovement = new UnitMovement(gameContext, this, gameContext.getGameConfigs().tileSize, 5f);
+        this.unitMovement = new UnitMovement(gameContext, this, gameContext.getGameConfigs().tileSize, 1f);
         this.unitPath = new Path(gameContext.getGameConfigs());
         this.tileX = 0;
         this.tileY = 0;

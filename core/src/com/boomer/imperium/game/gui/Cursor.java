@@ -31,7 +31,7 @@ public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
     private final Rectangle dragRectangle;
     private final Vector2 dragStart;
 
-    public Cursor(GameContext gameContext, GuiHolder guiHolder ,ShapeRenderer shapeRenderer, Viewport gameViewport) {
+    public Cursor(GameContext gameContext, GuiHolder guiHolder, ShapeRenderer shapeRenderer, Viewport gameViewport) {
         this.guiHolder = guiHolder;
         this.gameContext = gameContext;
         this.shapeRenderer = shapeRenderer;
@@ -47,8 +47,8 @@ public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
     @Override
     public void resize(int width, int height) {
         this.screenHeight = height;
-       this.virtualXRatio = guiHolder.getVirtualXRatio();
-       this.virtualYRatio = guiHolder.getVirtualYRatio();
+        this.virtualXRatio = guiHolder.getVirtualXRatio();
+        this.virtualYRatio = guiHolder.getVirtualYRatio();
     }
 
     @Override
@@ -83,7 +83,7 @@ public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
         }
         if (button == Input.Buttons.RIGHT) {
             gameContext.getEventManager().raiseEvent(EventType.MOUSE_RIGHT_CLICK)
-                    .setParams(gameLocation.x);
+                    .setParams(gameLocation);
             return true;
         }
 

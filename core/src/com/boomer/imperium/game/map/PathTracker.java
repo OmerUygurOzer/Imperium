@@ -11,7 +11,7 @@ import com.boomer.imperium.game.events.EventType;
 
 public class PathTracker implements TimedUpdateable {
 
-    private EventManager eventManager;
+    private final GameContextInterface gameContext;
     private final Unit unit;
     private final Map map;
     private Path path;
@@ -26,7 +26,7 @@ public class PathTracker implements TimedUpdateable {
     }
 
     public PathTracker(GameContextInterface gameContext, Unit unit, Map map, UnitMovement unitMovement) {
-        this.eventManager = gameContext.getEventManager();
+        this.gameContext = gameContext;
         this.unit = unit;
         this.map = map;
         this.unitMovement = unitMovement;
@@ -43,7 +43,7 @@ public class PathTracker implements TimedUpdateable {
             map.getTileAt(unit.tileX(), unit.tileY()).getEntitiesContained().remove(unit);
             unit.setTile(tileX, tileY);
             map.getTileAt(tileX, tileY).getEntitiesContained().add(unit);
-            eventManager.raiseEvent(EventType.UNIT_SWITCH_TILES)
+            gameContext.getEventManager().raiseEvent(EventType.UNIT_SWITCH_TILES)
                     .setParams(unit.getMemoryIndex())
                     .setParams(unit.tileX())
                     .setParams(unit.tileY())
@@ -61,7 +61,7 @@ public class PathTracker implements TimedUpdateable {
             unit.setFacing(path.tasks.get(curPath));
             setTargetForDirection(path.tasks.get(curPath));
             unitMovement.setDirection(path.tasks.get(curPath));
-            eventManager.raiseEvent(EventType.UNIT_ARRIVED_AT_TILE)
+            gameContext.getEventManager().raiseEvent(EventType.UNIT_ARRIVED_AT_TILE)
                     .setParams(unit.getMemoryIndex())
                     .setParams(tileX)
                     .setParams(tileY);

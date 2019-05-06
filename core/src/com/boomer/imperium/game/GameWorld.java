@@ -3,6 +3,7 @@ package com.boomer.imperium.game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.TimedUpdateable;
@@ -53,19 +54,20 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         layerStartAndCounts[Layer.AIR_OVERLAY.getPriority()][START_INDEX] = (entities.length / 7) * 5;
         layerStartAndCounts[Layer.GUI.getPriority()][START_INDEX] = (entities.length / 7) * 6;
         this.map = new Map(gameContext.getGameResources(), gameContext.getGameConfigs());
-        this.selectedEntities = new ArrayList<Entity>(12);
+        this.selectedEntities = new ArrayList<Entity>(20);
         this.unitPool = new UnitPool(gameContext);
-        for (int i = 0; i < 30; i++){
+        for (int i = 0; i < 30; i++) {
             Unit unit = unitPool.obtain();
             unit.setTypeFlags(GameFlags.UNIT);
             unit.setUnitSpriteAnimator(gameContext.getGameResources().man);
             unit.setUnitLayer(Layer.GROUND);
             unit.setFacing(Direction.NE);
-            unit.placeInTile(MathUtils.random(0,47),MathUtils.random(0,47));
-            unit.setIcon(LogicUtils.randomSelect(Arrays.asList(gameContext.getGameResources().normanIcon,gameContext.getGameResources().grokkenIcon)));
+            unit.placeInTile(MathUtils.random(0, 47), MathUtils.random(0, 47));
+            unit.setIcon(LogicUtils.randomSelect(Arrays.asList(gameContext.getGameResources().normanIcon, gameContext.getGameResources().grokkenIcon,
+                    gameContext.getGameResources().mayanIcon, gameContext.getGameResources().greekIcon, gameContext.getGameResources().vikingIcon)));
             unit.setMaxHp(200);
-            unit.setHp(MathUtils.random(0,200));
-            unit.setConstruction(MathUtils.random(0,100));
+            unit.setHp(MathUtils.random(0, 200));
+            unit.setConstruction(MathUtils.random(0, 100));
             unit.setBuildables(Arrays.<Buildable>asList(new Buildable() {
                 @Override
                 public String getName() {
@@ -141,7 +143,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 public Building build() {
                     return null;
                 }
-            },new Buildable() {
+            }, new Buildable() {
                 @Override
                 public String getName() {
                     return null;
@@ -166,7 +168,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 public Building build() {
                     return null;
                 }
-            },new Buildable() {
+            }, new Buildable() {
                 @Override
                 public String getName() {
                     return null;
@@ -191,7 +193,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 public Building build() {
                     return null;
                 }
-            },new Buildable() {
+            }, new Buildable() {
                 @Override
                 public String getName() {
                     return null;
@@ -216,7 +218,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 public Building build() {
                     return null;
                 }
-            },new Buildable() {
+            }, new Buildable() {
                 @Override
                 public String getName() {
                     return null;
@@ -241,7 +243,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 public Building build() {
                     return null;
                 }
-            },new Buildable() {
+            }, new Buildable() {
                 @Override
                 public String getName() {
                     return null;
@@ -266,7 +268,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 public Building build() {
                     return null;
                 }
-            },new Buildable() {
+            }, new Buildable() {
                 @Override
                 public String getName() {
                     return null;
@@ -351,10 +353,10 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         map.getTileAt(entity.tileX(), entity.tileY()).getEntitiesContained().remove(entity);
     }
 
-    public void selectEntities(List<Entity> entities){
+    public void selectEntities(List<Entity> entities) {
         this.selectedEntities.addAll(entities);
-        for(Entity entity: selectedEntities)
-                entity.select();
+        for (Entity entity : selectedEntities)
+            entity.select();
     }
 
     public void clearSelection() {
@@ -364,11 +366,16 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         this.selectedEntities.clear();
     }
 
-    public Nation getNation(int nationIndex){
+    public Nation getNation(int nationIndex) {
         return null;
     }
 
-    public Player getPlayer(int playerIndex){
+    public Player getPlayer(int playerIndex) {
         return null;
+    }
+
+    public void setOrderForSelected(Vector2 vector2){
+        for (Entity entity : selectedEntities)
+            entity.asUnit().targetTile(map.findTile(vector2));
     }
 }

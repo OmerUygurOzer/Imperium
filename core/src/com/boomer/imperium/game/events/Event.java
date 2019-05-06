@@ -80,10 +80,13 @@ public final class Event implements Pool.Poolable {
     public void fire() {
         switch (eventType) {
             case MOUSE_RIGHT_CLICK:
-                gameGui.entitiesDeSelected();
-                gameWorld.clearSelection();
+//                gameGui.entitiesDeSelected();
+//                gameWorld.clearSelection();
+                gameWorld.setOrderForSelected(params[0].vectVal);
                 break;
             case MOUSE_LEFT_CLICK:
+                gameGui.entitiesDeSelected();
+                gameWorld.clearSelection();
                 List<Entity> entitiesContained = gameWorld.map.findTile(params[0].vectVal).getEntitiesContained();
                 gameWorld.selectEntities(entitiesContained);
                 gameGui.selectedEntities(entitiesContained);

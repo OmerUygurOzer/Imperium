@@ -43,6 +43,9 @@ public class Resources implements Disposable {
 //    public final Drawable harborDrawable;
 
     public final Drawable normanIcon;
+    public final Drawable mayanIcon;
+    public final Drawable greekIcon;
+    public final Drawable vikingIcon;
     public final Drawable grokkenIcon;
 
     public Resources(){
@@ -67,6 +70,9 @@ public class Resources implements Disposable {
         this.innButtonDrawable = new TextureRegionDrawable(buildingIconsTexture[1][1]);
 
         this.normanIcon = new TextureRegionDrawable(unitIcons[0][0]);
+        this.mayanIcon = new TextureRegionDrawable(unitIcons[0][1]);
+        this.greekIcon = new TextureRegionDrawable(unitIcons[0][2]);
+        this.vikingIcon = new TextureRegionDrawable(unitIcons[0][3]);
         this.grokkenIcon = new TextureRegionDrawable(unitIcons[3][0]);
 //        this.mineButtonDrawable = new TextureRegionDrawable(new TextureRegion(buildingIconsTexture,0,0,239,146));
 //        this.marketButtonDrawable = new TextureRegionDrawable(new TextureRegion(buildingIconsTexture,0,0,239,146));
