@@ -26,6 +26,7 @@ public class BuilderTab extends ScrollPane {
         this.listener = listener;
         this.container = new Table(skin);
         setActor(container);
+        setScrollbarsVisible(true);
         this.existingButtons = new ArrayList<ImageButton>();
         this.mappedButtons = new LinkedHashMap<ImageButton, Buildable>();
         for(int i = 0 ; i < 12 ; i++){
@@ -44,7 +45,7 @@ public class BuilderTab extends ScrollPane {
 
 
     public void setBuildables(List<Buildable> buildables) {
-        this.mappedButtons.clear();
+        mappedButtons.clear();
         container.clear();
         container.pack();
         for(int i = 0; i < buildables.size() && i < existingButtons.size(); i ++){
@@ -52,7 +53,10 @@ public class BuilderTab extends ScrollPane {
                 container.row();
             existingButtons.get(i).getStyle().imageUp = buildables.get(i).getUIIcon();
             mappedButtons.put(existingButtons.get(i),buildables.get(i));
-            container.add(existingButtons.get(i)).size(100f,70f).pad(5f).expand().fill();
+            container.add(existingButtons.get(i)).size(100f,70f)
+                    .pad(5f)
+                    .expand()
+                    .center();
         }
         for(int i = buildables.size() ; i < existingButtons.size() ; i++){
             container.removeActor(existingButtons.get(i));

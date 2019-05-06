@@ -3,6 +3,7 @@ package com.boomer.imperium.game.gui;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -49,6 +50,7 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
 
     private final Button buildButton;
     private final BuilderTab builderTab;
+    private final UnitDetailsTab unitDetailsTab;
 
     public GameGui(GameContext gameContext,GuiHolder guiHolder ,Viewport gameViewport, SpriteBatch spriteBatch) {
         super(new ExtendViewport(gameViewport.getWorldWidth(), gameViewport.getWorldHeight(), new OrthographicCamera()), spriteBatch);
@@ -74,6 +76,7 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
         this.builderTab = new BuilderTab(skin,this);
         this.buildButton = new ImageButton(resources.buildButton);
         this.buildButton.addListener(getBuildButtonListener());
+        this.unitDetailsTab = new UnitDetailsTab(skin);
         setGUIActors();
     }
 
@@ -102,10 +105,10 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
                 .expand()
                 .row();
 
-        traitDetailsPanel.add(builderTab)
+        traitDetailsPanel.add(unitDetailsTab)
                 .fill()
                 .expand()
-                .top();
+                .center();
 
         detailsPanel.add(actionButtonsPanel)
                 .expandX()
@@ -153,9 +156,7 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
 
 
     public void selectedEntities(List<Entity> entities) {
-        System.out.println("SELECT");
         if(entities.isEmpty()){
-            System.out.println("SELECTED EMPTY");
             return;
         }
         adjustForEntity(entities.get(0));
@@ -163,13 +164,14 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
 
 
     public void entitiesDeSelected() {
-
+        setCurrentTrainDetailsTab(unitDetailsTab);
     }
 
     private void adjustForEntity(Entity entity){
         if(GameFlags.checkTypeFlag(entity,GameFlags.UNIT)){
             System.out.println("UNIT");
             Unit unit = entity.asUnit();
+            unitDetailsTab.setUnit(unit);
             builderTab.setBuildables(unit.getBuildables());
             return;
         }
@@ -182,9 +184,18 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
         return new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("BUILD BUTTON CLICKED");
+               setCurrentTrainDetailsTab(builderTab);
             }
         };
+    }
+
+    private void setCurrentTrainDetailsTab(Actor actor){
+        traitDetailsPanel.clear();
+        traitDetailsPanel.add(actor)
+                .fill()
+                .expand()
+                .center();
+        traitDetailsPanel.pack();
     }
 
     @Override

@@ -62,6 +62,10 @@ public final class GameWorld implements Renderable, TimedUpdateable {
             unit.setUnitLayer(Layer.GROUND);
             unit.setFacing(Direction.NE);
             unit.placeInTile(MathUtils.random(0,47),MathUtils.random(0,47));
+            unit.setIcon(LogicUtils.randomSelect(Arrays.asList(gameContext.getGameResources().normanIcon,gameContext.getGameResources().grokkenIcon)));
+            unit.setMaxHp(200);
+            unit.setHp(MathUtils.random(0,200));
+            unit.setConstruction(MathUtils.random(0,100));
             unit.setBuildables(Arrays.<Buildable>asList(new Buildable() {
                 @Override
                 public String getName() {
@@ -106,6 +110,181 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 @Override
                 public Drawable getUIIcon() {
                     return gameContext.getGameResources().factoryButtonDrawable;
+                }
+
+                @Override
+                public Building build() {
+                    return null;
+                }
+            }, new Buildable() {
+                @Override
+                public String getName() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getCursorFillerSprite() {
+                    return null;
+                }
+
+                @Override
+                public Rectangle getCursorFillerRectangle() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getUIIcon() {
+                    return gameContext.getGameResources().universityButtonDrawable;
+                }
+
+                @Override
+                public Building build() {
+                    return null;
+                }
+            },new Buildable() {
+                @Override
+                public String getName() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getCursorFillerSprite() {
+                    return null;
+                }
+
+                @Override
+                public Rectangle getCursorFillerRectangle() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getUIIcon() {
+                    return gameContext.getGameResources().universityButtonDrawable;
+                }
+
+                @Override
+                public Building build() {
+                    return null;
+                }
+            },new Buildable() {
+                @Override
+                public String getName() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getCursorFillerSprite() {
+                    return null;
+                }
+
+                @Override
+                public Rectangle getCursorFillerRectangle() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getUIIcon() {
+                    return gameContext.getGameResources().universityButtonDrawable;
+                }
+
+                @Override
+                public Building build() {
+                    return null;
+                }
+            },new Buildable() {
+                @Override
+                public String getName() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getCursorFillerSprite() {
+                    return null;
+                }
+
+                @Override
+                public Rectangle getCursorFillerRectangle() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getUIIcon() {
+                    return gameContext.getGameResources().universityButtonDrawable;
+                }
+
+                @Override
+                public Building build() {
+                    return null;
+                }
+            },new Buildable() {
+                @Override
+                public String getName() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getCursorFillerSprite() {
+                    return null;
+                }
+
+                @Override
+                public Rectangle getCursorFillerRectangle() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getUIIcon() {
+                    return gameContext.getGameResources().universityButtonDrawable;
+                }
+
+                @Override
+                public Building build() {
+                    return null;
+                }
+            },new Buildable() {
+                @Override
+                public String getName() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getCursorFillerSprite() {
+                    return null;
+                }
+
+                @Override
+                public Rectangle getCursorFillerRectangle() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getUIIcon() {
+                    return gameContext.getGameResources().universityButtonDrawable;
+                }
+
+                @Override
+                public Building build() {
+                    return null;
+                }
+            },new Buildable() {
+                @Override
+                public String getName() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getCursorFillerSprite() {
+                    return null;
+                }
+
+                @Override
+                public Rectangle getCursorFillerRectangle() {
+                    return null;
+                }
+
+                @Override
+                public Drawable getUIIcon() {
+                    return gameContext.getGameResources().universityButtonDrawable;
                 }
 
                 @Override

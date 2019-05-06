@@ -2,6 +2,7 @@ package com.boomer.imperium.game.entities.buildings;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.Layer;
 import com.boomer.imperium.game.Nation;
 import com.boomer.imperium.game.Player;
@@ -106,6 +107,16 @@ public final class Building implements Entity {
 
     @Override
     public void setName(String name) {
+
+    }
+
+    @Override
+    public Drawable getIcon() {
+        return null;
+    }
+
+    @Override
+    public void setIcon(Drawable drawable) {
 
     }
 

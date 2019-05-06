@@ -3,6 +3,7 @@ package com.boomer.imperium.game.entities.units;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.*;
 import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.*;
@@ -26,6 +27,7 @@ public final class Unit implements Entity {
     private final PathTracker pathTracker;
     private int memoryIndex;
 
+    private Drawable icon;
     private UnitSpriteAnimator unitSpriteAnimator;
     private FrameCounter frameCounter;
     private Direction facing;
@@ -192,6 +194,12 @@ public final class Unit implements Entity {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public Drawable getIcon() { return icon; }
+
+    @Override
+    public void setIcon(Drawable drawable) { this.icon = drawable; }
 
     @Override
     public Nation getNation() {
