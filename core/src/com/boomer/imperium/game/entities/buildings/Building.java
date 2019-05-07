@@ -6,11 +6,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.Layer;
 import com.boomer.imperium.game.Nation;
 import com.boomer.imperium.game.Player;
+import com.boomer.imperium.game.Tile;
 import com.boomer.imperium.game.entities.Doodad;
 import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.entities.Projectile;
 import com.boomer.imperium.game.entities.Town;
 import com.boomer.imperium.game.entities.units.Unit;
+
+import java.util.List;
 
 public final class Building implements Entity {
 
@@ -33,6 +36,11 @@ public final class Building implements Entity {
     @Override
     public int tileY() {
         return 0;
+    }
+
+    @Override
+    public List<Tile> getTilesCovered() {
+        return null;
     }
 
     @Override

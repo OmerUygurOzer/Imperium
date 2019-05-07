@@ -169,7 +169,6 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
 
     private void adjustForEntity(Entity entity){
         if(GameFlags.checkTypeFlag(entity,GameFlags.UNIT)){
-            System.out.println("UNIT");
             Unit unit = entity.asUnit();
             unitDetailsTab.setUnit(unit);
             builderTab.setBuildables(unit.getBuildables());
@@ -200,6 +199,6 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
 
     @Override
     public void selectedBuildable(Buildable buildable) {
-        System.out.println("FORT CLICKED");
+
     }
 }

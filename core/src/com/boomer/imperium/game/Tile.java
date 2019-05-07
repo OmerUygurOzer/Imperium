@@ -38,6 +38,18 @@ public class Tile implements Renderable {
         return entitiesContained;
     }
 
+    public void addEntity(Entity entity){
+        entitiesContained.add(entity);
+        if(!GameFlags.checkStateFlag(entity,GameFlags.NO_ROOM))
+            isVacant = false;
+    }
+
+    public void removeEntity(Entity entity){
+        entitiesContained.remove(entity);
+        if(!GameFlags.checkStateFlag(entity,GameFlags.NO_ROOM))
+            isVacant = true;
+    }
+
     public boolean canBeMovedTo(){
         return isPassable && isVacant;
     }

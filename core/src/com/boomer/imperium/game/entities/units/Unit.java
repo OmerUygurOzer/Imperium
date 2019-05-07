@@ -6,13 +6,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.*;
 import com.boomer.imperium.game.configs.GameContextInterface;
-import com.boomer.imperium.game.entities.*;
+import com.boomer.imperium.game.entities.Doodad;
+import com.boomer.imperium.game.entities.Entity;
+import com.boomer.imperium.game.entities.Projectile;
+import com.boomer.imperium.game.entities.Town;
 import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.graphics.FrameCounter;
 import com.boomer.imperium.game.graphics.UnitSpriteAnimator;
-import com.boomer.imperium.game.map.Path;
-import com.boomer.imperium.game.map.PathFinder;
 import com.boomer.imperium.game.map.PathTracker;
 
 import java.util.List;
@@ -23,7 +24,6 @@ public final class Unit implements Entity {
     public final Rectangle bounds;
     private final UnitMovement unitMovement;
     private final UnitOrders unitOrders;
-    private final Path unitPath;
     private final PathTracker pathTracker;
     private int memoryIndex;
 
@@ -80,9 +80,8 @@ public final class Unit implements Entity {
 
     public Unit(GameContextInterface gameContext) {
         this.gameContext = gameContext;
-        this.unitOrders = new UnitOrders();
+        this.unitOrders = new UnitOrders(this);
         this.unitMovement = new UnitMovement(gameContext, this, gameContext.getGameConfigs().tileSize, 1f);
-        this.unitPath = new Path(gameContext.getGameConfigs());
         this.tileX = 0;
         this.tileY = 0;
         this.frameCounter = new FrameCounter(8f, 8);
@@ -112,8 +111,8 @@ public final class Unit implements Entity {
     }
 
     public void targetTile(Tile tile) {
-        PathFinder.findPath(unitPath, gameContext.getGameWorld().map, gameContext.getGameWorld().map.getTileAt(tileX, tileY), tile);
-        pathTracker.activate(unitPath);
+        unitOrders.setTargetTile(tile);
+        pathTracker.activate(unitOrders);
         state = UnitState.MOVING;
     }
 
@@ -135,6 +134,11 @@ public final class Unit implements Entity {
     @Override
     public int tileY() {
         return tileY;
+    }
+
+    @Override
+    public List<Tile> getTilesCovered() {
+        return null;
     }
 
 

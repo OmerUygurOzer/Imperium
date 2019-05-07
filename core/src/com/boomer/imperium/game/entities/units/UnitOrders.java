@@ -1,6 +1,36 @@
 package com.boomer.imperium.game.entities.units;
 
+import com.boomer.imperium.game.Tile;
+import com.boomer.imperium.game.entities.Entity;
+
 public class UnitOrders {
-    public int targetTileX;
-    public int targetTileY;
+    private Entity targetEntity;
+    private Tile targetTile;
+    private Unit unit;
+
+    public UnitOrders(Unit unit){
+        this.unit = unit;
+    }
+
+    public void setTargetEntity(Entity entity){
+        this.targetTile = null;
+        this.targetEntity = entity;
+    }
+
+    public void setTargetTile(Tile targetTile){
+        this.targetEntity = null;
+        this.targetTile = targetTile;
+    }
+
+    public Tile getDestinationTile(){
+        if(targetTile!=null)
+            return targetTile;
+        return targetEntity.getTilesCovered().get(0);
+    }
+
+    public Unit getUnit() {
+        return unit;
+    }
+
+
 }

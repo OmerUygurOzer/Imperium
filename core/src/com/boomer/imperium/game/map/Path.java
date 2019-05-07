@@ -17,6 +17,11 @@ public class Path {
         this.currentTask = 0;
     }
 
+    Path(int pathLen){
+        this.tasks = new ArrayList<Direction>(pathLen);
+        this.currentTask = 0;
+    }
+
     void addTask(Direction direction){
         tasks.add(direction);
     }

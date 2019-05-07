@@ -7,9 +7,12 @@ import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.Layer;
 import com.boomer.imperium.game.Nation;
 import com.boomer.imperium.game.Player;
+import com.boomer.imperium.game.Tile;
 import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.map.Bound;
+
+import java.util.List;
 
 public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable {
     void setMemoryIndex(int index);
@@ -17,6 +20,7 @@ public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable {
 
     int tileX();
     int tileY();
+    List<Tile> getTilesCovered();
     void receiveDamage(int damage);
     void setPosition(int tileX, int tileY);
     boolean shouldRemove();

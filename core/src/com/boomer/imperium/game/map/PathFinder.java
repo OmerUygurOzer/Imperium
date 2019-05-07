@@ -46,6 +46,15 @@ public final class PathFinder {
     }
 
     private static final PriorityQueue<Node> QUEUE = new PriorityQueue<Node>(200, QUEUE_COMPARATOR);
+    private static final Path TEMP_PATH = new Path(200);
+
+    public static Direction getNextMoveForTarget(Map map,Tile from,Tile to){
+        TEMP_PATH.tasks.clear();
+        findPath(TEMP_PATH,map,from,to);
+        if(TEMP_PATH.tasks.isEmpty())
+            return Direction.O;
+        return TEMP_PATH.tasks.get(0);
+    }
 
     public static void findPath(Path path, Map map, Tile from, Tile to) {
         path.tasks.clear();

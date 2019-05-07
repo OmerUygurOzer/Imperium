@@ -10,7 +10,8 @@ public enum Direction {
     S(4, (float) Math.sin(Math.toRadians(270)), (float) Math.cos(Math.toRadians(270)), 0, -1),
     SW(5, (float) Math.sin(Math.toRadians(225)), (float) Math.cos(Math.toRadians(225)), -1, -1),
     W(6, (float) Math.sin(Math.toRadians(180)), (float) Math.cos(Math.toRadians(180)), -1, 0),
-    NW(7, (float) Math.sin(Math.toRadians(135)), (float) Math.cos(Math.toRadians(135)), -1, 1);
+    NW(7, (float) Math.sin(Math.toRadians(135)), (float) Math.cos(Math.toRadians(135)), -1, 1),
+    O(-1,0f,0f,0,0);//CENTER
 
     public final float sin;
     public final float cos;

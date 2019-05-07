@@ -56,7 +56,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         this.map = new Map(gameContext.getGameResources(), gameContext.getGameConfigs());
         this.selectedEntities = new ArrayList<Entity>(20);
         this.unitPool = new UnitPool(gameContext);
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 300; i++) {
             Unit unit = unitPool.obtain();
             unit.setTypeFlags(GameFlags.UNIT);
             unit.setUnitSpriteAnimator(gameContext.getGameResources().man);
@@ -344,13 +344,13 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         int priority = entity.getLayer().getPriority();
         entities[layerStartAndCounts[priority][START_INDEX] + layerStartAndCounts[priority][COUNT]] = entity;
         entity.setMemoryIndex(layerStartAndCounts[priority][START_INDEX] + layerStartAndCounts[priority][COUNT]);
-        map.getTileAt(entity.tileX(), entity.tileY()).getEntitiesContained().add(entity);
+        map.getTileAt(entity.tileX(), entity.tileY()).addEntity(entity);
         return layerStartAndCounts[priority][START_INDEX] + layerStartAndCounts[priority][COUNT]++;
     }
 
     public void removeEntity(Entity entity) {
         entities[entity.getMemoryIndex()] = null;
-        map.getTileAt(entity.tileX(), entity.tileY()).getEntitiesContained().remove(entity);
+        map.getTileAt(entity.tileX(), entity.tileY()).removeEntity(entity);
     }
 
     public void selectEntities(List<Entity> entities) {

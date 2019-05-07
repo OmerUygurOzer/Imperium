@@ -124,10 +124,8 @@ public final class Event implements Pool.Poolable {
 
                 break;
             case UNIT_SWITCH_TILES:
-                System.out.println("tile switch");
                 break;
             case UNIT_ARRIVED_AT_TILE:
-                System.out.println("tile arrive");
                 break;
         }
     }
