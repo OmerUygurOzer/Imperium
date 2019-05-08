@@ -15,7 +15,10 @@ import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.graphics.FrameCounter;
 import com.boomer.imperium.game.graphics.UnitSpriteAnimator;
 import com.boomer.imperium.game.map.PathTracker;
+import com.boomer.imperium.game.map.Tile;
+import com.boomer.imperium.game.map.TileVector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class Unit implements Entity {
@@ -26,6 +29,8 @@ public final class Unit implements Entity {
     private final UnitOrders unitOrders;
     private final PathTracker pathTracker;
     private int memoryIndex;
+    private final List<Tile> tilesCovered;
+    private final List<TileVector> tileCoverageVectors;
 
     private Drawable icon;
     private UnitSpriteAnimator unitSpriteAnimator;
@@ -91,6 +96,9 @@ public final class Unit implements Entity {
                 gameContext.getGameConfigs().tileSize);
         this.selectedSprite = gameContext.getGameResources().inGameCursor;
         this.pathTracker = new PathTracker(gameContext, this, gameContext.getGameWorld().map, unitMovement);
+        this.tilesCovered = new ArrayList<Tile>(9);
+        this.tileCoverageVectors = new ArrayList<TileVector>(9);
+        this.tileCoverageVectors.add(new TileVector(0,0));
     }
 
     @Override
@@ -138,7 +146,17 @@ public final class Unit implements Entity {
 
     @Override
     public List<Tile> getTilesCovered() {
-        return null;
+        return tilesCovered;
+    }
+
+    @Override
+    public List<TileVector> getTileCoverageVectors() {
+        return tileCoverageVectors;
+    }
+
+    @Override
+    public void setTileCoverageVectors(List<TileVector> tileCoverageVectors) {
+        //Do nothing. units only ever occupy a single tile
     }
 
 
@@ -157,7 +175,14 @@ public final class Unit implements Entity {
         Tile tile = gameContext.getGameWorld().map.getTileAt(tileX, tileY);
         this.tileX = tile.tileX;
         this.tileY = tile.tileY;
+        this.tilesCovered.clear();
+        this.tilesCovered.add(tile);
         bounds.set(tile.bounds);
+    }
+
+    public void setTile(int x, int y) {
+        this.tileX = x;
+        this.tileY = y;
     }
 
     @Override
@@ -260,18 +285,6 @@ public final class Unit implements Entity {
 
     public void setUnitSpriteAnimator(UnitSpriteAnimator unitSpriteAnimator) {
         this.unitSpriteAnimator = unitSpriteAnimator;
-    }
-
-    public void placeInTile(int tileX, int tileY) {
-        Tile tile = gameContext.getGameWorld().map.getTileAt(tileX, tileY);
-        this.tileX = tile.tileX;
-        this.tileY = tile.tileY;
-        bounds.set(tile.bounds);
-    }
-
-    public void setTile(int x, int y) {
-        this.tileX = x;
-        this.tileY = y;
     }
 
     @Override

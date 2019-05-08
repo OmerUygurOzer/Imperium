@@ -1,7 +1,5 @@
 package com.boomer.imperium.game.configs;
 
-import com.boomer.imperium.game.Tile;
-
 public enum WorldSize {
     SMALL((2 * (float)Math.pow(2,4)) / 2), // 32 x 32
     MEDIUM((3 * (float)Math.pow(2,4)) / 2), // 42 x 42

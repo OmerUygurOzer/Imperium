@@ -1,6 +1,6 @@
 package com.boomer.imperium.game.entities.units;
 
-import com.boomer.imperium.game.Tile;
+import com.boomer.imperium.game.map.Tile;
 import com.boomer.imperium.game.entities.Entity;
 
 public class UnitOrders {
@@ -32,5 +32,9 @@ public class UnitOrders {
         return unit;
     }
 
+    public void clear(){
+        targetEntity = null;
+        targetTile = null;
+    }
 
 }

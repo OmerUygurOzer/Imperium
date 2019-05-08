@@ -197,4 +197,35 @@ public class UnitDetailsTab extends Table {
         this.sneakLabel.setText("Sneak:" + (int) sneak);
         this.tradesmanshipLabel.setText("Tradesmanship:" + (int) tradesmanship);
     }
+
+    public void clearUnit(){
+        this.unit = null;
+        this.curHP = 0f;
+        this.maxHP = 0f;
+        this.combat = 0f;
+        this.leadership = 0f;
+        this.construction = 0f;
+        this.research = 0f;
+        this.mining = 0f;
+        this.manufacturing = 0f;
+        this.farming = 0f;
+        this.artisanship = 0f;
+        this.sneak = 0f;
+        this.tradesmanship = 0;
+
+        this.icon.setDrawable(null);
+        this.healthBar.setRange(0f, maxHP);
+        this.healthBar.setValue(curHP);
+        this.healthLabel.setText((int) maxHP + "/" + (int) curHP);
+        this.combatLabel.setText("Combat:" + (int) combat);
+        this.leadershipLabel.setText("Leadership:" + (int) leadership);
+        this.constructionLabel.setText("Construction:" + (int) construction);
+        this.researchLabel.setText("Research:" + (int) research);
+        this.miningLabel.setText("Mining:" + (int) mining);
+        this.manufacturingLabel.setText("Manufacturing:" + (int) manufacturing);
+        this.farmingLabel.setText("Farming:" + (int) farming);
+        this.artisanshipLabel.setText("Artisanship:" + (int) artisanship);
+        this.sneakLabel.setText("Sneak:" + (int) sneak);
+        this.tradesmanshipLabel.setText("Tradesmanship:" + (int) tradesmanship);
+    }
 }

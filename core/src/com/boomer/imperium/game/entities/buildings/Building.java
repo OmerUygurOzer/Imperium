@@ -6,17 +6,35 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.Layer;
 import com.boomer.imperium.game.Nation;
 import com.boomer.imperium.game.Player;
-import com.boomer.imperium.game.Tile;
+import com.boomer.imperium.game.configs.GameContext;
+import com.boomer.imperium.game.configs.GameContextInterface;
+import com.boomer.imperium.game.map.Tile;
 import com.boomer.imperium.game.entities.Doodad;
 import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.entities.Projectile;
 import com.boomer.imperium.game.entities.Town;
 import com.boomer.imperium.game.entities.units.Unit;
+import com.boomer.imperium.game.map.TileVector;
 
 import java.util.List;
 
 public final class Building implements Entity {
 
+    public enum State{
+        IDLE,
+        ACTIVE,
+        BEING_CONSTRUCTED,
+    }
+
+
+    private final GameContextInterface gameContext;
+    private State state;
+
+
+    public Building(GameContextInterface gameContext){
+        this.gameContext = gameContext;
+        this.state = State.IDLE;
+    }
 
     @Override
     public void setMemoryIndex(int index) {
@@ -41,6 +59,16 @@ public final class Building implements Entity {
     @Override
     public List<Tile> getTilesCovered() {
         return null;
+    }
+
+    @Override
+    public List<TileVector> getTileCoverageVectors() {
+        return null;
+    }
+
+    @Override
+    public void setTileCoverageVectors(List<TileVector> tileCoverageVectors) {
+
     }
 
     @Override
@@ -201,5 +229,13 @@ public final class Building implements Entity {
     @Override
     public Rectangle getBounds() {
         return null;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 }

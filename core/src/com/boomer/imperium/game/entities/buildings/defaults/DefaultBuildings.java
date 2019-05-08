@@ -6,6 +6,7 @@ import com.boomer.imperium.game.Nation;
 import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.entities.buildings.Building;
+import com.boomer.imperium.game.map.TileVector;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +43,21 @@ public class DefaultBuildings {
         }
 
         @Override
+        public List<TileVector> getTileCoverage() {
+            return null;
+        }
+
+        @Override
+        public int widthInTiles() {
+            return 4;
+        }
+
+        @Override
+        public int heightInTiles() {
+            return 4;
+        }
+
+        @Override
         public Building build() {
             return null;
         }
@@ -66,6 +82,21 @@ public class DefaultBuildings {
         @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
+        }
+
+        @Override
+        public List<TileVector> getTileCoverage() {
+            return null;
+        }
+
+        @Override
+        public int widthInTiles() {
+            return 4;
+        }
+
+        @Override
+        public int heightInTiles() {
+            return 4;
         }
 
         @Override
@@ -96,6 +127,21 @@ public class DefaultBuildings {
         }
 
         @Override
+        public List<TileVector> getTileCoverage() {
+            return null;
+        }
+
+        @Override
+        public int widthInTiles() {
+            return 4;
+        }
+
+        @Override
+        public int heightInTiles() {
+            return 4;
+        }
+
+        @Override
         public Building build() {
             return null;
         }
@@ -120,6 +166,21 @@ public class DefaultBuildings {
         @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
+        }
+
+        @Override
+        public List<TileVector> getTileCoverage() {
+            return null;
+        }
+
+        @Override
+        public int widthInTiles() {
+            return 4;
+        }
+
+        @Override
+        public int heightInTiles() {
+            return 4;
         }
 
         @Override
@@ -150,6 +211,21 @@ public class DefaultBuildings {
         }
 
         @Override
+        public List<TileVector> getTileCoverage() {
+            return null;
+        }
+
+        @Override
+        public int widthInTiles() {
+            return 4;
+        }
+
+        @Override
+        public int heightInTiles() {
+            return 4;
+        }
+
+        @Override
         public Building build() {
             return null;
         }
@@ -174,6 +250,21 @@ public class DefaultBuildings {
         @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
+        }
+
+        @Override
+        public List<TileVector> getTileCoverage() {
+            return null;
+        }
+
+        @Override
+        public int widthInTiles() {
+            return 4;
+        }
+
+        @Override
+        public int heightInTiles() {
+            return 4;
         }
 
         @Override
@@ -204,6 +295,21 @@ public class DefaultBuildings {
         }
 
         @Override
+        public List<TileVector> getTileCoverage() {
+            return null;
+        }
+
+        @Override
+        public int widthInTiles() {
+            return 4;
+        }
+
+        @Override
+        public int heightInTiles() {
+            return 4;
+        }
+
+        @Override
         public Building build() {
             return null;
         }
@@ -228,6 +334,21 @@ public class DefaultBuildings {
         @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
+        }
+
+        @Override
+        public List<TileVector> getTileCoverage() {
+            return null;
+        }
+
+        @Override
+        public int widthInTiles() {
+            return 4;
+        }
+
+        @Override
+        public int heightInTiles() {
+            return 4;
         }
 
         @Override
@@ -258,6 +379,21 @@ public class DefaultBuildings {
         }
 
         @Override
+        public List<TileVector> getTileCoverage() {
+            return null;
+        }
+
+        @Override
+        public int widthInTiles() {
+            return 4;
+        }
+
+        @Override
+        public int heightInTiles() {
+            return 4;
+        }
+
+        @Override
         public Building build() {
             return null;
         }
@@ -285,6 +421,21 @@ public class DefaultBuildings {
         }
 
         @Override
+        public List<TileVector> getTileCoverage() {
+            return null;
+        }
+
+        @Override
+        public int widthInTiles() {
+            return 4;
+        }
+
+        @Override
+        public int heightInTiles() {
+            return 4;
+        }
+
+        @Override
         public Building build() {
             return null;
         }
@@ -309,6 +460,21 @@ public class DefaultBuildings {
         @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
+        }
+
+        @Override
+        public List<TileVector> getTileCoverage() {
+            return null;
+        }
+
+        @Override
+        public int widthInTiles() {
+            return 4;
+        }
+
+        @Override
+        public int heightInTiles() {
+            return 4;
         }
 
         @Override

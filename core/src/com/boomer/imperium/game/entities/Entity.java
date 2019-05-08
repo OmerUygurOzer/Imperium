@@ -7,10 +7,11 @@ import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.Layer;
 import com.boomer.imperium.game.Nation;
 import com.boomer.imperium.game.Player;
-import com.boomer.imperium.game.Tile;
 import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.map.Bound;
+import com.boomer.imperium.game.map.Tile;
+import com.boomer.imperium.game.map.TileVector;
 
 import java.util.List;
 
@@ -21,6 +22,9 @@ public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable {
     int tileX();
     int tileY();
     List<Tile> getTilesCovered();
+
+    List<TileVector> getTileCoverageVectors();
+    void setTileCoverageVectors(List<TileVector> tileCoverageVectors);
     void receiveDamage(int damage);
     void setPosition(int tileX, int tileY);
     boolean shouldRemove();

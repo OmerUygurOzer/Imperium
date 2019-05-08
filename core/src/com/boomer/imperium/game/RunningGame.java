@@ -12,12 +12,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boomer.imperium.core.GameState;
 import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.configs.GameContext;
-import com.boomer.imperium.game.configs.WorldSize;
 import com.boomer.imperium.game.events.Event;
 import com.boomer.imperium.game.events.EventManager;
 import com.boomer.imperium.game.events.Trigger;
-import com.boomer.imperium.game.gui.Cursor;
-import com.boomer.imperium.game.gui.GameGui;
 import com.boomer.imperium.game.gui.GuiHolder;
 
 public final class RunningGame extends GameState {

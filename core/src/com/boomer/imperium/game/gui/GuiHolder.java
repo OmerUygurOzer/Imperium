@@ -8,8 +8,9 @@ import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.ScreenSensitive;
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.configs.GameContext;
+import com.boomer.imperium.game.entities.buildings.Buildable;
 
-public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable {
+public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable,GameGui.GUIListener {
 
     private final GameContext gameContext;
     private final Viewport gameViewport;
@@ -18,17 +19,17 @@ public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable {
     private float virtualXRatio;
     private float virtualYRatio;
     private final GameGui gameGui;
-    private final Cursor cursor;
+    private final GameCursor cursor;
 
     public GuiHolder(GameContext gameContext, ShapeRenderer shapeRenderer, Viewport gameViewport, SpriteBatch spriteBatch){
         this.gameContext = gameContext;
         this.gameViewport = gameViewport;
         this.gameScreenBounds = new Rectangle();
         this.gameGui = new GameGui(gameContext,this,gameViewport,spriteBatch);
-        this.cursor = new Cursor(gameContext,this,shapeRenderer,gameViewport);
+        this.cursor = new GameCursor(gameContext,this,shapeRenderer,gameViewport);
     }
 
-    public Cursor getCursor(){
+    public GameCursor getCursor(){
         return cursor;
     }
 
@@ -58,7 +59,9 @@ public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable {
 
     @Override
     public void render(SpriteBatch spriteBatch) {
+        spriteBatch.begin();
         cursor.render(spriteBatch);
+        spriteBatch.end();
         gameGui.render(spriteBatch);
     }
 
@@ -81,5 +84,16 @@ public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable {
     @Override
     public void update(float deltaTime) {
         gameGui.update(deltaTime);
+
+    }
+
+    @Override
+    public void selectedBuildable(Buildable buildable) {
+        cursor.setBuildingToBuild(buildable);
+    }
+
+    @Override
+    public void clearBuildable() {
+        cursor.clearBuildingToBuild();
     }
 }

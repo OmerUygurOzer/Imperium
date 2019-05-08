@@ -74,6 +74,8 @@ public class PathTracker implements TimedUpdateable {
                         .getNextMoveForTarget(map,
                                 map.getTileAt(unitOrders.getUnit().tileX(), unitOrders.getUnit().tileY()),
                                 unitOrders.getDestinationTile());
+                if(direction==Direction.O || direction==null)
+                    state = State.IDLE;
             } else {
                 direction = Direction.O;
             }

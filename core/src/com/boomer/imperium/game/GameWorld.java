@@ -15,6 +15,7 @@ import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.entities.units.UnitPool;
 import com.boomer.imperium.game.map.Map;
+import com.boomer.imperium.game.map.TileVector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,13 +57,13 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         this.map = new Map(gameContext.getGameResources(), gameContext.getGameConfigs());
         this.selectedEntities = new ArrayList<Entity>(20);
         this.unitPool = new UnitPool(gameContext);
-        for (int i = 0; i < 300; i++) {
+        for (int i = 0; i < 30; i++) {
             Unit unit = unitPool.obtain();
             unit.setTypeFlags(GameFlags.UNIT);
             unit.setUnitSpriteAnimator(gameContext.getGameResources().man);
             unit.setUnitLayer(Layer.GROUND);
             unit.setFacing(Direction.NE);
-            unit.placeInTile(MathUtils.random(0, 47), MathUtils.random(0, 47));
+            unit.setPosition(MathUtils.random(0, 47), MathUtils.random(0, 47));
             unit.setIcon(LogicUtils.randomSelect(Arrays.asList(gameContext.getGameResources().normanIcon, gameContext.getGameResources().grokkenIcon,
                     gameContext.getGameResources().mayanIcon, gameContext.getGameResources().greekIcon, gameContext.getGameResources().vikingIcon)));
             unit.setMaxHp(200);
@@ -76,7 +77,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
 
                 @Override
                 public Drawable getCursorFillerSprite() {
-                    return null;
+                    return gameContext.getGameResources().anotherTemple;
                 }
 
                 @Override
@@ -90,6 +91,21 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 }
 
                 @Override
+                public List<TileVector> getTileCoverage() {
+                    return null;
+                }
+
+                @Override
+                public int widthInTiles() {
+                    return 2;
+                }
+
+                @Override
+                public int heightInTiles() {
+                    return 2;
+                }
+
+                @Override
                 public Building build() {
                     return null;
                 }
@@ -101,7 +117,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
 
                 @Override
                 public Drawable getCursorFillerSprite() {
-                    return null;
+                    return gameContext.getGameResources().temple;
                 }
 
                 @Override
@@ -115,28 +131,18 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 }
 
                 @Override
-                public Building build() {
-                    return null;
-                }
-            }, new Buildable() {
-                @Override
-                public String getName() {
+                public List<TileVector> getTileCoverage() {
                     return null;
                 }
 
                 @Override
-                public Drawable getCursorFillerSprite() {
-                    return null;
+                public int widthInTiles() {
+                    return 2;
                 }
 
                 @Override
-                public Rectangle getCursorFillerRectangle() {
-                    return null;
-                }
-
-                @Override
-                public Drawable getUIIcon() {
-                    return gameContext.getGameResources().universityButtonDrawable;
+                public int heightInTiles() {
+                    return 2;
                 }
 
                 @Override
@@ -151,7 +157,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
 
                 @Override
                 public Drawable getCursorFillerSprite() {
-                    return null;
+                    return gameContext.getGameResources().dragonTemple;
                 }
 
                 @Override
@@ -165,128 +171,18 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 }
 
                 @Override
-                public Building build() {
-                    return null;
-                }
-            }, new Buildable() {
-                @Override
-                public String getName() {
+                public List<TileVector> getTileCoverage() {
                     return null;
                 }
 
                 @Override
-                public Drawable getCursorFillerSprite() {
-                    return null;
+                public int widthInTiles() {
+                    return 2;
                 }
 
                 @Override
-                public Rectangle getCursorFillerRectangle() {
-                    return null;
-                }
-
-                @Override
-                public Drawable getUIIcon() {
-                    return gameContext.getGameResources().universityButtonDrawable;
-                }
-
-                @Override
-                public Building build() {
-                    return null;
-                }
-            }, new Buildable() {
-                @Override
-                public String getName() {
-                    return null;
-                }
-
-                @Override
-                public Drawable getCursorFillerSprite() {
-                    return null;
-                }
-
-                @Override
-                public Rectangle getCursorFillerRectangle() {
-                    return null;
-                }
-
-                @Override
-                public Drawable getUIIcon() {
-                    return gameContext.getGameResources().universityButtonDrawable;
-                }
-
-                @Override
-                public Building build() {
-                    return null;
-                }
-            }, new Buildable() {
-                @Override
-                public String getName() {
-                    return null;
-                }
-
-                @Override
-                public Drawable getCursorFillerSprite() {
-                    return null;
-                }
-
-                @Override
-                public Rectangle getCursorFillerRectangle() {
-                    return null;
-                }
-
-                @Override
-                public Drawable getUIIcon() {
-                    return gameContext.getGameResources().universityButtonDrawable;
-                }
-
-                @Override
-                public Building build() {
-                    return null;
-                }
-            }, new Buildable() {
-                @Override
-                public String getName() {
-                    return null;
-                }
-
-                @Override
-                public Drawable getCursorFillerSprite() {
-                    return null;
-                }
-
-                @Override
-                public Rectangle getCursorFillerRectangle() {
-                    return null;
-                }
-
-                @Override
-                public Drawable getUIIcon() {
-                    return gameContext.getGameResources().universityButtonDrawable;
-                }
-
-                @Override
-                public Building build() {
-                    return null;
-                }
-            }, new Buildable() {
-                @Override
-                public String getName() {
-                    return null;
-                }
-
-                @Override
-                public Drawable getCursorFillerSprite() {
-                    return null;
-                }
-
-                @Override
-                public Rectangle getCursorFillerRectangle() {
-                    return null;
-                }
-
-                @Override
-                public Drawable getUIIcon() {
-                    return gameContext.getGameResources().universityButtonDrawable;
+                public int heightInTiles() {
+                    return 2;
                 }
 
                 @Override

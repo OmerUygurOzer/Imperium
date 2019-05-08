@@ -1,5 +1,6 @@
 package com.boomer.imperium.game.gui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
@@ -12,9 +13,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.ScreenSensitive;
 import com.boomer.imperium.game.configs.GameContext;
+import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.events.EventType;
+import com.boomer.imperium.game.map.Tile;
 
-public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
+public class GameCursor implements ScreenSensitive, InputProcessor, Renderable {
 
     private final GuiHolder guiHolder;
     private final ShapeRenderer shapeRenderer;
@@ -31,7 +34,12 @@ public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
     private final Rectangle dragRectangle;
     private final Vector2 dragStart;
 
-    public Cursor(GameContext gameContext, GuiHolder guiHolder, ShapeRenderer shapeRenderer, Viewport gameViewport) {
+    private Buildable buildingToBuild;
+    private Tile buildTile;
+    private final Rectangle buildDrawRectangle;
+
+
+    public GameCursor(GameContext gameContext, GuiHolder guiHolder, ShapeRenderer shapeRenderer, Viewport gameViewport) {
         this.guiHolder = guiHolder;
         this.gameContext = gameContext;
         this.shapeRenderer = shapeRenderer;
@@ -42,6 +50,7 @@ public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
         this.bounds = new Rectangle(0f, 0f, gameContext.getGameConfigs().tileSize, gameContext.getGameConfigs().tileSize);
         this.dragRectangle = new Rectangle();
         this.dragStart = new Vector2();
+        this.buildDrawRectangle = new Rectangle();
     }
 
     @Override
@@ -122,6 +131,19 @@ public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         hover(screenX, screenY);
+        if(buildingToBuild!=null){
+            if (buildTile==null)
+                buildTile = gameContext.getGameWorld().map.findTile(gameLocation);
+            if(!buildTile.equals(gameContext.getGameWorld().map.findTile(gameLocation))){
+                buildTile = gameContext.getGameWorld().map.findTile(gameLocation);
+                float width = buildingToBuild.widthInTiles() * gameContext.getGameConfigs().tileSize;
+                float height = buildingToBuild.heightInTiles() * gameContext.getGameConfigs().tileSize;
+                Tile leftendTile = gameContext.getGameWorld().map.getTileAt(buildTile.tileX-(buildingToBuild.widthInTiles()-1),buildTile.tileY);
+                float x = leftendTile.bounds.x;
+                float y = leftendTile.bounds.y;
+                buildDrawRectangle.set(x,y,width,height);
+            }
+        }
         return false;
     }
 
@@ -138,8 +160,18 @@ public class Cursor implements ScreenSensitive, InputProcessor, Renderable {
             shapeRenderer.setColor(Color.YELLOW);
             shapeRenderer.rect(dragRectangle.x, dragRectangle.y, dragRectangle.width, dragRectangle.height);
             shapeRenderer.end();
+            return;
+        }
+        if(buildingToBuild!=null){
+            buildingToBuild.getCursorFillerSprite().draw(spriteBatch,buildDrawRectangle.x,buildDrawRectangle.y,buildDrawRectangle.width,buildDrawRectangle.height);
         }
     }
 
+    public void clearBuildingToBuild() {
+        buildingToBuild = null;
+    }
 
+    public void setBuildingToBuild(Buildable buildingToBuild) {
+        this.buildingToBuild = buildingToBuild;
+    }
 }

@@ -3,7 +3,6 @@ package com.boomer.imperium.game.map;
 import com.badlogic.gdx.utils.Pool;
 import com.boomer.imperium.game.Direction;
 import com.boomer.imperium.game.LogicUtils;
-import com.boomer.imperium.game.Tile;
 
 import java.util.Comparator;
 import java.util.HashSet;

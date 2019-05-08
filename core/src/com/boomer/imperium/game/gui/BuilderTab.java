@@ -45,9 +45,7 @@ public class BuilderTab extends ScrollPane {
 
 
     public void setBuildables(List<Buildable> buildables) {
-        mappedButtons.clear();
-        container.clear();
-        container.pack();
+        clearBuildables();
         for(int i = 0; i < buildables.size() && i < existingButtons.size(); i ++){
             if(i%2==0)
                 container.row();
@@ -62,6 +60,12 @@ public class BuilderTab extends ScrollPane {
             container.removeActor(existingButtons.get(i));
         }
         this.pack();
+    }
+
+    public void clearBuildables(){
+        mappedButtons.clear();;
+        container.clear();
+        container.pack();;
     }
 
     public interface Listener{

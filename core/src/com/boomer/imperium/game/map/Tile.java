@@ -1,10 +1,11 @@
-package com.boomer.imperium.game;
+package com.boomer.imperium.game.map;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.boomer.imperium.core.Renderable;
+import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.entities.Entity;
 

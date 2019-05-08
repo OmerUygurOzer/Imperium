@@ -25,6 +25,12 @@ import java.util.List;
 
 public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, Renderable,BuilderTab.Listener {
 
+    private enum State{
+        IDLE,
+        SELECTED,
+        BUILDING
+    }
+
     private final GuiHolder guiHolder;
     private final Resources resources;
     private final float guiWidth;
@@ -52,6 +58,10 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
     private final BuilderTab builderTab;
     private final UnitDetailsTab unitDetailsTab;
 
+    private State state;
+
+    private Buildable currentSelectedBuildable;
+
     public GameGui(GameContext gameContext,GuiHolder guiHolder ,Viewport gameViewport, SpriteBatch spriteBatch) {
         super(new ExtendViewport(gameViewport.getWorldWidth(), gameViewport.getWorldHeight(), new OrthographicCamera()), spriteBatch);
         this.guiHolder = guiHolder;
@@ -77,6 +87,7 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
         this.buildButton = new ImageButton(resources.buildButton);
         this.buildButton.addListener(getBuildButtonListener());
         this.unitDetailsTab = new UnitDetailsTab(skin);
+        this.state = State.IDLE;
         setGUIActors();
     }
 
@@ -156,6 +167,7 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
 
 
     public void selectedEntities(List<Entity> entities) {
+        state = State.SELECTED;
         if(entities.isEmpty()){
             return;
         }
@@ -164,7 +176,12 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
 
 
     public void entitiesDeSelected() {
+        state = State.IDLE;
         setCurrentTrainDetailsTab(unitDetailsTab);
+        currentSelectedBuildable = null;
+        builderTab.clearBuildables();
+        unitDetailsTab.clearUnit();
+        guiHolder.clearBuildable();
     }
 
     private void adjustForEntity(Entity entity){
@@ -199,6 +216,13 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
 
     @Override
     public void selectedBuildable(Buildable buildable) {
+        state = State.BUILDING;
+        currentSelectedBuildable = buildable;
+        guiHolder.selectedBuildable(buildable);
+    }
 
+    public interface GUIListener{
+        void selectedBuildable(Buildable buildable);
+        void clearBuildable();
     }
 }
