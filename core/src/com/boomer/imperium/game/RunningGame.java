@@ -17,6 +17,8 @@ import com.boomer.imperium.game.events.defaults.DefaultActions;
 import com.boomer.imperium.game.gui.GuiHolder;
 import com.boomer.imperium.game.map.Map;
 
+import javax.script.Invocable;
+
 public final class RunningGame extends GameState {
 
     private static final int SCREEN_WIDTH_IN_TILES = 20;
@@ -74,7 +76,6 @@ public final class RunningGame extends GameState {
         this.eventManager.registerTrigger(EventType.BUILDABLE_PICKED)
                 .addResult(DefaultActions.PICK_BUILDABLE_IN_GAME_WORLD)
                 .setCondition(Trigger.ALWAYS_RUN);
-
 
         addProcessor(guiHolder.getGUI());
         addProcessor(guiHolder.getCursor());

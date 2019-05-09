@@ -23,7 +23,7 @@ public final class EventManager implements TimedUpdateable {
     public EventManager(GameContext gameContext, Pool<Event> eventPool, Pool<Trigger> triggerPool) {
         this.gameContext = gameContext;
         this.gameContext.setEventManager(this);
-        this.eventsToRun = new ArrayList<Event>(gameContext.getGameConfigs().eventsInitialCapacity);
+        this.eventsToRun = new ArrayList<>(gameContext.getGameConfigs().eventsInitialCapacity);
         this.triggerMap = new LinkedHashMap<EventType, LinkedList<Trigger>>();
         for (EventType eventType : EventType.values()) {
             triggerMap.put(eventType, new LinkedList<Trigger>());
