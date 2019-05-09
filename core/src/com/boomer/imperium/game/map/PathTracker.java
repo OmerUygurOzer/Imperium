@@ -47,12 +47,12 @@ public class PathTracker implements TimedUpdateable {
             map.getTileAt(unit.tileX(), unit.tileY()).removeEntity(unit);
             unit.setTile(tileX, tileY);
             map.getTileAt(tileX, tileY).addEntity(unit);
-            gameContext.getEventManager().raiseEvent(EventType.UNIT_SWITCH_TILES)
-                    .setParams(unit.getMemoryIndex())
-                    .setParams(unit.tileX())
-                    .setParams(unit.tileY())
-                    .setParams(tileX)
-                    .setParams(tileY);
+//            gameContext.getEventManager().raiseEvent(EventType.UNIT_SWITCH_TILES)
+//                    .setParams(unit.getMemoryIndex())
+//                    .setParams(unit.tileX())
+//                    .setParams(unit.tileY())
+//                    .setParams(tileX)
+//                    .setParams(tileY);
         } else if (mov >= 1f) {
             unitMovement.setLength(0);
             Direction direction = null;
@@ -86,10 +86,9 @@ public class PathTracker implements TimedUpdateable {
                 setTargetForDirection(direction);
                 unitMovement.setDirection(direction);
             }
-            gameContext.getEventManager().raiseEvent(EventType.UNIT_ARRIVED_AT_TILE)
-                    .setParams(unit.getMemoryIndex())
-                    .setParams(tileX)
-                    .setParams(tileY);
+//            gameContext.getEventManager().raiseEvent(EventType.UNIT_ARRIVED_AT_TILE)
+//                    .setParams(tileX)
+//                    .setParams(tileY);
         }
     }
 

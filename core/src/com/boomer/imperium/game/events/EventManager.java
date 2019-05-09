@@ -16,16 +16,14 @@ public final class EventManager implements TimedUpdateable {
 
     private GameContext gameContext;
     private final Pool<Event> eventPool;
-    public final Pool<Trigger> triggerPool;
+    private final Pool<Trigger> triggerPool;
     private final ArrayList<Event> eventsToRun;
-    private final ArrayList<Action> actionsToRun;
     private LinkedHashMap<EventType, LinkedList<Trigger>> triggerMap;
 
     public EventManager(GameContext gameContext, Pool<Event> eventPool, Pool<Trigger> triggerPool) {
         this.gameContext = gameContext;
         this.gameContext.setEventManager(this);
         this.eventsToRun = new ArrayList<Event>(gameContext.getGameConfigs().eventsInitialCapacity);
-        this.actionsToRun = new ArrayList<Action>(gameContext.getGameConfigs().eventsInitialCapacity);
         this.triggerMap = new LinkedHashMap<EventType, LinkedList<Trigger>>();
         for (EventType eventType : EventType.values()) {
             triggerMap.put(eventType, new LinkedList<Trigger>());
@@ -55,14 +53,16 @@ public final class EventManager implements TimedUpdateable {
             while (triggerIterator.hasNext()) {
                 Trigger trigger = triggerIterator.next();
                 if (trigger.runEvent(event)) {
-//                    for(Action action : trigger.results()){
-//                        action.perform(a);
-//                    }
-                    triggerPool.free(trigger);
-                    triggerIterator.remove();
+                    for(Action action : trigger.results()){
+                       boolean done = action.perform(gameContext,event.getParams(),deltaTime);
+                       if(done){
+                           triggerPool.free(trigger);
+                           triggerIterator.remove();
+                       }
+                    }
+
                 }
             }
-            event.fire();
             eventPool.free(event);
         }
         eventsToRun.clear();

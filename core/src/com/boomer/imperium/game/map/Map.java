@@ -8,8 +8,25 @@ import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.game.*;
 import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.entities.Entity;
+import com.boomer.imperium.game.events.Condition;
+import com.boomer.imperium.game.events.Event;
+import com.boomer.imperium.game.events.Parameters;
 
 public class Map implements Renderable {
+
+    public static final Condition IS_POINT_WITHIN_MAP = new Condition() {
+        @Override
+        public boolean check(Event event) {
+            return event.getGameContext().getGameWorld().map.mapRectangle.contains(event.getParams().getVector(Parameters.Key.MOUSE_LOCATION));
+        }
+    };
+
+    public static final Condition IS_RECTANGLE_WITHIN_MAP = new Condition() {
+        @Override
+        public boolean check(Event event) {
+            return event.getGameContext().getGameWorld().map.mapRectangle.overlaps(event.getParams().getRectangle(Parameters.Key.MOUSE_DRAG_RECTANGLE));
+        }
+    };
 
     private final GameConfigs configs;
     private final Resources mapResources;
@@ -57,6 +74,10 @@ public class Map implements Renderable {
 
     public Tile findTile(float x, float y) {
         return getTileAt((int)Math.floor(x/configs.tileSize),(int)Math.floor(y/configs.tileSize));
+    }
+
+    public boolean contains(Vector2 point){
+        return mapRectangle.contains(point);
     }
 
     @Override

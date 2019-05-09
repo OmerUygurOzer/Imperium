@@ -4,19 +4,35 @@ import com.badlogic.gdx.utils.Pool;
 import com.boomer.imperium.game.GameWorld;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class Trigger implements Pool.Poolable {
 
-    private GameWorld gameWorld;
+    public static final Condition ALWAYS_RUN = new Condition() {
+        @Override
+        public boolean check(Event event) {
+            return true;
+        }
+    };
+
     private Condition condition;
     private List<Action> results;
 
-    public Trigger(GameWorld gameWorld){
+    public Trigger(){
         this.results = new ArrayList<Action>();
-        this.gameWorld = gameWorld;
     }
 
+    public Trigger(Condition condition,List<Action> results){
+        this.condition = condition;
+        this.results = results;
+    }
+
+
+    public Trigger(Condition condition,Action... results){
+        this.condition = condition;
+        this.results = Arrays.asList(results);
+    }
     public List<Action> results(){
         return results;
     }

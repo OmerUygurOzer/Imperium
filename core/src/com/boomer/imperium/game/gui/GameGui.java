@@ -20,8 +20,11 @@ import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.events.EventManager;
+import com.boomer.imperium.game.events.EventType;
 
 import java.util.List;
+
+import static com.boomer.imperium.game.events.Parameters.Key.BUILDABLE_TO_BUILD;
 
 public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, Renderable,BuilderTab.Listener {
 
@@ -181,7 +184,6 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
         currentSelectedBuildable = null;
         builderTab.clearBuildables();
         unitDetailsTab.clearUnit();
-        guiHolder.clearBuildable();
     }
 
     private void adjustForEntity(Entity entity){
@@ -217,12 +219,7 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
     @Override
     public void selectedBuildable(Buildable buildable) {
         state = State.BUILDING;
-        currentSelectedBuildable = buildable;
-        guiHolder.selectedBuildable(buildable);
-    }
-
-    public interface GUIListener{
-        void selectedBuildable(Buildable buildable);
-        void clearBuildable();
+        eventManager.raiseEvent(EventType.BUILDABLE_PICKED)
+                .getParams().putParameter(BUILDABLE_TO_BUILD,buildable);
     }
 }

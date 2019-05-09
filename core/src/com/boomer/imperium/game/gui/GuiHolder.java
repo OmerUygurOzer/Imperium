@@ -10,7 +10,7 @@ import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.configs.GameContext;
 import com.boomer.imperium.game.entities.buildings.Buildable;
 
-public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable,GameGui.GUIListener {
+public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable{
 
     private final GameContext gameContext;
     private final Viewport gameViewport;
@@ -26,6 +26,7 @@ public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable,G
         this.gameViewport = gameViewport;
         this.gameScreenBounds = new Rectangle();
         this.gameGui = new GameGui(gameContext,this,gameViewport,spriteBatch);
+        this.gameGui.setEventManager(gameContext.getEventManager());
         this.cursor = new GameCursor(gameContext,this,shapeRenderer,gameViewport);
     }
 
@@ -87,13 +88,4 @@ public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable,G
 
     }
 
-    @Override
-    public void selectedBuildable(Buildable buildable) {
-        cursor.setBuildingToBuild(buildable);
-    }
-
-    @Override
-    public void clearBuildable() {
-        cursor.clearBuildingToBuild();
-    }
 }

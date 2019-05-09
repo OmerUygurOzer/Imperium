@@ -15,6 +15,7 @@ import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.entities.units.UnitPool;
 import com.boomer.imperium.game.map.Map;
+import com.boomer.imperium.game.map.Tile;
 import com.boomer.imperium.game.map.TileVector;
 
 import java.util.ArrayList;
@@ -42,6 +43,10 @@ public final class GameWorld implements Renderable, TimedUpdateable {
 
     public final UnitPool unitPool;
 
+    private Buildable buildingToBuild;
+    private Tile buildTile;
+    private final Rectangle buildDrawRectangle;
+
     public GameWorld(final GameContext gameContext) {
         gameContext.setGameWorld(this);
         this.gameContext = gameContext;
@@ -57,6 +62,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         this.map = new Map(gameContext.getGameResources(), gameContext.getGameConfigs());
         this.selectedEntities = new ArrayList<Entity>(20);
         this.unitPool = new UnitPool(gameContext);
+        this.buildDrawRectangle = new Rectangle();
         for (int i = 0; i < 30; i++) {
             Unit unit = unitPool.obtain();
             unit.setTypeFlags(GameFlags.UNIT);
@@ -223,6 +229,8 @@ public final class GameWorld implements Renderable, TimedUpdateable {
             }
             layerStartAndCounts[i][COUNT] = nullTracker - layerStartAndCounts[i][START_INDEX];
         }
+
+
     }
 
     @Override
@@ -233,6 +241,9 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                  j < layerStartAndCounts[i][START_INDEX] + layerStartAndCounts[i][COUNT]; j++) {
                 entities[j].render(spriteBatch);
             }
+        }
+        if(buildingToBuild!=null){
+            buildingToBuild.getCursorFillerSprite().draw(spriteBatch,buildDrawRectangle.x,buildDrawRectangle.y,buildDrawRectangle.width,buildDrawRectangle.height);
         }
     }
 
@@ -260,6 +271,28 @@ public final class GameWorld implements Renderable, TimedUpdateable {
             entity.deSelect();
         }
         this.selectedEntities.clear();
+        this.buildingToBuild = null;
+        this.buildTile = null;
+    }
+
+    public void mouseHover(Vector2 hoverLocation){
+        if(buildingToBuild!=null){
+            if (buildTile==null)
+                buildTile = gameContext.getGameWorld().map.findTile(hoverLocation);
+            if(!buildTile.equals(gameContext.getGameWorld().map.findTile(hoverLocation))){
+                buildTile = gameContext.getGameWorld().map.findTile(hoverLocation);
+                float width = buildingToBuild.widthInTiles() * gameContext.getGameConfigs().tileSize;
+                float height = buildingToBuild.heightInTiles() * gameContext.getGameConfigs().tileSize;
+                Tile leftendTile = gameContext.getGameWorld().map.getTileAt(buildTile.tileX-(buildingToBuild.widthInTiles()-1),buildTile.tileY);
+                float x = leftendTile.bounds.x;
+                float y = leftendTile.bounds.y;
+                buildDrawRectangle.set(x,y,width,height);
+            }
+        }
+    }
+
+    public void setBuildingToBuild(Buildable buildingToBuild){
+        this.buildingToBuild = buildingToBuild;
     }
 
     public Nation getNation(int nationIndex) {
@@ -270,8 +303,5 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         return null;
     }
 
-    public void setOrderForSelected(Vector2 vector2){
-        for (Entity entity : selectedEntities)
-            entity.asUnit().targetTile(map.findTile(vector2));
-    }
+
 }

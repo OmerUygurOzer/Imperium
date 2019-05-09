@@ -15,6 +15,7 @@ import com.boomer.imperium.core.ScreenSensitive;
 import com.boomer.imperium.game.configs.GameContext;
 import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.events.EventType;
+import com.boomer.imperium.game.events.Parameters;
 import com.boomer.imperium.game.map.Tile;
 
 public class GameCursor implements ScreenSensitive, InputProcessor, Renderable {
@@ -34,11 +35,6 @@ public class GameCursor implements ScreenSensitive, InputProcessor, Renderable {
     private final Rectangle dragRectangle;
     private final Vector2 dragStart;
 
-    private Buildable buildingToBuild;
-    private Tile buildTile;
-    private final Rectangle buildDrawRectangle;
-
-
     public GameCursor(GameContext gameContext, GuiHolder guiHolder, ShapeRenderer shapeRenderer, Viewport gameViewport) {
         this.guiHolder = guiHolder;
         this.gameContext = gameContext;
@@ -50,7 +46,6 @@ public class GameCursor implements ScreenSensitive, InputProcessor, Renderable {
         this.bounds = new Rectangle(0f, 0f, gameContext.getGameConfigs().tileSize, gameContext.getGameConfigs().tileSize);
         this.dragRectangle = new Rectangle();
         this.dragStart = new Vector2();
-        this.buildDrawRectangle = new Rectangle();
     }
 
     @Override
@@ -87,12 +82,12 @@ public class GameCursor implements ScreenSensitive, InputProcessor, Renderable {
         hover(screenX, screenY);
         if (button == Input.Buttons.LEFT) {
             gameContext.getEventManager().raiseEvent(EventType.MOUSE_LEFT_CLICK)
-                    .setParams(gameLocation);
+                    .getParams().putParameter(Parameters.Key.MOUSE_LOCATION,gameLocation);
             return true;
         }
         if (button == Input.Buttons.RIGHT) {
             gameContext.getEventManager().raiseEvent(EventType.MOUSE_RIGHT_CLICK)
-                    .setParams(gameLocation);
+                    .getParams().putParameter(Parameters.Key.MOUSE_LOCATION,gameLocation);
             return true;
         }
 
@@ -105,7 +100,7 @@ public class GameCursor implements ScreenSensitive, InputProcessor, Renderable {
         if (isDragging) {
             isDragging = false;
             gameContext.getEventManager().raiseEvent(EventType.MOUSE_DRAG)
-                    .setParams(dragRectangle);
+                    .getParams().putParameter(Parameters.Key.MOUSE_DRAG_RECTANGLE,dragRectangle);
         }
         return false;
     }
@@ -131,19 +126,9 @@ public class GameCursor implements ScreenSensitive, InputProcessor, Renderable {
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         hover(screenX, screenY);
-        if(buildingToBuild!=null){
-            if (buildTile==null)
-                buildTile = gameContext.getGameWorld().map.findTile(gameLocation);
-            if(!buildTile.equals(gameContext.getGameWorld().map.findTile(gameLocation))){
-                buildTile = gameContext.getGameWorld().map.findTile(gameLocation);
-                float width = buildingToBuild.widthInTiles() * gameContext.getGameConfigs().tileSize;
-                float height = buildingToBuild.heightInTiles() * gameContext.getGameConfigs().tileSize;
-                Tile leftendTile = gameContext.getGameWorld().map.getTileAt(buildTile.tileX-(buildingToBuild.widthInTiles()-1),buildTile.tileY);
-                float x = leftendTile.bounds.x;
-                float y = leftendTile.bounds.y;
-                buildDrawRectangle.set(x,y,width,height);
-            }
-        }
+        gameContext.getEventManager().raiseEvent(EventType.MOUSE_MOVE)
+                .getParams().putParameter(Parameters.Key.MOUSE_LOCATION,gameLocation);
+
         return false;
     }
 
@@ -162,16 +147,6 @@ public class GameCursor implements ScreenSensitive, InputProcessor, Renderable {
             shapeRenderer.end();
             return;
         }
-        if(buildingToBuild!=null){
-            buildingToBuild.getCursorFillerSprite().draw(spriteBatch,buildDrawRectangle.x,buildDrawRectangle.y,buildDrawRectangle.width,buildDrawRectangle.height);
-        }
     }
 
-    public void clearBuildingToBuild() {
-        buildingToBuild = null;
-    }
-
-    public void setBuildingToBuild(Buildable buildingToBuild) {
-        this.buildingToBuild = buildingToBuild;
-    }
 }

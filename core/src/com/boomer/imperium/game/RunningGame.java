@@ -12,10 +12,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boomer.imperium.core.GameState;
 import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.configs.GameContext;
-import com.boomer.imperium.game.events.Event;
-import com.boomer.imperium.game.events.EventManager;
-import com.boomer.imperium.game.events.Trigger;
+import com.boomer.imperium.game.events.*;
+import com.boomer.imperium.game.events.defaults.DefaultActions;
 import com.boomer.imperium.game.gui.GuiHolder;
+import com.boomer.imperium.game.map.Map;
 
 public final class RunningGame extends GameState {
 
@@ -44,21 +44,38 @@ public final class RunningGame extends GameState {
         this.gameContext.setGameResources(new Resources());
         this.gameContext.setGameConfigs(gameConfigs);
         this.gameWorld = new GameWorld(gameContext);
-        this.guiHolder = new GuiHolder(gameContext, shapeRenderer,viewPort, spriteBatch);
-        this.gameContext.setGameGui(guiHolder.getGUI());
         this.eventManager = new EventManager(gameContext,
                 new Pool<Event>(gameConfigs.eventsInitialCapacity) {
                     @Override
                     protected Event newObject() {
-                        return new Event(gameWorld, guiHolder.getGUI());
+                        return new Event(gameContext);
                     }
                 },
                 new Pool<Trigger>(gameConfigs.eventsInitialCapacity) {
                     @Override
                     protected Trigger newObject() {
-                        return new Trigger(gameWorld);
+                        return new Trigger();
                     }
                 });
+        this.guiHolder = new GuiHolder(gameContext, shapeRenderer,viewPort, spriteBatch);
+        this.gameContext.setGameGui(guiHolder.getGUI());
+        this.eventManager.registerTrigger(EventType.MOUSE_LEFT_CLICK)
+                .addResult(DefaultActions.SELECT_ENTITIES_IN_TILE)
+                .setCondition(Map.IS_POINT_WITHIN_MAP);
+        this.eventManager.registerTrigger(EventType.MOUSE_RIGHT_CLICK)
+                .addResult(DefaultActions.DESELECTED_ENTITIES)
+                .setCondition(Map.IS_POINT_WITHIN_MAP);
+        this.eventManager.registerTrigger(EventType.MOUSE_DRAG)
+                .addResult(DefaultActions.SELECT_ENTITIES_IN_RECTANGLE)
+                .setCondition(Map.IS_RECTANGLE_WITHIN_MAP);
+        this.eventManager.registerTrigger(EventType.MOUSE_MOVE)
+                .addResult(DefaultActions.MOUSE_HOVER_IN_GAME_WORLD)
+                .setCondition(Map.IS_POINT_WITHIN_MAP);
+        this.eventManager.registerTrigger(EventType.BUILDABLE_PICKED)
+                .addResult(DefaultActions.PICK_BUILDABLE_IN_GAME_WORLD)
+                .setCondition(Trigger.ALWAYS_RUN);
+
+
         addProcessor(guiHolder.getGUI());
         addProcessor(guiHolder.getCursor());
     }

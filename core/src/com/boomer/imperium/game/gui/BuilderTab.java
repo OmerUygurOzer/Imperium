@@ -63,9 +63,9 @@ public class BuilderTab extends ScrollPane {
     }
 
     public void clearBuildables(){
-        mappedButtons.clear();;
+        mappedButtons.clear();
         container.clear();
-        container.pack();;
+        container.pack();
     }
 
     public interface Listener{
