@@ -46,6 +46,6 @@ public class HtmlLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener () {
-                return new GameRunner();
+                return new GameRunner(GameRunner.Mode.GAME);
         }
 }

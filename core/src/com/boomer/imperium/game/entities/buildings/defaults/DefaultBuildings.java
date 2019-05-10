@@ -2,6 +2,7 @@ package com.boomer.imperium.game.entities.buildings.defaults;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.Nation;
 import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.buildings.Buildable;
@@ -11,7 +12,7 @@ import com.boomer.imperium.game.map.TileVector;
 import java.util.Arrays;
 import java.util.List;
 
-public class DefaultBuildings {
+public final class DefaultBuildings {
 
     private final Nation nation;
     private final GameContextInterface gameContext;
@@ -33,11 +34,6 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Rectangle getCursorFillerRectangle() {
-            return null;
-        }
-
-        @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
         }
@@ -45,6 +41,11 @@ public class DefaultBuildings {
         @Override
         public List<TileVector> getTileCoverage() {
             return null;
+        }
+
+        @Override
+        public List<Integer> getConnectableComponents() {
+            return Arrays.asList(GameFlags.TOWN);
         }
 
         @Override
@@ -75,11 +76,6 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Rectangle getCursorFillerRectangle() {
-            return null;
-        }
-
-        @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
         }
@@ -87,6 +83,11 @@ public class DefaultBuildings {
         @Override
         public List<TileVector> getTileCoverage() {
             return null;
+        }
+
+        @Override
+        public List<Integer> getConnectableComponents() {
+            return Arrays.asList(GameFlags.TOWN);
         }
 
         @Override
@@ -117,11 +118,6 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Rectangle getCursorFillerRectangle() {
-            return null;
-        }
-
-        @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
         }
@@ -129,6 +125,11 @@ public class DefaultBuildings {
         @Override
         public List<TileVector> getTileCoverage() {
             return null;
+        }
+
+        @Override
+        public List<Integer> getConnectableComponents() {
+            return Arrays.asList(GameFlags.TOWN, GameFlags.GUILD);
         }
 
         @Override
@@ -159,11 +160,6 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Rectangle getCursorFillerRectangle() {
-            return null;
-        }
-
-        @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
         }
@@ -171,6 +167,11 @@ public class DefaultBuildings {
         @Override
         public List<TileVector> getTileCoverage() {
             return null;
+        }
+
+        @Override
+        public List<Integer> getConnectableComponents() {
+            return Arrays.asList(GameFlags.TOWN, GameFlags.FARM, GameFlags.MARKET);
         }
 
         @Override
@@ -201,11 +202,6 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Rectangle getCursorFillerRectangle() {
-            return null;
-        }
-
-        @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
         }
@@ -213,6 +209,11 @@ public class DefaultBuildings {
         @Override
         public List<TileVector> getTileCoverage() {
             return null;
+        }
+
+        @Override
+        public List<Integer> getConnectableComponents() {
+            return Arrays.asList(GameFlags.TOWN, GameFlags.MINE, GameFlags.MARKET);
         }
 
         @Override
@@ -243,11 +244,6 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Rectangle getCursorFillerRectangle() {
-            return null;
-        }
-
-        @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
         }
@@ -255,6 +251,11 @@ public class DefaultBuildings {
         @Override
         public List<TileVector> getTileCoverage() {
             return null;
+        }
+
+        @Override
+        public List<Integer> getConnectableComponents() {
+            return Arrays.asList(GameFlags.TOWN, GameFlags.FACTORY, GameFlags.MARKET);
         }
 
         @Override
@@ -285,11 +286,6 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Rectangle getCursorFillerRectangle() {
-            return null;
-        }
-
-        @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
         }
@@ -297,6 +293,11 @@ public class DefaultBuildings {
         @Override
         public List<TileVector> getTileCoverage() {
             return null;
+        }
+
+        @Override
+        public List<Integer> getConnectableComponents() {
+            return Arrays.asList(GameFlags.TOWN, GameFlags.MINE, GameFlags.MARKET, GameFlags.GUILD);
         }
 
         @Override
@@ -327,17 +328,17 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Rectangle getCursorFillerRectangle() {
-            return null;
-        }
-
-        @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
         }
 
         @Override
         public List<TileVector> getTileCoverage() {
+            return null;
+        }
+
+        @Override
+        public List<Integer> getConnectableComponents() {
             return null;
         }
 
@@ -369,11 +370,6 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Rectangle getCursorFillerRectangle() {
-            return null;
-        }
-
-        @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
         }
@@ -381,6 +377,11 @@ public class DefaultBuildings {
         @Override
         public List<TileVector> getTileCoverage() {
             return null;
+        }
+
+        @Override
+        public List<Integer> getConnectableComponents() {
+            return Arrays.asList(GameFlags.TOWN);
         }
 
         @Override
@@ -411,11 +412,6 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Rectangle getCursorFillerRectangle() {
-            return null;
-        }
-
-        @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
         }
@@ -423,6 +419,11 @@ public class DefaultBuildings {
         @Override
         public List<TileVector> getTileCoverage() {
             return null;
+        }
+
+        @Override
+        public List<Integer> getConnectableComponents() {
+            return Arrays.asList(GameFlags.TOWN,GameFlags.MARKET);
         }
 
         @Override
@@ -453,11 +454,6 @@ public class DefaultBuildings {
         }
 
         @Override
-        public Rectangle getCursorFillerRectangle() {
-            return null;
-        }
-
-        @Override
         public Drawable getUIIcon() {
             return nation.getBuildableImageDrawable(getName());
         }
@@ -465,6 +461,11 @@ public class DefaultBuildings {
         @Override
         public List<TileVector> getTileCoverage() {
             return null;
+        }
+
+        @Override
+        public List<Integer> getConnectableComponents() {
+            return Arrays.asList(GameFlags.TOWN,GameFlags.MARKET);
         }
 
         @Override

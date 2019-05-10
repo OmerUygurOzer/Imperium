@@ -11,9 +11,13 @@ public enum UnitState {
     DYING(31),
     DEAD(32);
 
-    public int animationIndex;
+    private int animationIndex;
 
     UnitState(int animationIndex){
         this.animationIndex = animationIndex;
+    }
+
+    public int getAnimationIndex() {
+        return animationIndex;
     }
 }

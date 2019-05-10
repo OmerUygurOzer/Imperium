@@ -1,6 +1,5 @@
 package com.boomer.imperium.game.gui;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
@@ -13,15 +12,12 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.ScreenSensitive;
 import com.boomer.imperium.game.configs.GameContext;
-import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.events.EventType;
 import com.boomer.imperium.game.events.Parameters;
-import com.boomer.imperium.game.map.Tile;
 
-public class GameCursor implements ScreenSensitive, InputProcessor, Renderable {
+public final class GameCursor implements ScreenSensitive, InputProcessor, Renderable {
 
     private final GuiHolder guiHolder;
-    private final ShapeRenderer shapeRenderer;
     private final Viewport gameViewport;
     private final Camera gameCamera;
     private final GameContext gameContext;
@@ -35,10 +31,9 @@ public class GameCursor implements ScreenSensitive, InputProcessor, Renderable {
     private final Rectangle dragRectangle;
     private final Vector2 dragStart;
 
-    public GameCursor(GameContext gameContext, GuiHolder guiHolder, ShapeRenderer shapeRenderer, Viewport gameViewport) {
+    public GameCursor(GameContext gameContext, GuiHolder guiHolder, Viewport gameViewport) {
         this.guiHolder = guiHolder;
         this.gameContext = gameContext;
-        this.shapeRenderer = shapeRenderer;
         this.gameViewport = gameViewport;
         this.gameCamera = gameViewport.getCamera();
         this.gameScreenBounds = guiHolder.getGameScreenBounds();
@@ -138,7 +133,7 @@ public class GameCursor implements ScreenSensitive, InputProcessor, Renderable {
     }
 
     @Override
-    public void render(SpriteBatch spriteBatch) {
+    public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
         if (isDragging) {
             shapeRenderer.setProjectionMatrix(gameCamera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);

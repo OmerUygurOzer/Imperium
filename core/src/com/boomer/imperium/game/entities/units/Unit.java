@@ -2,6 +2,7 @@ package com.boomer.imperium.game.entities.units;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.*;
@@ -24,7 +25,7 @@ import java.util.List;
 public final class Unit implements Entity {
 
     private final GameContextInterface gameContext;
-    public final Rectangle bounds;
+    private final Rectangle bounds;
     private final UnitMovement unitMovement;
     private final UnitOrders unitOrders;
     private final PathTracker pathTracker;
@@ -40,7 +41,6 @@ public final class Unit implements Entity {
 
 
     private UnitState state;
-    private int tileCount = 1;  //width and height in tiles
     private Layer unitLayer;
 
     private Nation nation;
@@ -111,7 +111,7 @@ public final class Unit implements Entity {
     }
 
     @Override
-    public void render(SpriteBatch spriteBatch) {
+    public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
         unitSpriteAnimator.draw(spriteBatch, frameCounter.currentFrame, bounds, facing, state);
         if (selected)
             spriteBatch.draw(selectedSprite, bounds.x, bounds.y, bounds.width, bounds.height);
@@ -147,6 +147,12 @@ public final class Unit implements Entity {
     @Override
     public List<Tile> getTilesCovered() {
         return tilesCovered;
+    }
+
+    @Override
+    public void setTilesCovered(List<Tile> tilesCovered) {
+        this.tilesCovered.clear();
+        this.tilesCovered.addAll(tilesCovered);
     }
 
     @Override
@@ -265,22 +271,8 @@ public final class Unit implements Entity {
         this.stateFlags = stateFlags;
     }
 
-    @Override
-    public void setCenterInTiles(int tileCount) {
-        this.tileCount = tileCount;
-    }
-
-    @Override
-    public int getCenterInTiles() {
-        return this.tileCount;
-    }
-
     public void setState(UnitState state) {
         this.state = state;
-    }
-
-    public void setUnitLayer(Layer unitLayer) {
-        this.unitLayer = unitLayer;
     }
 
     public void setUnitSpriteAnimator(UnitSpriteAnimator unitSpriteAnimator) {
@@ -338,7 +330,6 @@ public final class Unit implements Entity {
     public void reset() {
         //width and height in tiles
         this.state = UnitState.IDLE;
-        this.tileCount = 0;  //width and height in tiles
         this.unitLayer = null;
 
         this.nation = null;

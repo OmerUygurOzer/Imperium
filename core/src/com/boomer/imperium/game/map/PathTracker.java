@@ -9,6 +9,7 @@ import com.boomer.imperium.game.entities.units.UnitOrders;
 import com.boomer.imperium.game.entities.units.UnitState;
 import com.boomer.imperium.game.events.EventManager;
 import com.boomer.imperium.game.events.EventType;
+import com.boomer.imperium.game.events.Parameters;
 
 public class PathTracker implements TimedUpdateable {
 
@@ -44,15 +45,16 @@ public class PathTracker implements TimedUpdateable {
             return;
         float mov = unitMovement.updateBounds(deltaTime);
         if (mov >= 0.5f && (unit.tileX() != tileX || unit.tileY() != tileY)) {
-            map.getTileAt(unit.tileX(), unit.tileY()).removeEntity(unit);
+            Tile fromTile = map.getTileAt(unit.tileX(), unit.tileY());
+            fromTile.removeEntity(unit);
             unit.setTile(tileX, tileY);
-            map.getTileAt(tileX, tileY).addEntity(unit);
-//            gameContext.getEventManager().raiseEvent(EventType.UNIT_SWITCH_TILES)
-//                    .setParams(unit.getMemoryIndex())
-//                    .setParams(unit.tileX())
-//                    .setParams(unit.tileY())
-//                    .setParams(tileX)
-//                    .setParams(tileY);
+            Tile toTile = map.getTileAt(tileX, tileY);
+            toTile.addEntity(unit);
+            gameContext.getEventManager().raiseEvent(EventType.UNIT_SWITCH_TILES)
+                    .getParams()
+                    .putParameter(Parameters.Key.UNIT,unit)
+                    .putParameter(Parameters.Key.FROM_TILE,fromTile)
+                    .putParameter(Parameters.Key.TO_TILE,toTile);
         } else if (mov >= 1f) {
             unitMovement.setLength(0);
             Direction direction = null;
@@ -86,9 +88,9 @@ public class PathTracker implements TimedUpdateable {
                 setTargetForDirection(direction);
                 unitMovement.setDirection(direction);
             }
-//            gameContext.getEventManager().raiseEvent(EventType.UNIT_ARRIVED_AT_TILE)
-//                    .setParams(tileX)
-//                    .setParams(tileY);
+            gameContext.getEventManager().raiseEvent(EventType.UNIT_ARRIVED_AT_TILE)
+                   .getParams()
+                    .putParameter(Parameters.Key.TILE,map.getTileAt(unit.tileX(),unit.tileY()));
         }
     }
 

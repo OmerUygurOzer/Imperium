@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
+import com.boomer.imperium.game.graphics.BuildingSpriteAnimator;
 import com.boomer.imperium.game.graphics.UnitSpriteAnimator;
 
 public class Resources implements Disposable {
@@ -29,6 +30,7 @@ public class Resources implements Disposable {
     public final Drawable townButton;
 
     public final UnitSpriteAnimator man;
+    public final BuildingSpriteAnimator building;
 
     public final Sprite inGameCursor;
 
@@ -65,6 +67,7 @@ public class Resources implements Disposable {
         this.desert = new Sprite(tilesTexture, 64, 0, 64, 64);
         this.water = new Sprite(tilesTexture, 128, 0, 64, 64);
         this.man = new UnitSpriteAnimator(manTextureRegions);
+        this.building = new BuildingSpriteAnimator(temples); //(Todo)change this to a real spritesheet
         this.skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         this.inGameCursor = new Sprite(cursors[0][0]);
 

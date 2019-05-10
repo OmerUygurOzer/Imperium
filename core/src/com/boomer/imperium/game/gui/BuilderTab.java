@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class BuilderTab extends ScrollPane {
+public final class BuilderTab extends ScrollPane {
 
     private final Table container;
     private final List<ImageButton> existingButtons;

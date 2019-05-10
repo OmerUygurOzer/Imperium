@@ -1,6 +1,9 @@
 package com.boomer.imperium.game;
 
 import com.boomer.imperium.game.entities.Entity;
+import com.boomer.imperium.game.events.Condition;
+import com.boomer.imperium.game.events.Event;
+import com.boomer.imperium.game.events.Parameters;
 
 public final class GameFlags {
 
@@ -62,7 +65,12 @@ public final class GameFlags {
         return (entity.getStateFlags() & flag) == flag;
     }
 
-
+    public static Condition IS_SELECTABLE = new Condition() {
+        @Override
+        public boolean check(Event event) {
+            return checkStateFlag(event.getParams().getUnit(Parameters.Key.UNIT),GameFlags.SELECTABLE);
+        }
+    };
 
 
 

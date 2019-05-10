@@ -1,5 +1,6 @@
 package com.boomer.imperium.game.events.defaults;
 
+import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.events.Action;
@@ -29,8 +30,12 @@ public final class DefaultActions {
             gameContext.getGameWorld().clearSelection();
             gameContext.getGameGui().entitiesDeSelected();
             List<Entity> entitiesContained =  gameContext.getGameWorld().map.quadTree.findObjectsWithinRect(parameters.getRectangle(MOUSE_DRAG_RECTANGLE));
-            gameContext.getGameWorld().selectEntities(entitiesContained);
-            gameContext.getGameGui().selectedEntities(entitiesContained);
+            for(Entity entity : entitiesContained){
+                if(GameFlags.checkStateFlag(entity,GameFlags.SELECTABLE)){
+                    gameContext.getGameWorld().selectEntity(entity);
+                    gameContext.getGameGui().selectEntity(entity);
+                }
+            }
             return false;
         }
     };

@@ -52,8 +52,8 @@ public class UnitMovement implements TimedUpdateable {
         timeAccumulated = timeAccumulated + deltaTime;
         if (timeAccumulated >= speed) {
             lengthAccumulated = lengthAccumulated + 1f;
-            unit.bounds.x = unit.bounds.x + speedVector.x;
-            unit.bounds.y = unit.bounds.y + speedVector.y;
+            unit.getBounds().x = unit.getBounds().x + speedVector.x;
+            unit.getBounds().y = unit.getBounds().y + speedVector.y;
             timeAccumulated = 0f;
         }
         return lengthAccumulated / length;

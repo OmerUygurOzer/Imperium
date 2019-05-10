@@ -15,9 +15,19 @@ import com.boomer.imperium.game.configs.WorldSize;
 
 public class GameRunner extends ApplicationAdapter {
 
+    public enum Mode{
+        GAME,
+        EDITOR
+    }
+
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private GameStateManager gameStateManager;
+    private final Mode mode;
+
+    public GameRunner(Mode mode){
+        this.mode = mode;
+    }
 
     @Override
     public void create() {
@@ -25,13 +35,13 @@ public class GameRunner extends ApplicationAdapter {
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
         this.gameStateManager = new GameStateManager();
-        this.gameStateManager.pushGameState(new RunningGame(batch,shapeRenderer,new GameConfigs(64f,0f,WorldSize.MEDIUM)));
+        this.gameStateManager.pushGameState(new RunningGame(batch,shapeRenderer,new GameConfigs(64f,0f,WorldSize.SMALL)));
     }
 
     @Override
     public void render() {
         gameStateManager.getCurrentGameState().update();
-        gameStateManager.getCurrentGameState().render(batch);
+        gameStateManager.getCurrentGameState().render(batch,shapeRenderer);
     }
 
     @Override

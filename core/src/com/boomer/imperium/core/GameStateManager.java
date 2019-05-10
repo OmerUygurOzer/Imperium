@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Disposable;
 
 import java.util.Stack;
 
-public class GameStateManager implements Disposable,ScreenSensitive {
+public final class GameStateManager implements Disposable,ScreenSensitive {
 
     private Stack<GameState> gameStates;
 

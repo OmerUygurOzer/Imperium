@@ -1,6 +1,8 @@
 package com.boomer.imperium.game;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -12,6 +14,7 @@ import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.entities.buildings.Building;
+import com.boomer.imperium.game.entities.buildings.BuildingPool;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.entities.units.UnitPool;
 import com.boomer.imperium.game.map.Map;
@@ -41,11 +44,15 @@ public final class GameWorld implements Renderable, TimedUpdateable {
     public final Map map;
     private final ArrayList<Entity> selectedEntities;
 
-    public final UnitPool unitPool;
+    private final UnitPool unitPool;
+    private final BuildingPool buildingPool;
 
     private Buildable buildingToBuild;
     private Tile buildTile;
     private final Rectangle buildDrawRectangle;
+    private final Rectangle connectionRadiusRect;
+    private final Vector2 mouseHoverLocation;
+    private final List<Building> connectionBuildings;
 
     public GameWorld(final GameContext gameContext) {
         gameContext.setGameWorld(this);
@@ -62,19 +69,35 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         this.map = new Map(gameContext.getGameResources(), gameContext.getGameConfigs());
         this.selectedEntities = new ArrayList<Entity>(20);
         this.unitPool = new UnitPool(gameContext);
+        this.buildingPool = new BuildingPool(gameContext);
+        this.mouseHoverLocation = new Vector2();
         this.buildDrawRectangle = new Rectangle();
+        this.connectionRadiusRect = new Rectangle(0f, 0f, 300f, 300f);//Todo: get radius from configs
+        this.connectionBuildings = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            Building building = buildingPool.obtain();
+            building.setLayer(Layer.GROUND);
+            building.setTypeFlags(GameFlags.BUILDING);
+            building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
+            building.setTileCoverageVectors(Arrays.asList(new TileVector(0, 0), new TileVector(-1, 0), new TileVector(-1, 1), new TileVector(0, 1)));
+            building.setPosition(MathUtils.random(2, 24), MathUtils.random(2, 24));
+            building.setComponentFlags(GameFlags.MARKET);
+            building.setStateFlags(GameFlags.SELECTABLE);
+            addEntity(building);
+        }
         for (int i = 0; i < 30; i++) {
             Unit unit = unitPool.obtain();
             unit.setTypeFlags(GameFlags.UNIT);
             unit.setUnitSpriteAnimator(gameContext.getGameResources().man);
-            unit.setUnitLayer(Layer.GROUND);
+            unit.setLayer(Layer.GROUND);
             unit.setFacing(Direction.NE);
-            unit.setPosition(MathUtils.random(0, 47), MathUtils.random(0, 47));
+            unit.setPosition(MathUtils.random(0, 20), MathUtils.random(0, 20));
             unit.setIcon(LogicUtils.randomSelect(Arrays.asList(gameContext.getGameResources().normanIcon, gameContext.getGameResources().grokkenIcon,
                     gameContext.getGameResources().mayanIcon, gameContext.getGameResources().greekIcon, gameContext.getGameResources().vikingIcon)));
             unit.setMaxHp(200);
             unit.setHp(MathUtils.random(0, 200));
             unit.setConstruction(MathUtils.random(0, 100));
+            unit.setStateFlags(GameFlags.SELECTABLE);
             unit.setBuildables(Arrays.<Buildable>asList(new Buildable() {
                 @Override
                 public String getName() {
@@ -87,17 +110,17 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 }
 
                 @Override
-                public Rectangle getCursorFillerRectangle() {
-                    return null;
-                }
-
-                @Override
                 public Drawable getUIIcon() {
                     return gameContext.getGameResources().fortButtonDrawable;
                 }
 
                 @Override
                 public List<TileVector> getTileCoverage() {
+                    return null;
+                }
+
+                @Override
+                public List<Integer> getConnectableComponents() {
                     return null;
                 }
 
@@ -127,17 +150,17 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 }
 
                 @Override
-                public Rectangle getCursorFillerRectangle() {
-                    return null;
-                }
-
-                @Override
                 public Drawable getUIIcon() {
                     return gameContext.getGameResources().factoryButtonDrawable;
                 }
 
                 @Override
                 public List<TileVector> getTileCoverage() {
+                    return null;
+                }
+
+                @Override
+                public List<Integer> getConnectableComponents() {
                     return null;
                 }
 
@@ -167,17 +190,17 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 }
 
                 @Override
-                public Rectangle getCursorFillerRectangle() {
-                    return null;
-                }
-
-                @Override
                 public Drawable getUIIcon() {
                     return gameContext.getGameResources().universityButtonDrawable;
                 }
 
                 @Override
                 public List<TileVector> getTileCoverage() {
+                    return null;
+                }
+
+                @Override
+                public List<Integer> getConnectableComponents() {
                     return null;
                 }
 
@@ -234,16 +257,23 @@ public final class GameWorld implements Renderable, TimedUpdateable {
     }
 
     @Override
-    public void render(SpriteBatch spriteBatch) {
-        map.render(spriteBatch);
+    public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
+        map.render(spriteBatch, shapeRenderer);
         for (int i = 0; i < Layer.values().length; i++) {
             for (int j = layerStartAndCounts[i][START_INDEX];
                  j < layerStartAndCounts[i][START_INDEX] + layerStartAndCounts[i][COUNT]; j++) {
-                entities[j].render(spriteBatch);
+                entities[j].render(spriteBatch, shapeRenderer);
             }
         }
-        if(buildingToBuild!=null){
-            buildingToBuild.getCursorFillerSprite().draw(spriteBatch,buildDrawRectangle.x,buildDrawRectangle.y,buildDrawRectangle.width,buildDrawRectangle.height);
+        if (buildingToBuild != null) {
+            buildingToBuild.getCursorFillerSprite().draw(spriteBatch, buildDrawRectangle.x, buildDrawRectangle.y, buildDrawRectangle.width, buildDrawRectangle.height);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(Color.YELLOW);
+            for (Building building : connectionBuildings) {
+                System.out.println("DRAWING LINE:"+connectionBuildings.size());
+                shapeRenderer.line(building.getCenter(), mouseHoverLocation);
+            }
+            shapeRenderer.end();
         }
     }
 
@@ -251,19 +281,30 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         int priority = entity.getLayer().getPriority();
         entities[layerStartAndCounts[priority][START_INDEX] + layerStartAndCounts[priority][COUNT]] = entity;
         entity.setMemoryIndex(layerStartAndCounts[priority][START_INDEX] + layerStartAndCounts[priority][COUNT]);
-        map.getTileAt(entity.tileX(), entity.tileY()).addEntity(entity);
+        int x = entity.tileX();
+        int y = entity.tileY();
+        for (TileVector tileVector : entity.getTileCoverageVectors()) {
+            map.getTileAt(x + tileVector.x, y + tileVector.y).addEntity(entity);
+        }
         return layerStartAndCounts[priority][START_INDEX] + layerStartAndCounts[priority][COUNT]++;
     }
 
     public void removeEntity(Entity entity) {
         entities[entity.getMemoryIndex()] = null;
-        map.getTileAt(entity.tileX(), entity.tileY()).removeEntity(entity);
+        for (Tile tile : entity.getTilesCovered()) {
+            tile.removeEntity(entity);
+        }
     }
 
     public void selectEntities(List<Entity> entities) {
         this.selectedEntities.addAll(entities);
         for (Entity entity : selectedEntities)
             entity.select();
+    }
+
+    public void selectEntity(Entity entity) {
+        this.selectedEntities.add(entity);
+        entity.select();
     }
 
     public void clearSelection() {
@@ -273,26 +314,45 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         this.selectedEntities.clear();
         this.buildingToBuild = null;
         this.buildTile = null;
+        this.connectionBuildings.clear();
     }
 
-    public void mouseHover(Vector2 hoverLocation){
-        if(buildingToBuild!=null){
-            if (buildTile==null)
+    public void mouseHover(Vector2 hoverLocation) {
+        this.mouseHoverLocation.set(hoverLocation);
+        this.connectionBuildings.clear();
+        if (buildingToBuild != null) {
+            if (buildTile == null)
                 buildTile = gameContext.getGameWorld().map.findTile(hoverLocation);
-            if(!buildTile.equals(gameContext.getGameWorld().map.findTile(hoverLocation))){
+            if (!buildTile.equals(gameContext.getGameWorld().map.findTile(hoverLocation))) {
                 buildTile = gameContext.getGameWorld().map.findTile(hoverLocation);
                 float width = buildingToBuild.widthInTiles() * gameContext.getGameConfigs().tileSize;
                 float height = buildingToBuild.heightInTiles() * gameContext.getGameConfigs().tileSize;
-                Tile leftendTile = gameContext.getGameWorld().map.getTileAt(buildTile.tileX-(buildingToBuild.widthInTiles()-1),buildTile.tileY);
+                Tile leftendTile = gameContext.getGameWorld().map.getTileAt(buildTile.tileX - (buildingToBuild.widthInTiles() - 1), buildTile.tileY);
                 float x = leftendTile.bounds.x;
                 float y = leftendTile.bounds.y;
-                buildDrawRectangle.set(x,y,width,height);
+                buildDrawRectangle.set(x, y, width, height);
+                connectionRadiusRect.setCenter(hoverLocation);
+                List<Entity> entities = map.quadTree.findObjectsWithinRect(connectionRadiusRect);
+                for (Entity entity : entities) {
+                    if (GameFlags.checkTypeFlag(entity, GameFlags.BUILDING)) {
+                        Building building = entity.asBuilding();
+                        if (LogicUtils.distance(hoverLocation, building.getCenter()) < 200) {
+                            connectionBuildings.add(building);
+                        }
+                    }
+                }
             }
         }
     }
 
-    public void setBuildingToBuild(Buildable buildingToBuild){
+    public void setBuildingToBuild(Buildable buildingToBuild) {
         this.buildingToBuild = buildingToBuild;
+    }
+
+    public void setTargetTileForSelected(Tile targetTileForSelected) {
+        for (Entity entity : selectedEntities) {
+
+        }
     }
 
     public Nation getNation(int nationIndex) {

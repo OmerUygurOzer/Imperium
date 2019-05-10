@@ -25,6 +25,7 @@ public final class RunningGame extends GameState {
     private static final int SCREEN_HEIGHT_IN_TILES = 18;
 
     private GameContext gameContext;
+    private ShapeRenderer shapeRenderer;
     private final GameConfigs configs;
     private float scale;
     private final OrthographicCamera camera;
@@ -37,6 +38,7 @@ public final class RunningGame extends GameState {
     private float camX, camY;
 
     public RunningGame(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, GameConfigs gameConfigs) {
+        this.shapeRenderer = shapeRenderer;
         this.configs = gameConfigs;
         this.camera = new OrthographicCamera();
         this.viewPort = new FitViewport(SCREEN_WIDTH_IN_TILES * gameConfigs.tileSize, SCREEN_HEIGHT_IN_TILES * gameConfigs.tileSize, camera);
@@ -59,7 +61,7 @@ public final class RunningGame extends GameState {
                         return new Trigger();
                     }
                 });
-        this.guiHolder = new GuiHolder(gameContext, shapeRenderer,viewPort, spriteBatch);
+        this.guiHolder = new GuiHolder(gameContext,viewPort, spriteBatch);
         this.gameContext.setGameGui(guiHolder.getGUI());
         this.eventManager.registerTrigger(EventType.MOUSE_LEFT_CLICK)
                 .addResult(DefaultActions.SELECT_ENTITIES_IN_TILE)
@@ -104,15 +106,15 @@ public final class RunningGame extends GameState {
     }
 
     @Override
-    public void render(SpriteBatch spriteBatch) {
+    public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         spriteBatch.begin();
         spriteBatch.setProjectionMatrix(camera.combined);
         viewPort.apply();
-        gameWorld.render(spriteBatch);
+        gameWorld.render(spriteBatch,shapeRenderer);
         spriteBatch.end();
-        guiHolder.render(spriteBatch);
+        guiHolder.render(spriteBatch,shapeRenderer);
     }
 
     @Override

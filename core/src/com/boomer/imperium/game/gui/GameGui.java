@@ -2,6 +2,7 @@ package com.boomer.imperium.game.gui;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -22,11 +23,12 @@ import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.events.EventManager;
 import com.boomer.imperium.game.events.EventType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.boomer.imperium.game.events.Parameters.Key.BUILDABLE_TO_BUILD;
 
-public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, Renderable,BuilderTab.Listener {
+public final class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, Renderable,BuilderTab.Listener {
 
     private enum State{
         IDLE,
@@ -63,6 +65,7 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
 
     private State state;
 
+    private final List<Entity> selectedEntities;
     private Buildable currentSelectedBuildable;
 
     public GameGui(GameContext gameContext,GuiHolder guiHolder ,Viewport gameViewport, SpriteBatch spriteBatch) {
@@ -90,6 +93,7 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
         this.buildButton = new ImageButton(resources.buildButton);
         this.buildButton.addListener(getBuildButtonListener());
         this.unitDetailsTab = new UnitDetailsTab(skin);
+        this.selectedEntities = new ArrayList<>();
         this.state = State.IDLE;
         setGUIActors();
     }
@@ -129,11 +133,6 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
                 .fillX()
                 .center();
 
-        actionButtonsPanel.add(buildButton)
-                .center()
-                .size(65,65)
-                .pad(5);
-
         addActor(leftSideTable);
         addActor(rightSideTable);
     }
@@ -163,18 +162,26 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
 
 
     @Override
-    public void render(SpriteBatch spriteBatch) {
+    public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
         getViewport().apply();
         draw();
     }
 
 
     public void selectedEntities(List<Entity> entities) {
-        state = State.SELECTED;
-        if(entities.isEmpty()){
+        if(entities.isEmpty()) {
             return;
         }
+        state = State.SELECTED;
+        this.selectedEntities.clear();
+        this.selectedEntities.addAll(entities);
         adjustForEntity(entities.get(0));
+    }
+
+    public void selectEntity(Entity entity){
+        state = State.SELECTED;
+        this.selectedEntities.add(entity);
+        adjustForEntity(entity);
     }
 
 
@@ -184,13 +191,23 @@ public class GameGui extends Stage implements TimedUpdateable, ScreenSensitive, 
         currentSelectedBuildable = null;
         builderTab.clearBuildables();
         unitDetailsTab.clearUnit();
+        actionButtonsPanel.clear();
     }
 
     private void adjustForEntity(Entity entity){
+        actionButtonsPanel.clear();
         if(GameFlags.checkTypeFlag(entity,GameFlags.UNIT)){
             Unit unit = entity.asUnit();
             unitDetailsTab.setUnit(unit);
-            builderTab.setBuildables(unit.getBuildables());
+            if(!unit.getBuildables().isEmpty()){
+                builderTab.setBuildables(unit.getBuildables());
+                actionButtonsPanel.add(buildButton)
+                        .center()
+                        .size(65,65)
+                        .pad(5);
+            }
+
+
             return;
         }
         if(GameFlags.checkTypeFlag(entity,GameFlags.BUILDING)){

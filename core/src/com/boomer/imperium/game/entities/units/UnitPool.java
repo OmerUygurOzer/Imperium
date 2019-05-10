@@ -3,7 +3,7 @@ package com.boomer.imperium.game.entities.units;
 import com.badlogic.gdx.utils.Pool;
 import com.boomer.imperium.game.configs.GameContextInterface;
 
-public class UnitPool extends Pool<Unit> {
+public final class UnitPool extends Pool<Unit> {
 
    private GameContextInterface gameContext;
 

@@ -3,6 +3,7 @@ package com.boomer.imperium.game.map;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.game.GameFlags;
@@ -31,7 +32,7 @@ public class Tile implements Renderable {
     }
 
     @Override
-    public void render(SpriteBatch spriteBatch) {
+    public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
         spriteBatch.draw(tileSprite, bounds.x, bounds.y, bounds.width, bounds.height);
     }
 

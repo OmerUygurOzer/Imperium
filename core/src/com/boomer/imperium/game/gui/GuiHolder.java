@@ -21,13 +21,13 @@ public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable{
     private final GameGui gameGui;
     private final GameCursor cursor;
 
-    public GuiHolder(GameContext gameContext, ShapeRenderer shapeRenderer, Viewport gameViewport, SpriteBatch spriteBatch){
+    public GuiHolder(GameContext gameContext, Viewport gameViewport, SpriteBatch spriteBatch){
         this.gameContext = gameContext;
         this.gameViewport = gameViewport;
         this.gameScreenBounds = new Rectangle();
         this.gameGui = new GameGui(gameContext,this,gameViewport,spriteBatch);
         this.gameGui.setEventManager(gameContext.getEventManager());
-        this.cursor = new GameCursor(gameContext,this,shapeRenderer,gameViewport);
+        this.cursor = new GameCursor(gameContext,this,gameViewport);
     }
 
     public GameCursor getCursor(){
@@ -59,11 +59,11 @@ public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable{
     }
 
     @Override
-    public void render(SpriteBatch spriteBatch) {
+    public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
         spriteBatch.begin();
-        cursor.render(spriteBatch);
+        cursor.render(spriteBatch,shapeRenderer);
         spriteBatch.end();
-        gameGui.render(spriteBatch);
+        gameGui.render(spriteBatch,shapeRenderer);
     }
 
     @Override

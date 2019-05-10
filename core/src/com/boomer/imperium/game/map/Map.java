@@ -2,6 +2,7 @@ package com.boomer.imperium.game.map;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.boomer.imperium.core.Renderable;
@@ -81,9 +82,9 @@ public class Map implements Renderable {
     }
 
     @Override
-    public void render(SpriteBatch spriteBatch) {
+    public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
         for (int i = 0; i < tiles.length; i++) {
-            tiles[i].render(spriteBatch);
+            tiles[i].render(spriteBatch,shapeRenderer);
         }
     }
 }

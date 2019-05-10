@@ -15,7 +15,7 @@ public class UnitSpriteAnimator {
     }
 
     public void draw(SpriteBatch spriteBatch, int currentFrame, Rectangle bounds, Direction facing, UnitState state){
-        spriteBatch.draw(allMovements[state.animationIndex+facing.animationIndex][currentFrame],
+        spriteBatch.draw(allMovements[state.getAnimationIndex()+facing.animationIndex][currentFrame],
                 bounds.x,bounds.y,bounds.width,bounds.height);
     }
 

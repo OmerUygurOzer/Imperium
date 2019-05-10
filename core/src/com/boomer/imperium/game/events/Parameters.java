@@ -14,14 +14,19 @@ public final class Parameters {
         MOUSE_LOCATION,
         MOUSE_DRAG_RECTANGLE,
         BUILDABLE_TO_BUILD,
+        UNIT,
+        FROM_TILE,
+        TO_TILE,
+        TILE
     }
 
     private Map<Key,Object> paramsMap = new HashMap<Key,Object>();
 
     public Parameters(){}
 
-    public void putParameter(Key key,Object param){
+    public Parameters putParameter(Key key,Object param){
         this.paramsMap.put(key,param);
+        return this;
     }
 
     public Unit getUnit(Key key){

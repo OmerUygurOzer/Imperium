@@ -22,6 +22,7 @@ public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable {
     int tileX();
     int tileY();
     List<Tile> getTilesCovered();
+    void setTilesCovered(List<Tile> tilesCovered);
 
     List<TileVector> getTileCoverageVectors();
     void setTileCoverageVectors(List<TileVector> tileCoverageVectors);
@@ -32,8 +33,6 @@ public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable {
     void deSelect();
     Layer getLayer();
     void setLayer(Layer layer);
-    void setCenterInTiles(int centerInTiles);
-    int getCenterInTiles();
 
     Player getPlayer();
     void setPlayer(Player player);
