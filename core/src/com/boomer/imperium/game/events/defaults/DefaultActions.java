@@ -8,6 +8,7 @@ import com.boomer.imperium.game.events.Parameters;
 
 import java.util.List;
 
+import static com.boomer.imperium.game.LogicUtils.unbox;
 import static com.boomer.imperium.game.events.Parameters.Key.*;
 
 public final class DefaultActions {
@@ -61,6 +62,38 @@ public final class DefaultActions {
         @Override
         public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
             gameContext.getGameWorld().setBuildingToBuild(parameters.getBuildable(BUILDABLE_TO_BUILD));
+            return false;
+        }
+    };
+
+    public static final Action DAYS_PASSED = new Action() {
+        @Override
+        public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
+            gameContext.getGameWorld().dayPassed(unbox(parameters.getInt(Parameters.Key.DAYS),0));
+            return false;
+        }
+    };
+
+    public static final Action WEEKS_PASSED = new Action() {
+        @Override
+        public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
+            gameContext.getGameWorld().weekPassed(unbox(parameters.getInt(Parameters.Key.WEEKS),0));
+            return false;
+        }
+    };
+
+    public static final Action MONTH_PASSED = new Action() {
+        @Override
+        public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
+            gameContext.getGameWorld().monthPassed(unbox(parameters.getInt(Parameters.Key.MONTHS),0));
+            return false;
+        }
+    };
+
+    public static final Action YEARS_PASSED = new Action() {
+        @Override
+        public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
+            gameContext.getGameWorld().yearPassed(unbox(parameters.getInt(Parameters.Key.YEARS),0));
             return false;
         }
     };

@@ -324,4 +324,25 @@ public final class Building implements Entity {
         this.connectables.clear();
         this.connectables.addAll(collectables);
     }
+
+
+    @Override
+    public void dayPassed(int daysPassed) {
+
+    }
+
+    @Override
+    public void weekPassed(int weeksPassed) {
+
+    }
+
+    @Override
+    public void monthPassed(int monthsPassed) {
+
+    }
+
+    @Override
+    public void yearPassed(int yearsPassed) {
+
+    }
 }

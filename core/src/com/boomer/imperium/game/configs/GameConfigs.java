@@ -8,6 +8,7 @@ public final class GameConfigs {
     public final float guiWidth = 400f;
     public final int calculatePathPerTask = 32;
     public final int eventsInitialCapacity = 400;
+    public final float secondsPerGameDay = 1f;
 
     public final float yellowHPBarThreshold = 100f;
     public final float purpeHPBarThreshold = 150f;

@@ -17,7 +17,11 @@ public final class Parameters {
         UNIT,
         FROM_TILE,
         TO_TILE,
-        TILE
+        TILE,
+        DAYS,
+        WEEKS,
+        MONTHS,
+        YEARS
     }
 
     private Map<Key,Object> paramsMap = new HashMap<Key,Object>();

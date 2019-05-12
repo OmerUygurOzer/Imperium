@@ -25,5 +25,9 @@ public final class LogicUtils {
         return selectable.get(MathUtils.random(0,selectable.size()-1));
     }
 
+    public static int unbox(Integer integer,int defaultVal){
+        return integer==null? defaultVal : integer;
+    }
+
     private LogicUtils(){}
 }

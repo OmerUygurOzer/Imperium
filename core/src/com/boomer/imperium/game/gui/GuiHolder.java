@@ -60,9 +60,7 @@ public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable{
 
     @Override
     public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
-        spriteBatch.begin();
         cursor.render(spriteBatch,shapeRenderer);
-        spriteBatch.end();
         gameGui.render(spriteBatch,shapeRenderer);
     }
 

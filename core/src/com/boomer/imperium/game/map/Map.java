@@ -59,7 +59,7 @@ public class Map implements Renderable {
             }
         }
         this.mapRectangle = new Rectangle(0, 0, gameConfigs.worldSize.getRadius(gameConfigs) * 2, gameConfigs.worldSize.getRadius(gameConfigs) * 2);
-        this.quadTree = new QuadNode<Entity>(mapRectangle, 4);
+        this.quadTree = new QuadNode<Entity>(mapRectangle, gameConfigs.tileSize);
     }
 
     public Tile getTileAt(int x, int y) {

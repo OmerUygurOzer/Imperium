@@ -47,7 +47,6 @@ public final class RunningGame extends GameState {
         this.gameContext = new GameContext();
         this.gameContext.setGameResources(new Resources());
         this.gameContext.setGameConfigs(gameConfigs);
-        this.gameWorld = new GameWorld(gameContext);
         this.eventManager = new EventManager(gameContext,
                 new Pool<Event>(gameConfigs.eventsInitialCapacity) {
                     @Override
@@ -63,6 +62,7 @@ public final class RunningGame extends GameState {
                 });
         this.guiHolder = new GuiHolder(gameContext,viewPort, spriteBatch);
         this.gameContext.setGameGui(guiHolder.getGUI());
+        this.gameWorld = new GameWorld(gameContext);
         this.eventManager.registerTrigger(EventType.MOUSE_LEFT_CLICK)
                 .addResult(DefaultActions.SELECT_ENTITIES_IN_TILE)
                 .setCondition(Map.IS_POINT_WITHIN_MAP);
@@ -77,6 +77,18 @@ public final class RunningGame extends GameState {
                 .setCondition(Map.IS_POINT_WITHIN_MAP);
         this.eventManager.registerTrigger(EventType.BUILDABLE_PICKED)
                 .addResult(DefaultActions.PICK_BUILDABLE_IN_GAME_WORLD)
+                .setCondition(Trigger.ALWAYS_RUN);
+        this.eventManager.registerTrigger(EventType.DAY_PASSED)
+                .addResult(DefaultActions.DAYS_PASSED)
+                .setCondition(Trigger.ALWAYS_RUN);
+        this.eventManager.registerTrigger(EventType.WEEK_PASSED)
+                .addResult(DefaultActions.WEEKS_PASSED)
+                .setCondition(Trigger.ALWAYS_RUN);
+        this.eventManager.registerTrigger(EventType.MONTH_PASSED)
+                .addResult(DefaultActions.MONTH_PASSED)
+                .setCondition(Trigger.ALWAYS_RUN);
+        this.eventManager.registerTrigger(EventType.YEAR_PASSED)
+                .addResult(DefaultActions.YEARS_PASSED)
                 .setCondition(Trigger.ALWAYS_RUN);
 
         addProcessor(guiHolder.getGUI());
@@ -111,6 +123,7 @@ public final class RunningGame extends GameState {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         spriteBatch.begin();
         spriteBatch.setProjectionMatrix(camera.combined);
+        shapeRenderer.setProjectionMatrix(camera.combined);
         viewPort.apply();
         gameWorld.render(spriteBatch,shapeRenderer);
         spriteBatch.end();

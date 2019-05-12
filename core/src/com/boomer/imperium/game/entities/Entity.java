@@ -9,13 +9,14 @@ import com.boomer.imperium.game.Nation;
 import com.boomer.imperium.game.Player;
 import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.entities.units.Unit;
+import com.boomer.imperium.game.events.GameCalendarTracker;
 import com.boomer.imperium.game.map.Bound;
 import com.boomer.imperium.game.map.Tile;
 import com.boomer.imperium.game.map.TileVector;
 
 import java.util.List;
 
-public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable {
+public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable,GameCalendarTracker.Listener {
     void setMemoryIndex(int index);
     int getMemoryIndex();
 

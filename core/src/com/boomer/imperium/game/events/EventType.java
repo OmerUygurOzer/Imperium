@@ -13,4 +13,8 @@ public enum EventType {
     UNIT_SWITCH_TILES,
     UNIT_ARRIVED_AT_TILE,
     BUILDABLE_PICKED,
+    DAY_PASSED,
+    WEEK_PASSED,
+    MONTH_PASSED,
+    YEAR_PASSED
 }

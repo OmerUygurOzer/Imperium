@@ -1,5 +1,6 @@
 package com.boomer.imperium.game.entities.units;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -112,10 +113,9 @@ public final class Unit implements Entity {
 
     @Override
     public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
-        unitSpriteAnimator.draw(spriteBatch, frameCounter.currentFrame, bounds, facing, state);
         if (selected)
             spriteBatch.draw(selectedSprite, bounds.x, bounds.y, bounds.width, bounds.height);
-
+        unitSpriteAnimator.draw(spriteBatch, frameCounter.currentFrame, bounds, facing, state);
     }
 
     public void targetTile(Tile tile) {
@@ -127,6 +127,7 @@ public final class Unit implements Entity {
     @Override
     public void select() {
         selected = true;
+        System.out.println("SELECTED");
     }
 
     @Override
@@ -547,5 +548,26 @@ public final class Unit implements Entity {
 
     public void setUnitCapacity(int unitCapacity) {
         this.unitCapacity = unitCapacity;
+    }
+
+
+    @Override
+    public void dayPassed(int daysPassed) {
+
+    }
+
+    @Override
+    public void weekPassed(int weeksPassed) {
+
+    }
+
+    @Override
+    public void monthPassed(int monthsPassed) {
+
+    }
+
+    @Override
+    public void yearPassed(int yearsPassed) {
+
     }
 }

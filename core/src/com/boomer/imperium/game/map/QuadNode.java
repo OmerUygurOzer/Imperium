@@ -41,6 +41,10 @@ public class QuadNode<T extends Bound> {
         return found;
     }
 
+    public void findObjectsWithinRect(Rectangle rectangle,List<T> found) {
+        findObjectsWithinRect(rectangle, area.width, found);
+    }
+
     public List<T> findObjectsWithinRect(float x, float y, float width, float height) {
         LinkedList<T> found = new LinkedList<T>();
         findObjectsWithinRect(new Rectangle(x,y,width,height), area.width, found);
@@ -48,11 +52,11 @@ public class QuadNode<T extends Bound> {
     }
 
     private void attach(T object, float curWidth) {
+        objects.add(object);
         float nextWidth = curWidth/2f;
-        if (nextWidth < minSize) {
+        if (nextWidth <= minSize) {
             return;
         }
-        objects.add(object);
         Rectangle boundRect = object.getBounds();
         if (topRightArea.overlaps(boundRect)) {
             if (topRightNode == null) {
@@ -80,9 +84,9 @@ public class QuadNode<T extends Bound> {
         }
     }
 
-    private void findObjectsWithinRect(Rectangle rectangle, float curWidth, LinkedList<T> found) {
+    private void findObjectsWithinRect(Rectangle rectangle, float curWidth, List<T> found) {
         float nextWidth = curWidth/2f;
-        if (nextWidth < minSize || rectangle.contains(area)) {
+        if (nextWidth <= minSize || rectangle.contains(area)) {
             found.addAll(objects);
             return;
         }

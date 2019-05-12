@@ -17,6 +17,7 @@ import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.entities.buildings.BuildingPool;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.entities.units.UnitPool;
+import com.boomer.imperium.game.events.GameCalendarTracker;
 import com.boomer.imperium.game.map.Map;
 import com.boomer.imperium.game.map.Tile;
 import com.boomer.imperium.game.map.TileVector;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class GameWorld implements Renderable, TimedUpdateable {
+public final class GameWorld implements Renderable, TimedUpdateable,GameCalendarTracker.Listener {
 
     private static final int START_INDEX = 0;
     private static final int COUNT = 1;
@@ -42,6 +43,8 @@ public final class GameWorld implements Renderable, TimedUpdateable {
     };
     private final Entity[] entities;
     public final Map map;
+    private final GameCalendarTracker gameCalendarTracker;
+
     private final ArrayList<Entity> selectedEntities;
 
     private final UnitPool unitPool;
@@ -50,13 +53,25 @@ public final class GameWorld implements Renderable, TimedUpdateable {
     private Buildable buildingToBuild;
     private Tile buildTile;
     private final Rectangle buildDrawRectangle;
+    private final Vector2 buildDrawCenter;
     private final Rectangle connectionRadiusRect;
     private final Vector2 mouseHoverLocation;
     private final List<Building> connectionBuildings;
+    private final ArrayList<Entity> foundEntities;
+
+    private boolean dayPassedFlag = false;
+    private boolean weekPassedFlag = false;
+    private boolean monthPassedFlag = false;
+    private boolean yearPassedFlag = false;
+    private int daysPassed = 0;
+    private int weeksPassed = 0;
+    private int monthsPassed = 0;
+    private int yearsPassed = 0;
 
     public GameWorld(final GameContext gameContext) {
         gameContext.setGameWorld(this);
         this.gameContext = gameContext;
+        this.gameCalendarTracker = new GameCalendarTracker(gameContext);
         this.entities = new Entity[(int) ((gameContext.getGameConfigs().worldSize.getRadius(gameContext.getGameConfigs()) * 2) *
                 (gameContext.getGameConfigs().worldSize.getRadius(gameContext.getGameConfigs()) * 2) / gameContext.getGameConfigs().tileSize) * 7];
         layerStartAndCounts[Layer.TILES.getPriority()][START_INDEX] = 0;
@@ -72,8 +87,10 @@ public final class GameWorld implements Renderable, TimedUpdateable {
         this.buildingPool = new BuildingPool(gameContext);
         this.mouseHoverLocation = new Vector2();
         this.buildDrawRectangle = new Rectangle();
+        this.buildDrawCenter = new Vector2();
         this.connectionRadiusRect = new Rectangle(0f, 0f, 300f, 300f);//Todo: get radius from configs
         this.connectionBuildings = new ArrayList<>();
+        this.foundEntities = new ArrayList<>(60);
         for (int i = 0; i < 5; i++) {
             Building building = buildingPool.obtain();
             building.setLayer(Layer.GROUND);
@@ -85,7 +102,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
             building.setStateFlags(GameFlags.SELECTABLE);
             addEntity(building);
         }
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 10; i++) {
             Unit unit = unitPool.obtain();
             unit.setTypeFlags(GameFlags.UNIT);
             unit.setUnitSpriteAnimator(gameContext.getGameResources().man);
@@ -226,6 +243,7 @@ public final class GameWorld implements Renderable, TimedUpdateable {
 
     @Override
     public void update(float deltaTime) {
+        gameCalendarTracker.update(deltaTime);
         map.quadTree.clear();
         for (int i = 0; i < Layer.values().length; i++) {
             for (int j = layerStartAndCounts[i][START_INDEX]; j
@@ -239,6 +257,16 @@ public final class GameWorld implements Renderable, TimedUpdateable {
             int nullTracker = layerStartAndCounts[i][START_INDEX];
             int count = layerStartAndCounts[i][COUNT];
             for (int j = startIndex; j < startIndex + count; j++) {
+                if(entities[j]!=null){
+                    if(dayPassedFlag)
+                        entities[j].dayPassed(daysPassed);
+                    if(weekPassedFlag)
+                        entities[j].weekPassed(weeksPassed);
+                    if(monthPassedFlag)
+                        entities[j].monthPassed(monthsPassed);
+                    if(yearPassedFlag)
+                        entities[j].yearPassed(yearsPassed);
+                }
                 if (entities[j] != null && entities[nullTracker] != null) {
                     entities[j].update(deltaTime);
                     nullTracker++;
@@ -252,8 +280,14 @@ public final class GameWorld implements Renderable, TimedUpdateable {
             }
             layerStartAndCounts[i][COUNT] = nullTracker - layerStartAndCounts[i][START_INDEX];
         }
-
-
+        if(dayPassedFlag)
+            dayPassedFlag = false;
+        if(weekPassedFlag)
+            weekPassedFlag = false;
+        if(monthPassedFlag)
+            monthPassedFlag = false;
+        if(yearPassedFlag)
+            yearPassedFlag = false;
     }
 
     @Override
@@ -266,14 +300,15 @@ public final class GameWorld implements Renderable, TimedUpdateable {
             }
         }
         if (buildingToBuild != null) {
-            buildingToBuild.getCursorFillerSprite().draw(spriteBatch, buildDrawRectangle.x, buildDrawRectangle.y, buildDrawRectangle.width, buildDrawRectangle.height);
+            shapeRenderer.setProjectionMatrix(spriteBatch.getProjectionMatrix());
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.YELLOW);
+            //shapeRenderer.rect(connectionRadiusRect.x,connectionRadiusRect.y,connectionRadiusRect.width,connectionRadiusRect.height);
             for (Building building : connectionBuildings) {
-                System.out.println("DRAWING LINE:"+connectionBuildings.size());
-                shapeRenderer.line(building.getCenter(), mouseHoverLocation);
+                shapeRenderer.line(building.getCenter(), buildDrawRectangle.getCenter(buildDrawCenter));
             }
             shapeRenderer.end();
+            buildingToBuild.getCursorFillerSprite().draw(spriteBatch, buildDrawRectangle.x, buildDrawRectangle.y, buildDrawRectangle.width, buildDrawRectangle.height);
         }
     }
 
@@ -327,16 +362,17 @@ public final class GameWorld implements Renderable, TimedUpdateable {
                 buildTile = gameContext.getGameWorld().map.findTile(hoverLocation);
                 float width = buildingToBuild.widthInTiles() * gameContext.getGameConfigs().tileSize;
                 float height = buildingToBuild.heightInTiles() * gameContext.getGameConfigs().tileSize;
-                Tile leftendTile = gameContext.getGameWorld().map.getTileAt(buildTile.tileX - (buildingToBuild.widthInTiles() - 1), buildTile.tileY);
-                float x = leftendTile.bounds.x;
-                float y = leftendTile.bounds.y;
+                Tile leftEndTile = gameContext.getGameWorld().map.getTileAt(buildTile.tileX - (buildingToBuild.widthInTiles() - 1), buildTile.tileY);
+                float x = leftEndTile.bounds.x;
+                float y = leftEndTile.bounds.y;
                 buildDrawRectangle.set(x, y, width, height);
                 connectionRadiusRect.setCenter(hoverLocation);
-                List<Entity> entities = map.quadTree.findObjectsWithinRect(connectionRadiusRect);
-                for (Entity entity : entities) {
+                foundEntities.clear();
+                map.quadTree.findObjectsWithinRect(connectionRadiusRect,foundEntities);
+                for (Entity entity : foundEntities) {
                     if (GameFlags.checkTypeFlag(entity, GameFlags.BUILDING)) {
                         Building building = entity.asBuilding();
-                        if (LogicUtils.distance(hoverLocation, building.getCenter()) < 200) {
+                        if (LogicUtils.distance(hoverLocation, building.getCenter()) < 200d) {
                             connectionBuildings.add(building);
                         }
                     }
@@ -364,4 +400,31 @@ public final class GameWorld implements Renderable, TimedUpdateable {
     }
 
 
+    @Override
+    public void dayPassed(int daysPassed) {
+        this.dayPassedFlag = true;
+        this.daysPassed = daysPassed;
+        System.out.println("DAY PASSED");
+    }
+
+    @Override
+    public void weekPassed(int weeksPassed) {
+        this.weekPassedFlag = true;
+        this.weeksPassed = weeksPassed;
+        System.out.println("WEEK PASSED");
+    }
+
+    @Override
+    public void monthPassed(int monthsPassed) {
+        this.monthPassedFlag = true;
+        this.monthsPassed = monthsPassed;
+        System.out.println("MONTH PASSED");
+    }
+
+    @Override
+    public void yearPassed(int yearsPassed) {
+        this.yearPassedFlag = true;
+        this.yearsPassed = yearsPassed;
+        System.out.println("YEAR PASSED");
+    }
 }
