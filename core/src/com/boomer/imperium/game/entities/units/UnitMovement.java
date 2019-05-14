@@ -6,7 +6,7 @@ import com.boomer.imperium.game.Direction;
 import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.configs.GameContextInterface;
 
-public class UnitMovement implements TimedUpdateable {
+public class UnitMovement  implements TimedUpdateable {
 
     private static float getMovementLengthForDirection(Direction direction, GameConfigs gameConfigs) {
         switch (direction) {
@@ -48,7 +48,8 @@ public class UnitMovement implements TimedUpdateable {
         this.lengthAccumulated = 0;
     }
 
-    public float updateBounds(float deltaTime) {
+    @Override
+    public void update(float deltaTime) {
         timeAccumulated = timeAccumulated + deltaTime;
         if (timeAccumulated >= speed) {
             lengthAccumulated = lengthAccumulated + 1f;
@@ -56,13 +57,13 @@ public class UnitMovement implements TimedUpdateable {
             unit.getBounds().y = unit.getBounds().y + speedVector.y;
             timeAccumulated = 0f;
         }
-        return lengthAccumulated / length;
     }
 
-    @Override
-    public void update(float deltaTime) {
-
-
+    public boolean isComplete(){
+        return lengthAccumulated >= length;
     }
 
+    public boolean hasStarted(){
+        return lengthAccumulated>0f;
+    }
 }

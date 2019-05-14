@@ -12,6 +12,7 @@ public final class GameConfigs {
 
     public final float yellowHPBarThreshold = 100f;
     public final float purpeHPBarThreshold = 150f;
+    public final String gameStartingDate = "";
 
     public GameConfigs(float tileSize,float aspectRatio,WorldSize worldSize) {
         this.tileSize = tileSize;

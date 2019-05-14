@@ -100,6 +100,8 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
             building.setPosition(MathUtils.random(2, 24), MathUtils.random(2, 24));
             building.setComponentFlags(GameFlags.MARKET);
             building.setStateFlags(GameFlags.SELECTABLE);
+            building.setHp(MathUtils.random(0, 400));
+            building.setMaxHp(400);
             addEntity(building);
         }
         for (int i = 0; i < 10; i++) {
@@ -387,7 +389,7 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
 
     public void setTargetTileForSelected(Tile targetTileForSelected) {
         for (Entity entity : selectedEntities) {
-
+            entity.targetTile(targetTileForSelected);
         }
     }
 
@@ -404,27 +406,23 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
     public void dayPassed(int daysPassed) {
         this.dayPassedFlag = true;
         this.daysPassed = daysPassed;
-        System.out.println("DAY PASSED");
     }
 
     @Override
     public void weekPassed(int weeksPassed) {
         this.weekPassedFlag = true;
         this.weeksPassed = weeksPassed;
-        System.out.println("WEEK PASSED");
     }
 
     @Override
     public void monthPassed(int monthsPassed) {
         this.monthPassedFlag = true;
         this.monthsPassed = monthsPassed;
-        System.out.println("MONTH PASSED");
     }
 
     @Override
     public void yearPassed(int yearsPassed) {
         this.yearPassedFlag = true;
         this.yearsPassed = yearsPassed;
-        System.out.println("YEAR PASSED");
     }
 }

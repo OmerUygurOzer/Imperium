@@ -1,5 +1,6 @@
 package com.boomer.imperium.game.entities;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Pool;
 import com.boomer.imperium.core.Renderable;
@@ -17,6 +18,9 @@ import com.boomer.imperium.game.map.TileVector;
 import java.util.List;
 
 public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable,GameCalendarTracker.Listener {
+
+    void targetTile(Tile tile);
+
     void setMemoryIndex(int index);
     int getMemoryIndex();
 
@@ -43,7 +47,6 @@ public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable,G
     void setName(String name);
     Drawable getIcon();
     void setIcon(Drawable drawable);
-
 
     int getTypeFlags();
     int getComponentFlags();

@@ -21,6 +21,7 @@ public class Resources implements Disposable {
     public final TextureRegion[][] buildingIconsTexture;
     public final TextureRegion[][] unitIcons;
     public final TextureRegion[][] temples;
+    public final TextureRegion[] hpBar;
 
     public final Sprite grassland;
     public final Sprite desert;
@@ -70,6 +71,7 @@ public class Resources implements Disposable {
         this.building = new BuildingSpriteAnimator(temples); //(Todo)change this to a real spritesheet
         this.skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         this.inGameCursor = new Sprite(cursors[0][0]);
+        this.hpBar = new TextureRegion(new Texture("healthbar.png")).split(50,20)[0];
 
         this.buildButton = new TextureRegionDrawable(new TextureRegion(buttonsTexture, 0, 0, 109, 93));
         this.townButton = new TextureRegionDrawable(new TextureRegion(buttonsTexture, 109, 0, 109, 93));

@@ -10,10 +10,7 @@ import com.boomer.imperium.game.Layer;
 import com.boomer.imperium.game.Nation;
 import com.boomer.imperium.game.Player;
 import com.boomer.imperium.game.configs.GameContextInterface;
-import com.boomer.imperium.game.entities.Doodad;
-import com.boomer.imperium.game.entities.Entity;
-import com.boomer.imperium.game.entities.Projectile;
-import com.boomer.imperium.game.entities.Town;
+import com.boomer.imperium.game.entities.*;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.graphics.BuildingSpriteAnimator;
 import com.boomer.imperium.game.graphics.FrameCounter;
@@ -36,6 +33,7 @@ public final class Building implements Entity {
 
     private BuildingState state;
     private Drawable icon;
+    private HPBar hpBar;
 
     private Nation nation;
     private Player player;
@@ -68,6 +66,13 @@ public final class Building implements Entity {
         this.typeFlags = GameFlags.BUILDING;
         this.componentFlags = 0;
         this.stateFlags = 0;
+        this.hpBar = new HPBar(gameContext,this);
+        this.hpBar.setHp(maxHp,hp);
+    }
+
+    @Override
+    public void targetTile(Tile tile) {
+
     }
 
     @Override
@@ -82,11 +87,13 @@ public final class Building implements Entity {
 
     @Override
     public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
+        hpBar.render(spriteBatch,shapeRenderer);
         buildingSpriteAnimator.draw(spriteBatch,frameCounter.currentFrame,bounds,state);
     }
 
     @Override
     public void update(float deltaTime) {
+        hpBar.setHp(maxHp,hp);
         frameCounter.update(deltaTime);
     }
 

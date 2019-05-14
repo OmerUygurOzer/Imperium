@@ -67,7 +67,7 @@ public final class RunningGame extends GameState {
                 .addResult(DefaultActions.SELECT_ENTITIES_IN_TILE)
                 .setCondition(Map.IS_POINT_WITHIN_MAP);
         this.eventManager.registerTrigger(EventType.MOUSE_RIGHT_CLICK)
-                .addResult(DefaultActions.DESELECTED_ENTITIES)
+                .addResult(DefaultActions.SELECTED_ENTITIES_TARGET_TILE)
                 .setCondition(Map.IS_POINT_WITHIN_MAP);
         this.eventManager.registerTrigger(EventType.MOUSE_DRAG)
                 .addResult(DefaultActions.SELECT_ENTITIES_IN_RECTANGLE)

@@ -50,6 +50,14 @@ public final class DefaultActions {
         }
     };
 
+    public static final Action SELECTED_ENTITIES_TARGET_TILE = new Action() {
+        @Override
+        public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
+            gameContext.getGameWorld().setTargetTileForSelected(gameContext.getGameWorld().map.findTile(parameters.getVector(MOUSE_LOCATION)));
+            return false;
+        }
+    };
+
     public static final Action MOUSE_HOVER_IN_GAME_WORLD = new Action() {
         @Override
         public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {

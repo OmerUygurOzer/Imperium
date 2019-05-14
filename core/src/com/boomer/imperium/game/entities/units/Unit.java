@@ -1,17 +1,16 @@
 package com.boomer.imperium.game.entities.units;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.boomer.imperium.game.*;
+import com.boomer.imperium.game.Direction;
+import com.boomer.imperium.game.Layer;
+import com.boomer.imperium.game.Nation;
+import com.boomer.imperium.game.Player;
 import com.boomer.imperium.game.configs.GameContextInterface;
-import com.boomer.imperium.game.entities.Doodad;
-import com.boomer.imperium.game.entities.Entity;
-import com.boomer.imperium.game.entities.Projectile;
-import com.boomer.imperium.game.entities.Town;
+import com.boomer.imperium.game.entities.*;
 import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.graphics.FrameCounter;
@@ -30,6 +29,7 @@ public final class Unit implements Entity {
     private final UnitMovement unitMovement;
     private final UnitOrders unitOrders;
     private final PathTracker pathTracker;
+    private final HPBar hpBar;
     private int memoryIndex;
     private final List<Tile> tilesCovered;
     private final List<TileVector> tileCoverageVectors;
@@ -100,10 +100,13 @@ public final class Unit implements Entity {
         this.tilesCovered = new ArrayList<Tile>(9);
         this.tileCoverageVectors = new ArrayList<TileVector>(9);
         this.tileCoverageVectors.add(new TileVector(0,0));
+        this.hpBar = new HPBar(gameContext,this);
+        this.hpBar.setHp(maxHp,hp);
     }
 
     @Override
     public void update(float deltaTime) {
+        hpBar.setHp(maxHp,hp);
         frameCounter.update(deltaTime);
         if (state.equals(UnitState.MOVING)) {
             pathTracker.update(deltaTime);
@@ -113,11 +116,13 @@ public final class Unit implements Entity {
 
     @Override
     public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
+        hpBar.render(spriteBatch,shapeRenderer);
         if (selected)
             spriteBatch.draw(selectedSprite, bounds.x, bounds.y, bounds.width, bounds.height);
         unitSpriteAnimator.draw(spriteBatch, frameCounter.currentFrame, bounds, facing, state);
     }
 
+    @Override
     public void targetTile(Tile tile) {
         unitOrders.setTargetTile(tile);
         pathTracker.activate(unitOrders);
@@ -127,7 +132,6 @@ public final class Unit implements Entity {
     @Override
     public void select() {
         selected = true;
-        System.out.println("SELECTED");
     }
 
     @Override

@@ -43,8 +43,8 @@ public class PathTracker implements TimedUpdateable {
     public void update(float deltaTime) {
         if (state.equals(State.IDLE))
             return;
-        float mov = unitMovement.updateBounds(deltaTime);
-        if (mov >= 0.5f && (unit.tileX() != tileX || unit.tileY() != tileY)) {
+        unitMovement.update(deltaTime);
+        if ((unit.tileX() != tileX || unit.tileY() != tileY)) {
             Tile fromTile = map.getTileAt(unit.tileX(), unit.tileY());
             fromTile.removeEntity(unit);
             unit.setTile(tileX, tileY);
@@ -55,7 +55,7 @@ public class PathTracker implements TimedUpdateable {
                     .putParameter(Parameters.Key.UNIT,unit)
                     .putParameter(Parameters.Key.FROM_TILE,fromTile)
                     .putParameter(Parameters.Key.TO_TILE,toTile);
-        } else if (mov >= 1f) {
+        } else if(unitMovement.isComplete()){
             unitMovement.setLength(0);
             Direction direction = null;
             if (state.equals(State.ACTIVE_PATH)) {
