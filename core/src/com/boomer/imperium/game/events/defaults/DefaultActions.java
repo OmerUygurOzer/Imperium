@@ -13,38 +13,18 @@ import static com.boomer.imperium.game.events.Parameters.Key.*;
 
 public final class DefaultActions {
 
-    public static final Action SELECT_ENTITIES_IN_TILE = new Action() {
+    public static final Action SELECT_ENTITIES_IN_GUI = new Action() {
         @Override
         public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
-            gameContext.getGameWorld().clearSelection();
             gameContext.getGameGui().entitiesDeSelected();
-            List<Entity> entitiesContained =  gameContext.getGameWorld().map.findTile(parameters.getVector(MOUSE_LOCATION)).getEntitiesContained();
-            gameContext.getGameWorld().selectEntities(entitiesContained);
-            gameContext.getGameGui().selectedEntities(entitiesContained);
+            gameContext.getGameGui().selectedEntities(parameters.getEntities(SELECTED_ENTITIES));
             return false;
         }
     };
 
-    public static final Action SELECT_ENTITIES_IN_RECTANGLE = new Action() {
+    public static final Action DESELECTED_ENTITIES_IN_GUI = new Action() {
         @Override
         public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
-            gameContext.getGameWorld().clearSelection();
-            gameContext.getGameGui().entitiesDeSelected();
-            List<Entity> entitiesContained =  gameContext.getGameWorld().map.quadTree.findObjectsWithinRect(parameters.getRectangle(MOUSE_DRAG_RECTANGLE));
-            for(Entity entity : entitiesContained){
-                if(GameFlags.checkStateFlag(entity,GameFlags.SELECTABLE)){
-                    gameContext.getGameWorld().selectEntity(entity);
-                    gameContext.getGameGui().selectEntity(entity);
-                }
-            }
-            return false;
-        }
-    };
-
-    public static final Action DESELECTED_ENTITIES = new Action() {
-        @Override
-        public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
-            gameContext.getGameWorld().clearSelection();
             gameContext.getGameGui().entitiesDeSelected();
             return false;
         }
@@ -62,6 +42,30 @@ public final class DefaultActions {
         @Override
         public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
             gameContext.getGameWorld().mouseHover(parameters.getVector(MOUSE_LOCATION));
+            return false;
+        }
+    };
+
+    public static final Action MOUSE_DRAG_IN_GAME_WORLD = new Action() {
+        @Override
+        public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
+            gameContext.getGameWorld().mouseDrag(parameters.getRectangle(MOUSE_DRAG_RECTANGLE));
+            return false;
+        }
+    };
+
+    public static final Action MOUSE_RIGHT_CLICK_IN_GAME_WORLD = new Action() {
+        @Override
+        public boolean perform(GameContextInterface gameContext, Parameters parameters, float deltaTime) {
+            gameContext.getGameWorld().mouseRightClick(parameters.getVector(MOUSE_LOCATION));
+            return false;
+        }
+    };
+
+    public static final Action MOUSE_LEFT_CLICK_IN_GAME_WORLD = new Action() {
+        @Override
+        public boolean perform(GameContextInterface gameContext, Parameters parameters, float deltaTime) {
+            gameContext.getGameWorld().mouseLeftClick(parameters.getVector(MOUSE_LOCATION));
             return false;
         }
     };

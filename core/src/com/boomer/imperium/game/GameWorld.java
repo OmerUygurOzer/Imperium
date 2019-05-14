@@ -17,7 +17,9 @@ import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.entities.buildings.BuildingPool;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.entities.units.UnitPool;
+import com.boomer.imperium.game.events.EventType;
 import com.boomer.imperium.game.events.GameCalendarTracker;
+import com.boomer.imperium.game.events.Parameters;
 import com.boomer.imperium.game.map.Map;
 import com.boomer.imperium.game.map.Tile;
 import com.boomer.imperium.game.map.TileVector;
@@ -333,12 +335,6 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
         }
     }
 
-    public void selectEntities(List<Entity> entities) {
-        this.selectedEntities.addAll(entities);
-        for (Entity entity : selectedEntities)
-            entity.select();
-    }
-
     public void selectEntity(Entity entity) {
         this.selectedEntities.add(entity);
         entity.select();
@@ -352,6 +348,40 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
         this.buildingToBuild = null;
         this.buildTile = null;
         this.connectionBuildings.clear();
+    }
+
+    public void mouseDrag(Rectangle dragRectangle){
+        deselectEntities(selectedEntities);
+        List<Entity> entitiesSelected = map.quadTree.findObjectsWithinRect(dragRectangle);
+        filterEntitiesForSelectability(entitiesSelected);
+        selectedEntities.clear();
+        selectedEntities.addAll(entitiesSelected);
+        selectEntities(selectedEntities);
+        gameContext.getEventManager()
+                .raiseEvent(EventType.ENTITIES_SELECTED)
+                .getParams()
+                .putParameter(Parameters.Key.SELECTED_ENTITIES,entitiesSelected);
+    }
+
+    public void mouseRightClick(Vector2 point){
+        buildingToBuild = null;
+        Tile tile = map.findTile(point);
+        for(Entity entity: selectedEntities){
+            entity.targetTile(tile);
+        }
+    }
+
+    public void mouseLeftClick(Vector2 point){
+        deselectEntities(selectedEntities);
+        List<Entity> entitiesSelected = map.findTile(point).getEntitiesContained();
+        filterEntitiesForSelectability(entitiesSelected);
+        selectedEntities.clear();
+        selectedEntities.addAll(entitiesSelected);
+        selectEntities(selectedEntities);
+        gameContext.getEventManager()
+                .raiseEvent(EventType.ENTITIES_SELECTED)
+                .getParams()
+                .putParameter(Parameters.Key.SELECTED_ENTITIES,entitiesSelected);
     }
 
     public void mouseHover(Vector2 hoverLocation) {
@@ -391,6 +421,20 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
         for (Entity entity : selectedEntities) {
             entity.targetTile(targetTileForSelected);
         }
+    }
+
+    private void selectEntities(List<Entity> entitiesToSelect){
+        for(Entity entity:entitiesToSelect)
+            entity.select();
+    }
+
+    private void filterEntitiesForSelectability(List<Entity> entitiesToFilter){
+        entitiesToFilter.removeIf(entity -> !GameFlags.checkStateFlag(entity, GameFlags.SELECTABLE));
+    }
+
+    private void deselectEntities(List<Entity> deselectEntities){
+        for(Entity entity:deselectEntities)
+            entity.deSelect();
     }
 
     public Nation getNation(int nationIndex) {

@@ -2,15 +2,18 @@ package com.boomer.imperium.game.events;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.map.Tile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class Parameters {
     public enum Key{
+        SELECTED_ENTITIES,
         MOUSE_LOCATION,
         MOUSE_DRAG_RECTANGLE,
         BUILDABLE_TO_BUILD,
@@ -37,6 +40,12 @@ public final class Parameters {
         if(!paramsMap.containsKey(key))
             return null;
         return this.<Unit>castOrNull(paramsMap.get(key));
+    }
+
+    public List<Entity> getEntities(Key key){
+        if(!paramsMap.containsKey(key))
+            return null;
+        return this.<List<Entity>>castOrNull(paramsMap.get(key));
     }
 
     public Buildable getBuildable(Key key){

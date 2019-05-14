@@ -64,17 +64,23 @@ public final class RunningGame extends GameState {
         this.gameContext.setGameGui(guiHolder.getGUI());
         this.gameWorld = new GameWorld(gameContext);
         this.eventManager.registerTrigger(EventType.MOUSE_LEFT_CLICK)
-                .addResult(DefaultActions.SELECT_ENTITIES_IN_TILE)
+                .addResult(DefaultActions.MOUSE_LEFT_CLICK_IN_GAME_WORLD)
                 .setCondition(Map.IS_POINT_WITHIN_MAP);
         this.eventManager.registerTrigger(EventType.MOUSE_RIGHT_CLICK)
-                .addResult(DefaultActions.SELECTED_ENTITIES_TARGET_TILE)
+                .addResult(DefaultActions.MOUSE_RIGHT_CLICK_IN_GAME_WORLD)
                 .setCondition(Map.IS_POINT_WITHIN_MAP);
         this.eventManager.registerTrigger(EventType.MOUSE_DRAG)
-                .addResult(DefaultActions.SELECT_ENTITIES_IN_RECTANGLE)
+                .addResult(DefaultActions.MOUSE_DRAG_IN_GAME_WORLD)
                 .setCondition(Map.IS_RECTANGLE_WITHIN_MAP);
         this.eventManager.registerTrigger(EventType.MOUSE_MOVE)
                 .addResult(DefaultActions.MOUSE_HOVER_IN_GAME_WORLD)
                 .setCondition(Map.IS_POINT_WITHIN_MAP);
+        this.eventManager.registerTrigger(EventType.ENTITIES_SELECTED)
+                .addResult(DefaultActions.SELECT_ENTITIES_IN_GUI)
+                .setCondition(Trigger.ALWAYS_RUN);
+        this.eventManager.registerTrigger(EventType.ENTITIES_DESELECTED)
+                .addResult(DefaultActions.DESELECTED_ENTITIES_IN_GUI)
+                .setCondition(Trigger.ALWAYS_RUN);
         this.eventManager.registerTrigger(EventType.BUILDABLE_PICKED)
                 .addResult(DefaultActions.PICK_BUILDABLE_IN_GAME_WORLD)
                 .setCondition(Trigger.ALWAYS_RUN);
