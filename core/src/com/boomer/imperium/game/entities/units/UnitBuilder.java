@@ -1,22 +1,20 @@
 package com.boomer.imperium.game.entities.units;
 
 import com.badlogic.gdx.utils.Pool;
-import com.boomer.imperium.game.GameFlags;
-import com.boomer.imperium.game.Nation;
-import com.boomer.imperium.game.Player;
+import com.boomer.imperium.game.players.Nation;
 import com.boomer.imperium.game.configs.GameConfigs;
 
 import java.util.Arrays;
 
 import static com.boomer.imperium.game.GameFlags.*;
 
-public class UnitBuilders {
+public class UnitBuilder {
 
     private final Pool<Unit> unitPool;
     private final GameConfigs gameConfigs;
     private final Nation nation;
 
-    public UnitBuilders(Pool<Unit> unitPool, GameConfigs gameConfigs, Nation nation){
+    public UnitBuilder(Pool<Unit> unitPool, GameConfigs gameConfigs, Nation nation){
         this.unitPool = unitPool;
         this.gameConfigs = gameConfigs;
         this.nation = nation;

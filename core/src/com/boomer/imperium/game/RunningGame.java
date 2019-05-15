@@ -62,40 +62,62 @@ public final class RunningGame extends GameState {
                 });
         this.guiHolder = new GuiHolder(gameContext,viewPort, spriteBatch);
         this.gameContext.setGameGui(guiHolder.getGUI());
+        this.gameContext.setGameCursor(guiHolder.getCursor());
         this.gameWorld = new GameWorld(gameContext);
+
         this.eventManager.registerTrigger(EventType.MOUSE_LEFT_CLICK)
                 .addResult(DefaultActions.MOUSE_LEFT_CLICK_IN_GAME_WORLD)
                 .setCondition(Map.IS_POINT_WITHIN_MAP);
+
+        this.eventManager.registerTrigger(EventType.MOUSE_RIGHT_CLICK)
+                .addResult(DefaultActions.RESET_CURSOR_TO_STANDARD)
+                .setCondition(GameWorld.IS_BUILDING);
+
         this.eventManager.registerTrigger(EventType.MOUSE_RIGHT_CLICK)
                 .addResult(DefaultActions.MOUSE_RIGHT_CLICK_IN_GAME_WORLD)
                 .setCondition(Map.IS_POINT_WITHIN_MAP);
+
         this.eventManager.registerTrigger(EventType.MOUSE_DRAG)
                 .addResult(DefaultActions.MOUSE_DRAG_IN_GAME_WORLD)
                 .setCondition(Map.IS_RECTANGLE_WITHIN_MAP);
+
         this.eventManager.registerTrigger(EventType.MOUSE_MOVE)
                 .addResult(DefaultActions.MOUSE_HOVER_IN_GAME_WORLD)
                 .setCondition(Map.IS_POINT_WITHIN_MAP);
+
+        this.eventManager.registerTrigger(EventType.ENTITY_HOVERED_OVER)
+                .addResult(DefaultActions.ADJUST_CURSOR_IN_GUI)
+                .setCondition(Trigger.ALWAYS_RUN);
+
         this.eventManager.registerTrigger(EventType.ENTITIES_SELECTED)
                 .addResult(DefaultActions.SELECT_ENTITIES_IN_GUI)
                 .setCondition(Trigger.ALWAYS_RUN);
+
         this.eventManager.registerTrigger(EventType.ENTITIES_DESELECTED)
                 .addResult(DefaultActions.DESELECTED_ENTITIES_IN_GUI)
                 .setCondition(Trigger.ALWAYS_RUN);
+
         this.eventManager.registerTrigger(EventType.BUILDABLE_PICKED)
                 .addResult(DefaultActions.PICK_BUILDABLE_IN_GAME_WORLD)
+                .addResult(DefaultActions.ADJUST_CURSOR_FOR_BUILDING)
                 .setCondition(Trigger.ALWAYS_RUN);
+
         this.eventManager.registerTrigger(EventType.DAY_PASSED)
                 .addResult(DefaultActions.DAYS_PASSED)
                 .setCondition(Trigger.ALWAYS_RUN);
+
         this.eventManager.registerTrigger(EventType.WEEK_PASSED)
                 .addResult(DefaultActions.WEEKS_PASSED)
                 .setCondition(Trigger.ALWAYS_RUN);
+
         this.eventManager.registerTrigger(EventType.MONTH_PASSED)
                 .addResult(DefaultActions.MONTH_PASSED)
                 .setCondition(Trigger.ALWAYS_RUN);
+
         this.eventManager.registerTrigger(EventType.YEAR_PASSED)
                 .addResult(DefaultActions.YEARS_PASSED)
                 .setCondition(Trigger.ALWAYS_RUN);
+
 
         addProcessor(guiHolder.getGUI());
         addProcessor(guiHolder.getCursor());

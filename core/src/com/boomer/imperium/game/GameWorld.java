@@ -17,18 +17,25 @@ import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.entities.buildings.BuildingPool;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.entities.units.UnitPool;
-import com.boomer.imperium.game.events.EventType;
-import com.boomer.imperium.game.events.GameCalendarTracker;
-import com.boomer.imperium.game.events.Parameters;
+import com.boomer.imperium.game.events.*;
 import com.boomer.imperium.game.map.Map;
 import com.boomer.imperium.game.map.Tile;
 import com.boomer.imperium.game.map.TileVector;
+import com.boomer.imperium.game.players.Nation;
+import com.boomer.imperium.game.players.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class GameWorld implements Renderable, TimedUpdateable,GameCalendarTracker.Listener {
+public final class GameWorld implements Renderable, TimedUpdateable, GameCalendarTracker.Listener {
+
+    public static final Condition IS_BUILDING = new Condition() {
+        @Override
+        public boolean check(Event event) {
+            return event.getGameContext().getGameWorld().buildingToBuild != null;
+        }
+    };
 
     private static final int START_INDEX = 0;
     private static final int COUNT = 1;
@@ -52,6 +59,7 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
     private final UnitPool unitPool;
     private final BuildingPool buildingPool;
 
+    private Entity entityBeingHovered;
     private Buildable buildingToBuild;
     private Tile buildTile;
     private final Rectangle buildDrawRectangle;
@@ -126,7 +134,7 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
                 }
 
                 @Override
-                public Drawable getCursorFillerSprite() {
+                public Drawable getCursorFiller() {
                     return gameContext.getGameResources().anotherTemple;
                 }
 
@@ -166,7 +174,7 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
                 }
 
                 @Override
-                public Drawable getCursorFillerSprite() {
+                public Drawable getCursorFiller() {
                     return gameContext.getGameResources().temple;
                 }
 
@@ -206,7 +214,7 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
                 }
 
                 @Override
-                public Drawable getCursorFillerSprite() {
+                public Drawable getCursorFiller() {
                     return gameContext.getGameResources().dragonTemple;
                 }
 
@@ -261,15 +269,18 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
             int nullTracker = layerStartAndCounts[i][START_INDEX];
             int count = layerStartAndCounts[i][COUNT];
             for (int j = startIndex; j < startIndex + count; j++) {
-                if(entities[j]!=null){
-                    if(dayPassedFlag)
+                if (entities[j] != null) {
+                    if (dayPassedFlag)
                         entities[j].dayPassed(daysPassed);
-                    if(weekPassedFlag)
+                    if (weekPassedFlag)
                         entities[j].weekPassed(weeksPassed);
-                    if(monthPassedFlag)
+                    if (monthPassedFlag)
                         entities[j].monthPassed(monthsPassed);
-                    if(yearPassedFlag)
+                    if (yearPassedFlag)
                         entities[j].yearPassed(yearsPassed);
+                    if (entities[j].shouldRemove()) {
+                        removeEntity(entities[j]);
+                    }
                 }
                 if (entities[j] != null && entities[nullTracker] != null) {
                     entities[j].update(deltaTime);
@@ -284,13 +295,13 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
             }
             layerStartAndCounts[i][COUNT] = nullTracker - layerStartAndCounts[i][START_INDEX];
         }
-        if(dayPassedFlag)
+        if (dayPassedFlag)
             dayPassedFlag = false;
-        if(weekPassedFlag)
+        if (weekPassedFlag)
             weekPassedFlag = false;
-        if(monthPassedFlag)
+        if (monthPassedFlag)
             monthPassedFlag = false;
-        if(yearPassedFlag)
+        if (yearPassedFlag)
             yearPassedFlag = false;
     }
 
@@ -312,7 +323,7 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
                 shapeRenderer.line(building.getCenter(), buildDrawRectangle.getCenter(buildDrawCenter));
             }
             shapeRenderer.end();
-            buildingToBuild.getCursorFillerSprite().draw(spriteBatch, buildDrawRectangle.x, buildDrawRectangle.y, buildDrawRectangle.width, buildDrawRectangle.height);
+            buildingToBuild.getCursorFiller().draw(spriteBatch, buildDrawRectangle.x, buildDrawRectangle.y, buildDrawRectangle.width, buildDrawRectangle.height);
         }
     }
 
@@ -333,6 +344,11 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
         for (Tile tile : entity.getTilesCovered()) {
             tile.removeEntity(entity);
         }
+        if(GameFlags.checkTypeFlag(entity,GameFlags.UNIT)){
+            unitPool.free(entity.asUnit());
+        }else if (GameFlags.checkTypeFlag(entity,GameFlags.BUILDING)){
+            buildingPool.free(entity.asBuilding());
+        }
     }
 
     public void selectEntity(Entity entity) {
@@ -350,7 +366,7 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
         this.connectionBuildings.clear();
     }
 
-    public void mouseDrag(Rectangle dragRectangle){
+    public void mouseDrag(Rectangle dragRectangle) {
         deselectEntities(selectedEntities);
         List<Entity> entitiesSelected = map.quadTree.findObjectsWithinRect(dragRectangle);
         filterEntitiesForSelectability(entitiesSelected);
@@ -360,18 +376,18 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
         gameContext.getEventManager()
                 .raiseEvent(EventType.ENTITIES_SELECTED)
                 .getParams()
-                .putParameter(Parameters.Key.SELECTED_ENTITIES,entitiesSelected);
+                .putParameter(Parameters.Key.SELECTED_ENTITIES, entitiesSelected);
     }
 
-    public void mouseRightClick(Vector2 point){
+    public void mouseRightClick(Vector2 point) {
         buildingToBuild = null;
         Tile tile = map.findTile(point);
-        for(Entity entity: selectedEntities){
+        for (Entity entity : selectedEntities) {
             entity.targetTile(tile);
         }
     }
 
-    public void mouseLeftClick(Vector2 point){
+    public void mouseLeftClick(Vector2 point) {
         deselectEntities(selectedEntities);
         List<Entity> entitiesSelected = map.findTile(point).getEntitiesContained();
         filterEntitiesForSelectability(entitiesSelected);
@@ -381,7 +397,7 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
         gameContext.getEventManager()
                 .raiseEvent(EventType.ENTITIES_SELECTED)
                 .getParams()
-                .putParameter(Parameters.Key.SELECTED_ENTITIES,entitiesSelected);
+                .putParameter(Parameters.Key.SELECTED_ENTITIES, entitiesSelected);
     }
 
     public void mouseHover(Vector2 hoverLocation) {
@@ -400,7 +416,7 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
                 buildDrawRectangle.set(x, y, width, height);
                 connectionRadiusRect.setCenter(hoverLocation);
                 foundEntities.clear();
-                map.quadTree.findObjectsWithinRect(connectionRadiusRect,foundEntities);
+                map.quadTree.findObjectsWithinRect(connectionRadiusRect, foundEntities);
                 for (Entity entity : foundEntities) {
                     if (GameFlags.checkTypeFlag(entity, GameFlags.BUILDING)) {
                         Building building = entity.asBuilding();
@@ -409,6 +425,19 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
                         }
                     }
                 }
+            }
+            return;
+        }
+        for (Entity entity : map.findTile(hoverLocation).getEntitiesContained()) {
+            if (GameFlags.checkStateFlag(entity, GameFlags.SELECTABLE)) {
+                if (!entity.equals(entityBeingHovered)) {
+                    entityBeingHovered = entity;
+                    gameContext.getEventManager()
+                            .raiseEvent(EventType.ENTITY_HOVERED_OVER)
+                            .getParams()
+                            .putParameter(Parameters.Key.ENTITY, entity);
+                }
+                break;
             }
         }
     }
@@ -423,17 +452,17 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
         }
     }
 
-    private void selectEntities(List<Entity> entitiesToSelect){
-        for(Entity entity:entitiesToSelect)
+    private void selectEntities(List<Entity> entitiesToSelect) {
+        for (Entity entity : entitiesToSelect)
             entity.select();
     }
 
-    private void filterEntitiesForSelectability(List<Entity> entitiesToFilter){
+    private void filterEntitiesForSelectability(List<Entity> entitiesToFilter) {
         entitiesToFilter.removeIf(entity -> !GameFlags.checkStateFlag(entity, GameFlags.SELECTABLE));
     }
 
-    private void deselectEntities(List<Entity> deselectEntities){
-        for(Entity entity:deselectEntities)
+    private void deselectEntities(List<Entity> deselectEntities) {
+        for (Entity entity : deselectEntities)
             entity.deSelect();
     }
 
@@ -445,6 +474,9 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
         return null;
     }
 
+    public Buildable getBuildingToBuild() {
+        return buildingToBuild;
+    }
 
     @Override
     public void dayPassed(int daysPassed) {
@@ -468,5 +500,13 @@ public final class GameWorld implements Renderable, TimedUpdateable,GameCalendar
     public void yearPassed(int yearsPassed) {
         this.yearPassedFlag = true;
         this.yearsPassed = yearsPassed;
+    }
+
+    public UnitPool getUnitPool() {
+        return unitPool;
+    }
+
+    public BuildingPool getBuildingPool() {
+        return buildingPool;
     }
 }

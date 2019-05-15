@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface Buildable {
     String getName();
-    Drawable getCursorFillerSprite();
+    Drawable getCursorFiller();
     Drawable getUIIcon();
     List<TileVector> getTileCoverage();
     List<Integer> getConnectableComponents();

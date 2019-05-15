@@ -18,6 +18,7 @@ public final class Parameters {
         MOUSE_DRAG_RECTANGLE,
         BUILDABLE_TO_BUILD,
         UNIT,
+        ENTITY,
         FROM_TILE,
         TO_TILE,
         TILE,
@@ -34,6 +35,12 @@ public final class Parameters {
     public Parameters putParameter(Key key,Object param){
         this.paramsMap.put(key,param);
         return this;
+    }
+
+    public Entity getEntity(Key key){
+        if(!paramsMap.containsKey(key))
+            return null;
+        return this.<Entity>castOrNull(paramsMap.get(key));
     }
 
     public Unit getUnit(Key key){

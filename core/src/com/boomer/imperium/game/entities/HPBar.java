@@ -36,6 +36,6 @@ public class HPBar implements Renderable {
 
 
     private int find5PercentThreshold() {
-        return (int) ((curHp / maxHp) / 0.1f);
+        return ((int) ((curHp / maxHp) / 0.1f));
     }
 }

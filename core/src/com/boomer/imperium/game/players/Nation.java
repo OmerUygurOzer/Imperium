@@ -1,11 +1,12 @@
-package com.boomer.imperium.game;
+package com.boomer.imperium.game.players;
 
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.entities.buildings.defaults.DefaultBuildings;
-import com.boomer.imperium.game.entities.units.UnitBuilders;
+import com.boomer.imperium.game.entities.units.UnitBuilder;
 import com.boomer.imperium.game.graphics.UnitSpriteAnimator;
 
 public class Nation {
+    private String name;
     private float defaultMovementSpeed;
     private int   defaultRangeAttackDamage;
     private int   defaultMeleeAttackDamage;
@@ -27,11 +28,24 @@ public class Nation {
     private float defaultArtisanship;
     private float defaultTradesmanship;
     private float defaultConstruction;
-    private DefaultBuildings defaultBuildings;
-    private UnitBuilders unitBuilders;
 
-    public UnitBuilders getUnitBuilders() {
-        return unitBuilders;
+    private int defaultFortMaxHP;
+    private int defaultMarketMaxHP;
+    private int defaultMineMaxHP;
+    private int defaultFactoryMaxHP;
+    private int defaultFarmMaxHP;
+    private int defaultGuildMaxHP;
+    private int defaultInnMaxHP;
+    private int defaultUniversityMaxHP;
+    private int defaultHarborMaxHP;
+    private int defaultWarFactoryMaxHP;
+    private int defaultTempleMaxHP;
+
+    private DefaultBuildings defaultBuildings;
+    private UnitBuilder unitBuilder;
+
+    public UnitBuilder getUnitBuilder() {
+        return unitBuilder;
     }
 
     public DefaultBuildings getDefaultBuildings() {
@@ -42,7 +56,9 @@ public class Nation {
         return null;
     }
 
-    public Drawable getBuildableImageDrawable(String name){ return null; }
+    public Drawable getBuildingCursorFiller(String buildingName){return null;}
+
+    public Drawable getBuildableImageDrawable(String buildingName){ return null; }
 
     public float getDefaultMovementSpeed() {
         return defaultMovementSpeed;
@@ -123,4 +139,53 @@ public class Nation {
     }
 
     public float getDefaultConstruction() { return defaultConstruction; }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getDefaultFortMaxHP() {
+        return defaultFortMaxHP;
+    }
+
+    public int getDefaultMarketMaxHP() {
+        return defaultMarketMaxHP;
+    }
+
+    public int getDefaultMineMaxHP() {
+        return defaultMineMaxHP;
+    }
+
+    public int getDefaultFactoryMaxHP() {
+        return defaultFactoryMaxHP;
+    }
+
+    public int getDefaultFarmMaxHP() {
+        return defaultFarmMaxHP;
+    }
+
+    public int getDefaultGuildMaxHP() {
+        return defaultGuildMaxHP;
+    }
+
+    public int getDefaultInnMaxHP() {
+        return defaultInnMaxHP;
+    }
+
+    public int getDefaultUniversityMaxHP() {
+        return defaultUniversityMaxHP;
+    }
+
+    public int getDefaultHarborMaxHP() {
+        return defaultHarborMaxHP;
+    }
+
+    public int getDefaultWarFactoryMaxHP() {
+        return defaultWarFactoryMaxHP;
+    }
+
+    public int getDefaultTempleMaxHP() {
+        return defaultTempleMaxHP;
+    }
+
 }

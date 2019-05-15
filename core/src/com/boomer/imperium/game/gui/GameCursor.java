@@ -1,9 +1,11 @@
 package com.boomer.imperium.game.gui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -12,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.ScreenSensitive;
 import com.boomer.imperium.game.configs.GameContext;
+import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.events.EventType;
 import com.boomer.imperium.game.events.Parameters;
 
@@ -31,6 +34,14 @@ public final class GameCursor implements ScreenSensitive, InputProcessor, Render
     private final Rectangle dragRectangle;
     private final Vector2 dragStart;
 
+    private Cursor standardCursor;
+    private Cursor attackCursor;
+    private Cursor enterBuildingCursor;
+    private Cursor tradeCursor;
+    private Cursor buildCursor;
+    private Cursor enterTownCursor;
+
+
     public GameCursor(GameContext gameContext, GuiHolder guiHolder, Viewport gameViewport) {
         this.guiHolder = guiHolder;
         this.gameContext = gameContext;
@@ -41,6 +52,13 @@ public final class GameCursor implements ScreenSensitive, InputProcessor, Render
         this.bounds = new Rectangle(0f, 0f, gameContext.getGameConfigs().tileSize, gameContext.getGameConfigs().tileSize);
         this.dragRectangle = new Rectangle();
         this.dragStart = new Vector2();
+        this.standardCursor = Gdx.graphics.newCursor(gameContext.getGameResources().standardCursorPixmap,0,0);
+        this.attackCursor = Gdx.graphics.newCursor(gameContext.getGameResources().attackCursorPixmap,0,0);
+        this.enterBuildingCursor = Gdx.graphics.newCursor(gameContext.getGameResources().enterBuildingCursorPixmap,0,0);
+        this.tradeCursor = Gdx.graphics.newCursor(gameContext.getGameResources().cantTradeCursorPixmap,0,0);
+        this.buildCursor = Gdx.graphics.newCursor(gameContext.getGameResources().buildCursorPixmap,31,31);
+        this.enterTownCursor = Gdx.graphics.newCursor(gameContext.getGameResources().enterTownCursorPixmap,0,0);
+        Gdx.graphics.setCursor(standardCursor);
     }
 
     @Override
@@ -142,6 +160,18 @@ public final class GameCursor implements ScreenSensitive, InputProcessor, Render
             shapeRenderer.end();
             return;
         }
+    }
+
+    public void entityHoveredOver(Entity entity){
+
+    }
+
+    public void building(){
+        Gdx.graphics.setCursor(buildCursor);
+    }
+
+    public void clearCursor(){
+        Gdx.graphics.setCursor(standardCursor);
     }
 
 }

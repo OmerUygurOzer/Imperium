@@ -1,15 +1,15 @@
 package com.boomer.imperium.game.entities.buildings.defaults;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.GameFlags;
-import com.boomer.imperium.game.Nation;
+import com.boomer.imperium.game.players.Nation;
 import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.map.TileVector;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public final class DefaultBuildings {
@@ -22,6 +22,15 @@ public final class DefaultBuildings {
         this.nation = nation;
     }
 
+    private Building prepareBuilding(Buildable buildable){
+        Building building = gameContext.getGameWorld().getBuildingPool().obtain();
+        building.setName(buildable.getName());
+        building.setNation(nation);
+        building.setTypeFlags(GameFlags.BUILDING);
+        building.setStateFlags(GameFlags.RENDERABLE | GameFlags.SELECTABLE);
+        return building;
+    }
+
     public final Buildable FORT = new Buildable() {
         @Override
         public String getName() {
@@ -29,8 +38,8 @@ public final class DefaultBuildings {
         }
 
         @Override
-        public Drawable getCursorFillerSprite() {
-            return null;
+        public Drawable getCursorFiller() {
+            return nation.getBuildingCursorFiller(getName());
         }
 
         @Override
@@ -40,7 +49,11 @@ public final class DefaultBuildings {
 
         @Override
         public List<TileVector> getTileCoverage() {
-            return null;
+            return Arrays.asList(
+                    new TileVector(0,0),
+                    new TileVector(-1,0),
+                    new TileVector(-1,1),
+                    new TileVector(0,1));
         }
 
         @Override
@@ -50,17 +63,20 @@ public final class DefaultBuildings {
 
         @Override
         public int widthInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
         public int heightInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
         public Building build() {
-            return null;
+            Building building = prepareBuilding(this);
+            building.setComponentFlags(GameFlags.FORT);
+            building.setMaxHp(nation.getDefaultFortMaxHP());
+            return building;
         }
     };
 
@@ -71,8 +87,8 @@ public final class DefaultBuildings {
         }
 
         @Override
-        public Drawable getCursorFillerSprite() {
-            return null;
+        public Drawable getCursorFiller() {
+            return nation.getBuildingCursorFiller(getName());
         }
 
         @Override
@@ -82,7 +98,11 @@ public final class DefaultBuildings {
 
         @Override
         public List<TileVector> getTileCoverage() {
-            return null;
+            return Arrays.asList(
+                    new TileVector(0,0),
+                    new TileVector(-1,0),
+                    new TileVector(-1,1),
+                    new TileVector(0,1));
         }
 
         @Override
@@ -92,12 +112,12 @@ public final class DefaultBuildings {
 
         @Override
         public int widthInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
         public int heightInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
@@ -113,8 +133,8 @@ public final class DefaultBuildings {
         }
 
         @Override
-        public Drawable getCursorFillerSprite() {
-            return null;
+        public Drawable getCursorFiller() {
+            return nation.getBuildingCursorFiller(getName());
         }
 
         @Override
@@ -124,7 +144,11 @@ public final class DefaultBuildings {
 
         @Override
         public List<TileVector> getTileCoverage() {
-            return null;
+            return Arrays.asList(
+                    new TileVector(0,0),
+                    new TileVector(-1,0),
+                    new TileVector(-1,1),
+                    new TileVector(0,1));
         }
 
         @Override
@@ -134,12 +158,12 @@ public final class DefaultBuildings {
 
         @Override
         public int widthInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
         public int heightInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
@@ -155,8 +179,8 @@ public final class DefaultBuildings {
         }
 
         @Override
-        public Drawable getCursorFillerSprite() {
-            return null;
+        public Drawable getCursorFiller() {
+            return nation.getBuildingCursorFiller(getName());
         }
 
         @Override
@@ -166,7 +190,11 @@ public final class DefaultBuildings {
 
         @Override
         public List<TileVector> getTileCoverage() {
-            return null;
+            return Arrays.asList(
+                    new TileVector(0,0),
+                    new TileVector(-1,0),
+                    new TileVector(-1,1),
+                    new TileVector(0,1));
         }
 
         @Override
@@ -176,12 +204,12 @@ public final class DefaultBuildings {
 
         @Override
         public int widthInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
         public int heightInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
@@ -197,8 +225,8 @@ public final class DefaultBuildings {
         }
 
         @Override
-        public Drawable getCursorFillerSprite() {
-            return null;
+        public Drawable getCursorFiller() {
+            return nation.getBuildingCursorFiller(getName());
         }
 
         @Override
@@ -208,7 +236,13 @@ public final class DefaultBuildings {
 
         @Override
         public List<TileVector> getTileCoverage() {
-            return null;
+            return Arrays.asList(
+                    new TileVector(0,0),
+                    new TileVector(-1,0),
+                    new TileVector(-1,1),
+                    new TileVector(0,1),
+                    new TileVector(-2,0),
+                    new TileVector(-2,1));
         }
 
         @Override
@@ -218,12 +252,12 @@ public final class DefaultBuildings {
 
         @Override
         public int widthInTiles() {
-            return 4;
+            return 3;
         }
 
         @Override
         public int heightInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
@@ -239,8 +273,8 @@ public final class DefaultBuildings {
         }
 
         @Override
-        public Drawable getCursorFillerSprite() {
-            return null;
+        public Drawable getCursorFiller() {
+            return nation.getBuildingCursorFiller(getName());
         }
 
         @Override
@@ -250,7 +284,11 @@ public final class DefaultBuildings {
 
         @Override
         public List<TileVector> getTileCoverage() {
-            return null;
+            return Arrays.asList(
+                    new TileVector(0,0),
+                    new TileVector(-1,0),
+                    new TileVector(-1,1),
+                    new TileVector(0,1));
         }
 
         @Override
@@ -260,12 +298,12 @@ public final class DefaultBuildings {
 
         @Override
         public int widthInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
         public int heightInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
@@ -281,8 +319,8 @@ public final class DefaultBuildings {
         }
 
         @Override
-        public Drawable getCursorFillerSprite() {
-            return null;
+        public Drawable getCursorFiller() {
+            return nation.getBuildingCursorFiller(getName());
         }
 
         @Override
@@ -292,7 +330,11 @@ public final class DefaultBuildings {
 
         @Override
         public List<TileVector> getTileCoverage() {
-            return null;
+            return Arrays.asList(
+                    new TileVector(0,0),
+                    new TileVector(-1,0),
+                    new TileVector(-1,1),
+                    new TileVector(0,1));
         }
 
         @Override
@@ -302,12 +344,12 @@ public final class DefaultBuildings {
 
         @Override
         public int widthInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
         public int heightInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
@@ -323,8 +365,8 @@ public final class DefaultBuildings {
         }
 
         @Override
-        public Drawable getCursorFillerSprite() {
-            return null;
+        public Drawable getCursorFiller() {
+            return nation.getBuildingCursorFiller(getName());
         }
 
         @Override
@@ -334,22 +376,26 @@ public final class DefaultBuildings {
 
         @Override
         public List<TileVector> getTileCoverage() {
-            return null;
+            return Arrays.asList(
+                    new TileVector(0,0),
+                    new TileVector(-1,0),
+                    new TileVector(-1,1),
+                    new TileVector(0,1));
         }
 
         @Override
         public List<Integer> getConnectableComponents() {
-            return null;
+            return Collections.EMPTY_LIST;
         }
 
         @Override
         public int widthInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
         public int heightInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
@@ -365,8 +411,8 @@ public final class DefaultBuildings {
         }
 
         @Override
-        public Drawable getCursorFillerSprite() {
-            return null;
+        public Drawable getCursorFiller() {
+            return nation.getBuildingCursorFiller(getName());
         }
 
         @Override
@@ -376,7 +422,16 @@ public final class DefaultBuildings {
 
         @Override
         public List<TileVector> getTileCoverage() {
-            return null;
+            return Arrays.asList(
+                    new TileVector(0,0),
+                    new TileVector(-1,0),
+                    new TileVector(-1,1),
+                    new TileVector(0,1),
+                    new TileVector(-2,0),
+                    new TileVector(-2,1),
+                    new TileVector(-2,2),
+                    new TileVector(-1,2),
+                    new TileVector(0,2));
         }
 
         @Override
@@ -386,12 +441,12 @@ public final class DefaultBuildings {
 
         @Override
         public int widthInTiles() {
-            return 4;
+            return 3;
         }
 
         @Override
         public int heightInTiles() {
-            return 4;
+            return 3;
         }
 
         @Override
@@ -407,8 +462,8 @@ public final class DefaultBuildings {
         }
 
         @Override
-        public Drawable getCursorFillerSprite() {
-            return null;
+        public Drawable getCursorFiller() {
+            return nation.getBuildingCursorFiller(getName());
         }
 
         @Override
@@ -418,7 +473,11 @@ public final class DefaultBuildings {
 
         @Override
         public List<TileVector> getTileCoverage() {
-            return null;
+            return Arrays.asList(
+                    new TileVector(0,0),
+                    new TileVector(-1,0),
+                    new TileVector(-1,1),
+                    new TileVector(0,1));
         }
 
         @Override
@@ -428,12 +487,12 @@ public final class DefaultBuildings {
 
         @Override
         public int widthInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
         public int heightInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override
@@ -449,8 +508,8 @@ public final class DefaultBuildings {
         }
 
         @Override
-        public Drawable getCursorFillerSprite() {
-            return null;
+        public Drawable getCursorFiller() {
+            return nation.getBuildingCursorFiller(getName());
         }
 
         @Override
@@ -460,7 +519,13 @@ public final class DefaultBuildings {
 
         @Override
         public List<TileVector> getTileCoverage() {
-            return null;
+            return Arrays.asList(
+                    new TileVector(0,0),
+                    new TileVector(-1,0),
+                    new TileVector(-1,1),
+                    new TileVector(0,1),
+                    new TileVector(-2,0),
+                    new TileVector(-2,1));
         }
 
         @Override
@@ -470,12 +535,12 @@ public final class DefaultBuildings {
 
         @Override
         public int widthInTiles() {
-            return 4;
+            return 3;
         }
 
         @Override
         public int heightInTiles() {
-            return 4;
+            return 2;
         }
 
         @Override

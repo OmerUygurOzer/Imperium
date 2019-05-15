@@ -28,11 +28,11 @@ public class UnitMovement  implements TimedUpdateable {
     private float lengthAccumulated;
     private float timeAccumulated = 0f;
 
-    public UnitMovement(GameContextInterface gameContext, Unit unit, float tileSize, float secondsPerTile) {
+    public UnitMovement(GameContextInterface gameContext, Unit unit,float secondsPerTile) {
         this.unit = unit;
         this.configs = gameContext.getGameConfigs();
         this.speedVector = new Vector2(0f, 0f);
-        this.speed =  secondsPerTile/tileSize;
+        this.speed =  secondsPerTile/configs.tileSize;
     }
 
     public void setDirection(Direction facing) { //seconds per tile

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.PixmapTextureData;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -16,7 +17,8 @@ public class Resources implements Disposable {
 
     public final Texture tilesTexture;
     public final TextureRegion[][] manTextureRegions;
-    public final TextureRegion[][] cursors;
+    public final Texture cursors;
+    public final Pixmap cursorsPixMap;
     public final Texture buttonsTexture;
     public final TextureRegion[][] buildingIconsTexture;
     public final TextureRegion[][] unitIcons;
@@ -33,9 +35,15 @@ public class Resources implements Disposable {
     public final UnitSpriteAnimator man;
     public final BuildingSpriteAnimator building;
 
-    public final Sprite inGameCursor;
-
     public final Skin skin;
+
+    public final Pixmap standardCursorPixmap;
+    public final Pixmap attackCursorPixmap;
+    public final Pixmap enterBuildingCursorPixmap;
+    public final Pixmap buildCursorPixmap;
+    public final Pixmap enterTownCursorPixmap;
+    public final Pixmap tradeCursorPixmap;
+    public final Pixmap cantTradeCursorPixmap;
 
     public final Drawable fortButtonDrawable;
     public final Drawable factoryButtonDrawable;
@@ -60,7 +68,9 @@ public class Resources implements Disposable {
         this.tilesTexture = new Texture("tiles_grid.png");
         this.buttonsTexture = new Texture("buttons.png");
         this.manTextureRegions = new TextureRegion(new Texture("test_man.png")).split(138, 138);
-        this.cursors = new TextureRegion(new Texture("cursors.png")).split(32, 32);
+        this.cursors = new Texture("cursors.png");
+        cursors.getTextureData().prepare();
+        this.cursorsPixMap = cursors.getTextureData().consumePixmap();
         this.buildingIconsTexture = new TextureRegion(new Texture("building_icons.png")).split(239, 146);
         this.unitIcons = new TextureRegion(new Texture("unit_icons.png")).split(46, 38);
         this.temples = new TextureRegion(new Texture("temples.png")).split(141, 146);
@@ -70,7 +80,15 @@ public class Resources implements Disposable {
         this.man = new UnitSpriteAnimator(manTextureRegions);
         this.building = new BuildingSpriteAnimator(temples); //(Todo)change this to a real spritesheet
         this.skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-        this.inGameCursor = new Sprite(cursors[0][0]);
+
+        this.standardCursorPixmap = createPixmapFromTexturePixMap(cursorsPixMap,0,0,32,32);
+        this.attackCursorPixmap = createPixmapFromTexturePixMap(cursorsPixMap,64,0,32,32);
+        this.enterBuildingCursorPixmap = createPixmapFromTexturePixMap(cursorsPixMap,256,32,32,32);
+        this.buildCursorPixmap = createPixmapFromTexturePixMap(cursorsPixMap,196,32,32,32);
+        this.enterTownCursorPixmap = createPixmapFromTexturePixMap(cursorsPixMap,352,64,32,32);
+        this.tradeCursorPixmap = createPixmapFromTexturePixMap(cursorsPixMap,288,32,32,32);
+        this.cantTradeCursorPixmap = createPixmapFromTexturePixMap(cursorsPixMap,320,32,32,32);
+
         this.hpBar = new TextureRegion(new Texture("healthbar.png")).split(50,20)[0];
 
         this.buildButton = new TextureRegionDrawable(new TextureRegion(buttonsTexture, 0, 0, 109, 93));
@@ -92,6 +110,16 @@ public class Resources implements Disposable {
         this.temple = new TextureRegionDrawable(temples[0][0]);
         this.dragonTemple = new TextureRegionDrawable(temples[0][1]);
         this.anotherTemple = new TextureRegionDrawable(temples[0][2]);
+    }
+
+    private Pixmap createPixmapFromTexturePixMap(Pixmap texture,int x,int y, int width,int height){
+        Pixmap pixmap = new Pixmap(width,height,Pixmap.Format.RGBA8888);
+        for(int i = 0 ; i < width; i++){
+            for(int j = 0 ; j < height ; j++){
+                pixmap.drawPixel(i,j, texture.getPixel(x+i,y+j));
+            }
+        }
+        return pixmap;
     }
 
     @Override

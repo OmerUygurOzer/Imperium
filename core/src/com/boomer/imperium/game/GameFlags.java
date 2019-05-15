@@ -45,6 +45,9 @@ public final class GameFlags {
     public static final int AURA            = 1 << 22;
     public static final int AOE_ATTACK      = 1 << 23;
     public static final int ARMOR           = 1 << 24;
+    public static final int LAND_MOVEMENT   = 1 << 25;
+    public static final int WATER_MOVEMENT  = 1 << 26;
+    public static final int PRAYER          = 1 << 27;
 
     //State Flags
     public static final int INVULNERABLE    = 1;
@@ -52,6 +55,9 @@ public final class GameFlags {
     public static final int SELECTABLE      = 1 << 2;
     public static final int NO_ROOM         = 1 << 3;
     public static final int MOVABLE         = 1 << 4;
+
+    public static final int UNCONTAINED     = RENDERABLE | SELECTABLE | NO_ROOM;
+    public static final int CONTAINED       = Integer.MAX_VALUE ^ UNCONTAINED;
 
     public static boolean checkTypeFlag(Entity entity, int flag){
         return (entity.getTypeFlags() & flag) == flag;

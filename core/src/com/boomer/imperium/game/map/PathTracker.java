@@ -5,9 +5,7 @@ import com.boomer.imperium.game.Direction;
 import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.entities.units.UnitMovement;
-import com.boomer.imperium.game.entities.units.UnitOrders;
 import com.boomer.imperium.game.entities.units.UnitState;
-import com.boomer.imperium.game.events.EventManager;
 import com.boomer.imperium.game.events.EventType;
 import com.boomer.imperium.game.events.Parameters;
 
@@ -18,12 +16,12 @@ public class PathTracker implements TimedUpdateable {
     private final Map map;
     private Path path;
     private final UnitMovement unitMovement;
-    private UnitOrders unitOrders;
+    private Tile targetTile;
     private int curPath;
     private int tileX, tileY;
     private State state;
 
-    private enum State {
+    public enum State {
         ACTIVE_PATH,
         ACTIVE_ENTITY,
         ACTIVE_TILE,
@@ -67,15 +65,15 @@ public class PathTracker implements TimedUpdateable {
                 }
                 direction = path.tasks.get(curPath);
             } else if (state.equals(State.ACTIVE_TILE)) {
-                if (map.getTileAt(tileX, tileY).equals(unitOrders.getDestinationTile())) {
+                if (map.getTileAt(tileX, tileY).equals(targetTile)) {
                     unit.setState(UnitState.IDLE);
                     state = State.IDLE;
                     return;
                 }
                 direction = PathFinder
                         .getNextMoveForTarget(map,
-                                map.getTileAt(unitOrders.getUnit().tileX(), unitOrders.getUnit().tileY()),
-                                unitOrders.getDestinationTile());
+                                map.getTileAt(unit.tileX(), unit.tileY()),
+                                targetTile);
                 if(direction==Direction.O || direction==null)
                     state = State.IDLE;
             } else {
@@ -94,6 +92,10 @@ public class PathTracker implements TimedUpdateable {
         }
     }
 
+    public State getState() {
+        return state;
+    }
+
     public void activate(Path path) {
         this.path = path;
         this.curPath = 0;
@@ -103,10 +105,10 @@ public class PathTracker implements TimedUpdateable {
         unit.setFacing(path.tasks.get(curPath));
     }
 
-    public void activate(UnitOrders unitOrders) {
-        this.unitOrders = unitOrders;
+    public void activate(Tile targetTile) {
+        this.targetTile = targetTile;
         this.state = State.ACTIVE_TILE;
-        Direction direction = PathFinder.getNextMoveForTarget(map, map.getTileAt(unitOrders.getUnit().tileX(), unitOrders.getUnit().tileY()), unitOrders.getDestinationTile());
+        Direction direction = PathFinder.getNextMoveForTarget(map, map.getTileAt(unit.tileX(), unit.tileY()), targetTile);
         setTargetForDirection(direction);
         unitMovement.setDirection(direction);
         unit.setFacing(direction);

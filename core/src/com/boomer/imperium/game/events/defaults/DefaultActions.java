@@ -70,10 +70,34 @@ public final class DefaultActions {
         }
     };
 
+    public static final Action ADJUST_CURSOR_IN_GUI = new Action() {
+        @Override
+        public boolean perform(GameContextInterface gameContext, Parameters parameters, float deltaTime) {
+            gameContext.gameCursor().entityHoveredOver(parameters.getEntity(ENTITY));
+            return false;
+        }
+    };
+
     public static final Action PICK_BUILDABLE_IN_GAME_WORLD = new Action() {
         @Override
         public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
             gameContext.getGameWorld().setBuildingToBuild(parameters.getBuildable(BUILDABLE_TO_BUILD));
+            return false;
+        }
+    };
+
+    public static final Action ADJUST_CURSOR_FOR_BUILDING = new Action() {
+        @Override
+        public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
+            gameContext.gameCursor().building();
+            return false;
+        }
+    };
+
+    public static final Action RESET_CURSOR_TO_STANDARD = new Action() {
+        @Override
+        public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
+            gameContext.gameCursor().clearCursor();
             return false;
         }
     };

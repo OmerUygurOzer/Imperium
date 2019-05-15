@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.Layer;
-import com.boomer.imperium.game.Nation;
-import com.boomer.imperium.game.Player;
+import com.boomer.imperium.game.players.Nation;
+import com.boomer.imperium.game.players.Player;
 import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.*;
 import com.boomer.imperium.game.entities.units.Unit;
@@ -76,6 +76,11 @@ public final class Building implements Entity {
     }
 
     @Override
+    public void targetEntity(Entity entity) {
+
+    }
+
+    @Override
     public void setMemoryIndex(int index) {
         this.memoryIndex = index;
     }
@@ -131,7 +136,7 @@ public final class Building implements Entity {
 
     @Override
     public void receiveDamage(int damage) {
-        if (!state.equals(BuildingState.COLLAPSING) | !state.equals(BuildingState.RUBBLE))
+        if (state.equals(BuildingState.COLLAPSING) | state.equals(BuildingState.RUBBLE))
             return;
         hp = -damage;
         if (hp <= 0) {
@@ -167,7 +172,7 @@ public final class Building implements Entity {
 
     @Override
     public boolean shouldRemove() {
-        return false;
+        return state.equals(BuildingState.RUBBLE);
     }
 
     @Override

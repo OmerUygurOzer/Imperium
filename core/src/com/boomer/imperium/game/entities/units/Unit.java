@@ -7,8 +7,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.Direction;
 import com.boomer.imperium.game.Layer;
-import com.boomer.imperium.game.Nation;
-import com.boomer.imperium.game.Player;
+import com.boomer.imperium.game.entities.units.orders.UnitOrders;
+import com.boomer.imperium.game.players.Nation;
+import com.boomer.imperium.game.players.Player;
 import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.*;
 import com.boomer.imperium.game.entities.buildings.Buildable;
@@ -26,7 +27,7 @@ public final class Unit implements Entity {
 
     private final GameContextInterface gameContext;
     private final Rectangle bounds;
-    private final UnitMovement unitMovement;
+
     private final UnitOrders unitOrders;
     private final PathTracker pathTracker;
     private final HPBar hpBar;
@@ -86,8 +87,7 @@ public final class Unit implements Entity {
 
     public Unit(GameContextInterface gameContext) {
         this.gameContext = gameContext;
-        this.unitOrders = new UnitOrders(this);
-        this.unitMovement = new UnitMovement(gameContext, this, gameContext.getGameConfigs().tileSize, 1f);
+        UnitMovement unitMovement = new UnitMovement(gameContext, this, 1f);
         this.tileX = 0;
         this.tileY = 0;
         this.frameCounter = new FrameCounter(8f, 8);
@@ -95,8 +95,9 @@ public final class Unit implements Entity {
         Tile tile = gameContext.getGameWorld().map.getTileAt(0, 0);
         this.bounds = new Rectangle(tile.bounds.x, tile.bounds.y, gameContext.getGameConfigs().tileSize,
                 gameContext.getGameConfigs().tileSize);
-        this.selectedSprite = gameContext.getGameResources().inGameCursor;
+        //this.selectedSprite = gameContext.getGameResources().inGameCursor;
         this.pathTracker = new PathTracker(gameContext, this, gameContext.getGameWorld().map, unitMovement);
+        this.unitOrders = new UnitOrders(this);
         this.tilesCovered = new ArrayList<Tile>(9);
         this.tileCoverageVectors = new ArrayList<TileVector>(9);
         this.tileCoverageVectors.add(new TileVector(0,0));
@@ -108,25 +109,25 @@ public final class Unit implements Entity {
     public void update(float deltaTime) {
         hpBar.setHp(maxHp,hp);
         frameCounter.update(deltaTime);
-        if (state.equals(UnitState.MOVING)) {
-            pathTracker.update(deltaTime);
-        }
-
+        unitOrders.update(deltaTime);
     }
 
     @Override
     public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
         hpBar.render(spriteBatch,shapeRenderer);
-        if (selected)
-            spriteBatch.draw(selectedSprite, bounds.x, bounds.y, bounds.width, bounds.height);
+        //if (selected)
+            //spriteBatch.draw(selectedSprite, bounds.x, bounds.y, bounds.width, bounds.height);
         unitSpriteAnimator.draw(spriteBatch, frameCounter.currentFrame, bounds, facing, state);
     }
 
     @Override
     public void targetTile(Tile tile) {
-        unitOrders.setTargetTile(tile);
-        pathTracker.activate(unitOrders);
-        state = UnitState.MOVING;
+        unitOrders.moveToTile(tile);
+    }
+
+    @Override
+    public void targetEntity(Entity entity){
+        unitOrders.attackEntity(entity);
     }
 
     @Override
@@ -191,6 +192,10 @@ public final class Unit implements Entity {
         bounds.set(tile.bounds);
     }
 
+    public PathTracker getPathTracker() {
+        return pathTracker;
+    }
+
     public void setTile(int x, int y) {
         this.tileX = x;
         this.tileY = y;
@@ -217,7 +222,7 @@ public final class Unit implements Entity {
 
     @Override
     public void setPlayer(Player player) {
-
+        this.player = player;
     }
 
     @Override
