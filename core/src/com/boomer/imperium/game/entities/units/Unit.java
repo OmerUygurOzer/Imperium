@@ -3,7 +3,9 @@ package com.boomer.imperium.game.entities.units;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.Direction;
 import com.boomer.imperium.game.Layer;
@@ -27,6 +29,7 @@ public final class Unit implements Entity {
 
     private final GameContextInterface gameContext;
     private final Rectangle bounds;
+    private final Vector2 center;
 
     private final UnitOrders unitOrders;
     private final PathTracker pathTracker;
@@ -65,6 +68,7 @@ public final class Unit implements Entity {
     private float meleeAttackSpeed;
     private float rangeAttackSpeed;
     private int rangeAttackRange;
+    private final Circle rangeCircle;
     private float projectileSpeed;
     private float aoeRadius;
 
@@ -95,6 +99,8 @@ public final class Unit implements Entity {
         Tile tile = gameContext.getGameWorld().map.getTileAt(0, 0);
         this.bounds = new Rectangle(tile.bounds.x, tile.bounds.y, gameContext.getGameConfigs().tileSize,
                 gameContext.getGameConfigs().tileSize);
+        this.center = new Vector2();
+        this.rangeCircle = new Circle();
         //this.selectedSprite = gameContext.getGameResources().inGameCursor;
         this.pathTracker = new PathTracker(gameContext, this, gameContext.getGameWorld().map, unitMovement);
         this.unitOrders = new UnitOrders(this);
@@ -189,7 +195,8 @@ public final class Unit implements Entity {
         this.tileY = tile.tileY;
         this.tilesCovered.clear();
         this.tilesCovered.add(tile);
-        bounds.set(tile.bounds);
+        this.bounds.set(tile.bounds);
+        this.rangeCircle.setPosition(getCenter());
     }
 
     public PathTracker getPathTracker() {
@@ -204,6 +211,11 @@ public final class Unit implements Entity {
     @Override
     public Rectangle getBounds() {
         return bounds;
+    }
+
+    @Override
+    public Vector2 getCenter() {
+        return bounds.getCenter(center);
     }
 
     public void setFacing(Direction facing) {
@@ -458,7 +470,12 @@ public final class Unit implements Entity {
     }
 
     public void setRangeAttackRange(int rangeAttackRange) {
+        this.rangeCircle.setRadius(rangeAttackRange);
         this.rangeAttackRange = rangeAttackRange;
+    }
+
+    public Circle getRangeCircle(){
+        return rangeCircle;
     }
 
     public float getProjectileSpeed() {

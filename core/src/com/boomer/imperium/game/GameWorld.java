@@ -382,10 +382,21 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
     public void mouseRightClick(Vector2 point) {
         buildingToBuild = null;
         Tile tile = map.findTile(point);
-        for (Entity entity : selectedEntities) {
-            entity.targetTile(tile);
+        if(tile.isVacant){
+            for (Entity entity : selectedEntities) {
+                entity.targetTile(tile);
+            }
+            return;
         }
+        Entity targetEntity = tile.getEntitiesContained().get(0);
+        for (Entity entity : selectedEntities) {
+            System.out.println("FROM:"+entity.tileX()+"/"+entity.tileY());
+            entity.targetEntity(targetEntity);
+        }
+        System.out.println("To:"+tile.tileX+"/"+tile.tileY);
+        System.out.println("To:"+targetEntity.tileX()+"/"+targetEntity.tileY());
     }
+
 
     public void mouseLeftClick(Vector2 point) {
         deselectEntities(selectedEntities);

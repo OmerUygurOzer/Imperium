@@ -20,6 +20,7 @@ public class PathTracker implements TimedUpdateable {
     private int curPath;
     private int tileX, tileY;
     private State state;
+    private boolean midTile;
 
     public enum State {
         ACTIVE_PATH,
@@ -43,6 +44,7 @@ public class PathTracker implements TimedUpdateable {
             return;
         unitMovement.update(deltaTime);
         if ((unit.tileX() != tileX || unit.tileY() != tileY)) {
+            midTile = true;
             Tile fromTile = map.getTileAt(unit.tileX(), unit.tileY());
             fromTile.removeEntity(unit);
             unit.setTile(tileX, tileY);
@@ -70,6 +72,7 @@ public class PathTracker implements TimedUpdateable {
                     state = State.IDLE;
                     return;
                 }
+                midTile = false;
                 direction = PathFinder
                         .getNextMoveForTarget(map,
                                 map.getTileAt(unit.tileX(), unit.tileY()),
@@ -92,8 +95,16 @@ public class PathTracker implements TimedUpdateable {
         }
     }
 
+    public boolean isMidTile() {
+        return midTile;
+    }
+
     public State getState() {
         return state;
+    }
+
+    public void setState(State state){
+        this.state = state;
     }
 
     public void activate(Path path) {
@@ -112,6 +123,10 @@ public class PathTracker implements TimedUpdateable {
         setTargetForDirection(direction);
         unitMovement.setDirection(direction);
         unit.setFacing(direction);
+    }
+
+    public void activate(int tileX,int tileY) {
+        activate(gameContext.getGameWorld().map.getTileAt(tileX,tileY));
     }
 
     private void setTargetForDirection(Direction direction) {

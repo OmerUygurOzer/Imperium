@@ -19,22 +19,35 @@ public class UnitOrders implements TimedUpdateable {
 
     @Override
     public void update(float deltaTime) {
-        if(currentOrder!=null)
+        if(currentOrder!=null){
             currentOrder.update(deltaTime);
+            if(currentOrder.completed())
+                currentOrder = null;
+        }
     }
 
     public void moveToTile(Tile tile){
+        resetCurentOrder(move);
         this.move.targetTile(tile);
         this.currentOrder = move;
     }
 
     public void attackEntity(Entity entity){
+        resetCurentOrder(attack);
         this.attack.attackEntity(entity);
         this.currentOrder = attack;
     }
 
     public boolean completedCurrentOrder(){
         return currentOrder.completed();
+    }
+
+    private void resetCurentOrder(UnitOrder order){
+        if(currentOrder!=null){
+            if(!currentOrder.equals(order)){
+                currentOrder.reset();
+            }
+        }
     }
 
 }
