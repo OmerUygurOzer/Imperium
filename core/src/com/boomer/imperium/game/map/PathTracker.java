@@ -43,7 +43,7 @@ public class PathTracker implements TimedUpdateable {
         if (state.equals(State.IDLE))
             return;
         unitMovement.update(deltaTime);
-        if ((unit.tileX() != tileX || unit.tileY() != tileY)) {
+        if (!midTile) {
             midTile = true;
             Tile fromTile = map.getTileAt(unit.tileX(), unit.tileY());
             fromTile.removeEntity(unit);
@@ -52,10 +52,11 @@ public class PathTracker implements TimedUpdateable {
             toTile.addEntity(unit);
             gameContext.getEventManager().raiseEvent(EventType.UNIT_SWITCH_TILES)
                     .getParams()
-                    .putParameter(Parameters.Key.UNIT,unit)
-                    .putParameter(Parameters.Key.FROM_TILE,fromTile)
-                    .putParameter(Parameters.Key.TO_TILE,toTile);
-        } else if(unitMovement.isComplete()){
+                    .putParameter(Parameters.Key.UNIT, unit)
+                    .putParameter(Parameters.Key.FROM_TILE, fromTile)
+                    .putParameter(Parameters.Key.TO_TILE, toTile);
+        } else if (unitMovement.isComplete()) {
+            midTile = false;
             unitMovement.setLength(0);
             Direction direction = null;
             if (state.equals(State.ACTIVE_PATH)) {
@@ -72,12 +73,12 @@ public class PathTracker implements TimedUpdateable {
                     state = State.IDLE;
                     return;
                 }
-                midTile = false;
+
                 direction = PathFinder
                         .getNextMoveForTarget(map,
                                 map.getTileAt(unit.tileX(), unit.tileY()),
                                 targetTile);
-                if(direction==Direction.O || direction==null)
+                if (direction == Direction.O || direction == null)
                     state = State.IDLE;
             } else {
                 direction = Direction.O;
@@ -90,8 +91,8 @@ public class PathTracker implements TimedUpdateable {
                 unitMovement.setDirection(direction);
             }
             gameContext.getEventManager().raiseEvent(EventType.UNIT_ARRIVED_AT_TILE)
-                   .getParams()
-                    .putParameter(Parameters.Key.TILE,map.getTileAt(unit.tileX(),unit.tileY()));
+                    .getParams()
+                    .putParameter(Parameters.Key.TILE, map.getTileAt(unit.tileX(), unit.tileY()));
         }
     }
 
@@ -103,7 +104,7 @@ public class PathTracker implements TimedUpdateable {
         return state;
     }
 
-    public void setState(State state){
+    public void setState(State state) {
         this.state = state;
     }
 
@@ -118,15 +119,17 @@ public class PathTracker implements TimedUpdateable {
 
     public void activate(Tile targetTile) {
         this.targetTile = targetTile;
-        this.state = State.ACTIVE_TILE;
-        Direction direction = PathFinder.getNextMoveForTarget(map, map.getTileAt(unit.tileX(), unit.tileY()), targetTile);
-        setTargetForDirection(direction);
-        unitMovement.setDirection(direction);
-        unit.setFacing(direction);
+        if (!midTile) {
+            this.state = State.ACTIVE_TILE;
+            Direction direction = PathFinder.getNextMoveForTarget(map, map.getTileAt(unit.tileX(), unit.tileY()), targetTile);
+            setTargetForDirection(direction);
+            unitMovement.setDirection(direction);
+            unit.setFacing(direction);
+        }
     }
 
-    public void activate(int tileX,int tileY) {
-        activate(gameContext.getGameWorld().map.getTileAt(tileX,tileY));
+    public void activate(int tileX, int tileY) {
+        activate(gameContext.getGameWorld().map.getTileAt(tileX, tileY));
     }
 
     private void setTargetForDirection(Direction direction) {

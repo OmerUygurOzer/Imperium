@@ -72,15 +72,12 @@ public final class PathFinder {
                 deConstructPath(path,curNode);
                 break;
             }
-
             int x = curNode.tile.tileX;
             int y = curNode.tile.tileY;
-
             for (Direction direction : Direction.values()) {
                 Tile neighbor = map.getTileAt(x + (int) direction.directionVector.x, y + (int) direction.directionVector.y);
                 if(neighbor != null && neighbor.equals(to)){
                     tiles.offer(inject(neighbor, direction, curNode));
-                    break;
                 }
                 if (neighbor != null && neighbor.canBeMovedTo()) {
                     if (!VISITED.contains(neighbor)) {

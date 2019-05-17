@@ -1,6 +1,7 @@
 package com.boomer.imperium.game.map;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.boomer.imperium.game.entities.Entity;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -87,7 +88,11 @@ public class QuadNode<T extends Bound> {
     private void findObjectsWithinRect(Rectangle rectangle, float curWidth, List<T> found) {
         float nextWidth = curWidth/2f;
         if (nextWidth <= minSize || rectangle.contains(area)) {
-            found.addAll(objects);
+            for(T t: objects){
+                if(rectangle.contains(t.getCenter())){
+                    found.add(t);
+                }
+            }
             return;
         }
         if (topRightArea.overlaps(rectangle) && topRightNode != null) {
