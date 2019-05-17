@@ -86,9 +86,7 @@ public class PathTracker implements TimedUpdateable {
 
             unit.setPosition(tileX, tileY);
             if (!direction.equals(Direction.O)) {
-                unit.setFacing(direction);
-                setTargetForDirection(direction);
-                unitMovement.setDirection(direction);
+                startMovingTowardsDirection(direction);
             }
             gameContext.getEventManager().raiseEvent(EventType.UNIT_ARRIVED_AT_TILE)
                     .getParams()
@@ -121,15 +119,19 @@ public class PathTracker implements TimedUpdateable {
         this.targetTile = targetTile;
         if (!midTile) {
             this.state = State.ACTIVE_TILE;
-            Direction direction = PathFinder.getNextMoveForTarget(map, map.getTileAt(unit.tileX(), unit.tileY()), targetTile);
-            setTargetForDirection(direction);
-            unitMovement.setDirection(direction);
-            unit.setFacing(direction);
+            startMovingTowardsDirection(PathFinder
+                    .getNextMoveForTarget(map, map.getTileAt(unit.tileX(), unit.tileY()), targetTile));
         }
     }
 
     public void activate(int tileX, int tileY) {
         activate(gameContext.getGameWorld().map.getTileAt(tileX, tileY));
+    }
+
+    private void startMovingTowardsDirection(Direction direction){
+        unit.setFacing(direction);
+        setTargetForDirection(direction);
+        unitMovement.setDirection(direction);
     }
 
     private void setTargetForDirection(Direction direction) {

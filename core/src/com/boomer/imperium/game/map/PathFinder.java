@@ -78,6 +78,7 @@ public final class PathFinder {
                 Tile neighbor = map.getTileAt(x + (int) direction.directionVector.x, y + (int) direction.directionVector.y);
                 if(neighbor != null && neighbor.equals(to)){
                     tiles.offer(inject(neighbor, direction, curNode));
+                    break;
                 }
                 if (neighbor != null && neighbor.canBeMovedTo()) {
                     if (!VISITED.contains(neighbor)) {

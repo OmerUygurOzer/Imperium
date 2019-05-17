@@ -44,7 +44,7 @@ public final class GameCalendarTracker implements TimedUpdateable {
             timeAccumulated = 0f;
             daysPassed++;
             monthDayCounter++;
-            this.calendar.add(Calendar.DATE,1);
+            calendar.add(Calendar.DATE,1);
             eventManager.raiseEvent(EventType.DAY_PASSED)
                     .getParams().putParameter(Parameters.Key.DAYS, daysPassed);
             if (daysPassed % 7 == 0) {
