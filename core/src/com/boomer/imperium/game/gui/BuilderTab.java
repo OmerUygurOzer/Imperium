@@ -13,20 +13,16 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public final class BuilderTab extends ScrollPane {
+public final class BuilderTab extends Table {
 
-    private final Table container;
     private final List<ImageButton> existingButtons;
     private final LinkedHashMap<ImageButton, Buildable> mappedButtons;
 
     private final Listener listener;
 
     public BuilderTab(Skin skin, final Listener listener) {
-        super(null,skin);
+        super(skin);
         this.listener = listener;
-        this.container = new Table(skin);
-        setActor(container);
-        setScrollbarsVisible(true);
         this.existingButtons = new ArrayList<ImageButton>();
         this.mappedButtons = new LinkedHashMap<ImageButton, Buildable>();
         for(int i = 0 ; i < 12 ; i++){
@@ -48,24 +44,24 @@ public final class BuilderTab extends ScrollPane {
         clearBuildables();
         for(int i = 0; i < buildables.size() && i < existingButtons.size(); i ++){
             if(i%2==0)
-                container.row();
+                row();
             existingButtons.get(i).getStyle().imageUp = buildables.get(i).getUIIcon();
             mappedButtons.put(existingButtons.get(i),buildables.get(i));
-            container.add(existingButtons.get(i)).size(100f,70f)
+            add(existingButtons.get(i)).size(100f,70f)
                     .pad(5f)
                     .expand()
                     .center();
         }
         for(int i = buildables.size() ; i < existingButtons.size() ; i++){
-            container.removeActor(existingButtons.get(i));
+            removeActor(existingButtons.get(i));
         }
         this.pack();
     }
 
     public void clearBuildables(){
         mappedButtons.clear();
-        container.clear();
-        container.pack();
+        clear();
+        pack();
     }
 
     public interface Listener{

@@ -54,12 +54,11 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
     private final Table miniMapPanel;
     private final MiniMap miniMap;
 
-    private final Table traitsTabPanel;
-    private final ButtonGroup<ImageButton> traitsPanelButtons;
-    private final Table traitDetailsPanel;
-    private final Table actionButtonsPanel;
+    private final Table detailsTabHolder;
+    private final ComponentRadioTab componentRadioTab;
 
-    private final Button buildButton;
+    private final ImageButton buildButton;
+    private final ImageButton detailsButton;
     private final BuilderTab builderTab;
     private final UnitDetailsTab unitDetailsTab;
 
@@ -82,15 +81,15 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
         this.skin = gameContext.getGameResources().skin;
         this.leftSideTable = new Table(skin);
         this.rightSideTable = new Table(skin);
+        this.componentRadioTab = new ComponentRadioTab(skin);
         this.miniMapPanel = new Table(skin);
         this.detailsPanel = new Table(skin);
-        this.traitsTabPanel = new Table(skin);
+        this.detailsTabHolder = new Table(skin);
         this.miniMap = new MiniMap(gameContext.getGameWorld());
-        this.traitsPanelButtons = new ButtonGroup<ImageButton>();
-        this.traitDetailsPanel = new Table(skin);
-        this.actionButtonsPanel = new Table(skin);
         this.builderTab = new BuilderTab(skin,this);
         this.buildButton = new ImageButton(resources.buildButton);
+        this.detailsButton = new ImageButton(resources.townButton);
+        this.detailsButton.addListener(getDetailsButtonListener());
         this.buildButton.addListener(getBuildButtonListener());
         this.unitDetailsTab = new UnitDetailsTab(skin);
         this.selectedEntities = new ArrayList<>();
@@ -106,32 +105,29 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
         rightSideTable.setDebug(true);
         miniMapPanel.setDebug(true);
         detailsPanel.setDebug(true);
-        traitDetailsPanel.setDebug(true);
-        traitsTabPanel.setDebug(true);
-        actionButtonsPanel.setDebug(true);
-        rightSideTable.add(miniMapPanel).height(Value.percentHeight(0.3f,rightSideTable)).expandX().fill().row();
-        rightSideTable.add(detailsPanel).height(Value.percentHeight(0.7f,rightSideTable)).expandX().fill();
+        detailsTabHolder.setDebug(true);
 
-        detailsPanel.add(traitsTabPanel)
-                .fillX()
+        rightSideTable.add(miniMapPanel).height(Value.percentHeight(0.3f,rightSideTable))
                 .expandX()
+                .fill()
+                .row();
+
+        rightSideTable.add(detailsPanel).height(Value.percentHeight(0.7f,rightSideTable))
+                .expandX()
+                .fill();
+
+        detailsPanel.add(componentRadioTab)
+                .expandX()
+                .height(Value.percentHeight(0.10f,detailsPanel))
                 .center()
                 .row();
 
-        detailsPanel.add(traitDetailsPanel)
-                .fill()
+        detailsPanel.add(detailsTabHolder)
                 .expand()
-                .row();
-
-        traitDetailsPanel.add(unitDetailsTab)
                 .fill()
-                .expand()
                 .center();
 
-        detailsPanel.add(actionButtonsPanel)
-                .expandX()
-                .fillX()
-                .center();
+
 
         addActor(leftSideTable);
         addActor(rightSideTable);
@@ -191,23 +187,33 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
         currentSelectedBuildable = null;
         builderTab.clearBuildables();
         unitDetailsTab.clearUnit();
-        actionButtonsPanel.clear();
+        componentRadioTab.clearButtons();
     }
 
     private void adjustForEntity(Entity entity){
-        actionButtonsPanel.clear();
+        componentRadioTab.clearButtons();
         if(GameFlags.checkTypeFlag(entity,GameFlags.UNIT)){
             Unit unit = entity.asUnit();
             unitDetailsTab.setUnit(unit);
+            detailsTabHolder.clear();
+            detailsTabHolder
+                    .add(unitDetailsTab)
+                    .expand()
+                    .fill()
+                    .center();
+            detailsTabHolder.pack();
+            componentRadioTab.addComponentButton(detailsButton)
+                    .center()
+                    .size(65,65)
+                    .pad(5);
+
             if(!unit.getBuildables().isEmpty()){
                 builderTab.setBuildables(unit.getBuildables());
-                actionButtonsPanel.add(buildButton)
+                componentRadioTab.addComponentButton(buildButton)
                         .center()
                         .size(65,65)
                         .pad(5);
             }
-
-
             return;
         }
         if(GameFlags.checkTypeFlag(entity,GameFlags.BUILDING)){
@@ -224,13 +230,22 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
         };
     }
 
+    private ClickListener getDetailsButtonListener(){
+        return new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+               setCurrentTrainDetailsTab(unitDetailsTab);
+            }
+        };
+    }
+
     private void setCurrentTrainDetailsTab(Actor actor){
-        traitDetailsPanel.clear();
-        traitDetailsPanel.add(actor)
+        detailsTabHolder.clear();
+        detailsTabHolder.add(actor)
                 .fill()
                 .expand()
                 .center();
-        traitDetailsPanel.pack();
+        detailsTabHolder.pack();
     }
 
     @Override

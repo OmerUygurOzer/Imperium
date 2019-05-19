@@ -44,13 +44,14 @@ public final class Building implements Entity {
     private final List<TileVector> tileCoverageVector;
     private final List<Tile> tilesCovered;
     private final List<Integer> connectables;
+    private final List<Unit> containedUnits;
+
     private String name;
     private int typeFlags;
     private int componentFlags;
     private int stateFlags;
     private int maxHp;
     private int hp;
-
 
     public Building(GameContextInterface gameContext) {
         this.gameContext = gameContext;
@@ -63,6 +64,7 @@ public final class Building implements Entity {
         this.tileCoverageVector = new ArrayList<>(9);
         this.tilesCovered = new ArrayList<>();
         this.connectables = new ArrayList<>();
+        this.containedUnits = new ArrayList<>(12);
         this.typeFlags = GameFlags.BUILDING;
         this.componentFlags = 0;
         this.stateFlags = 0;
@@ -146,6 +148,16 @@ public final class Building implements Entity {
 
     public void setBuildingSpriteAnimator(BuildingSpriteAnimator buildingSpriteAnimator) {
         this.buildingSpriteAnimator = buildingSpriteAnimator;
+    }
+
+    public void containUnit(Unit unit){
+        this.containedUnits.add(unit);
+        unit.setStateFlags(GameFlags.CONTAINED);
+    }
+
+    public void uncontainUnit(Unit unit){
+        this.containedUnits.remove(unit);
+        unit.setStateFlags(GameFlags.UNCONTAINED);
     }
 
     @Override
