@@ -47,7 +47,6 @@ public class PathTracker implements TimedUpdateable {
             midTile = true;
             Tile fromTile = map.getTileAt(unit.tileX(), unit.tileY());
             fromTile.removeEntity(unit);
-            unit.setTile(tileX, tileY);
             Tile toTile = map.getTileAt(tileX, tileY);
             toTile.addEntity(unit);
             gameContext.getEventManager().raiseEvent(EventType.UNIT_SWITCH_TILES)
@@ -57,6 +56,7 @@ public class PathTracker implements TimedUpdateable {
                     .putParameter(Parameters.Key.TO_TILE, toTile);
         } else if (unitMovement.isComplete()) {
             midTile = false;
+            unit.setTile(tileX, tileY);
             unitMovement.setLength(0);
             Direction direction = null;
             if (state.equals(State.ACTIVE_PATH)) {
@@ -73,7 +73,6 @@ public class PathTracker implements TimedUpdateable {
                     state = State.IDLE;
                     return;
                 }
-
                 direction = PathFinder
                         .getNextMoveForTarget(map,
                                 map.getTileAt(unit.tileX(), unit.tileY()),
@@ -104,6 +103,11 @@ public class PathTracker implements TimedUpdateable {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public void stop(){
+        state = State.IDLE;
+        midTile = false;
     }
 
     public void activate(Path path) {

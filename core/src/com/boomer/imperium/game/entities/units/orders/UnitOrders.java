@@ -1,20 +1,25 @@
 package com.boomer.imperium.game.entities.units.orders;
 
 import com.boomer.imperium.core.TimedUpdateable;
+import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.Entity;
+import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.entities.units.Unit;
+import com.boomer.imperium.game.events.GameCalendarTracker;
 import com.boomer.imperium.game.map.Tile;
 
-public class UnitOrders implements TimedUpdateable {
+public final class UnitOrders implements TimedUpdateable,GameCalendarTracker.Listener {
 
     private final Move move;
     private final Attack attack;
+    private final Build build;
 
     private UnitOrder currentOrder;
 
-    public UnitOrders(Unit unit){
+    public UnitOrders(Unit unit, GameContextInterface gameContext){
         this.move = new Move(unit);
-        this.attack = new Attack(unit);
+        this.attack = new Attack(unit,gameContext.getGameConfigs());
+        this.build = new Build(unit,gameContext.getGameConfigs(),gameContext.getGameWorld());
     }
 
     @Override
@@ -38,6 +43,12 @@ public class UnitOrders implements TimedUpdateable {
         this.currentOrder = attack;
     }
 
+    public void build(Tile tile,Buildable buildable){
+        resetCurentOrder(build);
+        this.build.build(buildable,tile);
+        this.currentOrder = build;
+    }
+
     public boolean completedCurrentOrder(){
         return currentOrder.completed();
     }
@@ -50,4 +61,24 @@ public class UnitOrders implements TimedUpdateable {
         }
     }
 
+    @Override
+    public void dayPassed(int daysPassed) {
+        if(currentOrder!=null)
+            currentOrder.dayPassed(daysPassed);
+    }
+
+    @Override
+    public void weekPassed(int weeksPassed) {
+
+    }
+
+    @Override
+    public void monthPassed(int monthsPassed) {
+
+    }
+
+    @Override
+    public void yearPassed(int yearsPassed) {
+
+    }
 }

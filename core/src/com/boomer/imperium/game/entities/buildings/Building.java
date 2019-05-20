@@ -152,12 +152,12 @@ public final class Building implements Entity {
 
     public void containUnit(Unit unit){
         this.containedUnits.add(unit);
-        unit.setStateFlags(GameFlags.CONTAINED);
+        //unit.setStateFlags(unit.getStateFlags() | GameFlags.CONTAINED);
     }
 
     public void uncontainUnit(Unit unit){
         this.containedUnits.remove(unit);
-        unit.setStateFlags(GameFlags.UNCONTAINED);
+        //unit.setStateFlags(GameFlags.UNCONTAINED);
     }
 
     @Override
@@ -173,13 +173,17 @@ public final class Building implements Entity {
         for(TileVector tileVector : tileCoverageVector){
             tile = gameContext.getGameWorld().map.getTileAt(tileX + tileVector.x,tileY + tileVector.y);
             tilesCovered.add(tile);
-            tile.addEntity(this);
+            //tile.addEntity(this);
             x = Math.min(x,tile.bounds.x);
             y = Math.min(y,tile.bounds.y);
             maxX = Math.max(maxX,tile.bounds.x+tile.bounds.width);
             maxY = Math.max(maxY,tile.bounds.y+tile.bounds.height);
         }
         bounds.set(x,y,maxX-x,maxY-y);
+    }
+
+    public void setPosition(Tile tile){
+        setPosition(tile.tileX,tile.tileY);
     }
 
     @Override
@@ -320,6 +324,10 @@ public final class Building implements Entity {
     }
 
     public void setHp(int hp) {
+        if(hp>=maxHp){
+            this.hp = maxHp;
+            return;
+        }
         this.hp = hp;
     }
 

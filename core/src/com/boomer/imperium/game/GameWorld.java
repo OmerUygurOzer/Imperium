@@ -101,7 +101,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         this.connectionRadiusRect = new Rectangle(0f, 0f, 300f, 300f);//Todo: get radius from configs
         this.connectionBuildings = new ArrayList<>();
         this.foundEntities = new ArrayList<>(60);
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 0; i++) {
             Building building = buildingPool.obtain();
             building.setLayer(Layer.GROUND);
             building.setTypeFlags(GameFlags.BUILDING);
@@ -111,22 +111,24 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
             building.setComponentFlags(GameFlags.MARKET);
             building.setStateFlags(GameFlags.SELECTABLE);
             building.setHp(MathUtils.random(0, 400));
+            //building.setHp(0);
             building.setMaxHp(400);
             addEntity(building);
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             Unit unit = unitPool.obtain();
             unit.setTypeFlags(GameFlags.UNIT);
             unit.setUnitSpriteAnimator(gameContext.getGameResources().man);
             unit.setLayer(Layer.GROUND);
             unit.setFacing(Direction.NE);
-            unit.setPosition(MathUtils.random(0, 20), MathUtils.random(0, 20));
+            unit.setPosition(MathUtils.random(0, 1), MathUtils.random(0, 1));
             unit.setIcon(LogicUtils.randomSelect(Arrays.asList(gameContext.getGameResources().normanIcon, gameContext.getGameResources().grokkenIcon,
                     gameContext.getGameResources().mayanIcon, gameContext.getGameResources().greekIcon, gameContext.getGameResources().vikingIcon)));
             unit.setMaxHp(200);
             unit.setHp(MathUtils.random(0, 200));
             unit.setConstruction(MathUtils.random(0, 100));
-            unit.setStateFlags(GameFlags.SELECTABLE);
+            unit.setComponentFlags(GameFlags.BUILDER);
+            unit.setStateFlags(GameFlags.SELECTABLE | GameFlags.RENDERABLE);
             unit.setBuildables(Arrays.<Buildable>asList(new Buildable() {
                 @Override
                 public String getName() {
@@ -165,7 +167,17 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
                 @Override
                 public Building build() {
-                    return null;
+                    Building building = buildingPool.obtain();
+                    building.setLayer(Layer.GROUND);
+                    building.setName("KERANE");
+                    building.setTypeFlags(GameFlags.BUILDING);
+                    building.setTileCoverageVectors(Arrays.asList(new TileVector(0, 0), new TileVector(-1, 0), new TileVector(-1, 1), new TileVector(0, 1)));
+                    building.setIcon(gameContext.getGameResources().anotherTemple);
+                    building.setStateFlags(GameFlags.RENDERABLE | GameFlags.SELECTABLE);
+                    building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
+                    building.setComponentFlags(GameFlags.FORT);
+                    building.setMaxHp(50);
+                    return building;
                 }
             }, new Buildable() {
                 @Override
@@ -205,7 +217,17 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
                 @Override
                 public Building build() {
-                    return null;
+                    Building building = buildingPool.obtain();
+                    building.setLayer(Layer.GROUND);
+                    building.setName("KERANE");
+                    building.setTypeFlags(GameFlags.BUILDING);
+                    building.setTileCoverageVectors(Arrays.asList(new TileVector(0, 0), new TileVector(-1, 0), new TileVector(-1, 1), new TileVector(0, 1)));
+                    building.setIcon(gameContext.getGameResources().anotherTemple);
+                    building.setStateFlags(GameFlags.RENDERABLE | GameFlags.SELECTABLE);
+                    building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
+                    building.setComponentFlags(GameFlags.FORT);
+                    building.setMaxHp(50);
+                    return building;
                 }
             }, new Buildable() {
                 @Override
@@ -245,7 +267,17 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
                 @Override
                 public Building build() {
-                    return null;
+                    Building building = buildingPool.obtain();
+                    building.setLayer(Layer.GROUND);
+                    building.setName("KERANE");
+                    building.setTypeFlags(GameFlags.BUILDING);
+                    building.setTileCoverageVectors(Arrays.asList(new TileVector(0, 0), new TileVector(-1, 0), new TileVector(-1, 1), new TileVector(0, 1)));
+                    building.setIcon(gameContext.getGameResources().anotherTemple);
+                    building.setStateFlags(GameFlags.RENDERABLE | GameFlags.SELECTABLE);
+                    building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
+                    building.setComponentFlags(GameFlags.FORT);
+                    building.setMaxHp(50);
+                    return building;
                 }
             }));
             addEntity(unit);
@@ -318,7 +350,6 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
             shapeRenderer.setProjectionMatrix(spriteBatch.getProjectionMatrix());
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.YELLOW);
-            //shapeRenderer.rect(connectionRadiusRect.x,connectionRadiusRect.y,connectionRadiusRect.width,connectionRadiusRect.height);
             for (Building building : connectionBuildings) {
                 shapeRenderer.line(building.getCenter(), buildDrawRectangle.getCenter(buildDrawCenter));
             }
@@ -344,9 +375,9 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         for (Tile tile : entity.getTilesCovered()) {
             tile.removeEntity(entity);
         }
-        if(GameFlags.checkTypeFlag(entity,GameFlags.UNIT)){
+        if (GameFlags.checkTypeFlag(entity, GameFlags.UNIT)) {
             unitPool.free(entity.asUnit());
-        }else if (GameFlags.checkTypeFlag(entity,GameFlags.BUILDING)){
+        } else if (GameFlags.checkTypeFlag(entity, GameFlags.BUILDING)) {
             buildingPool.free(entity.asBuilding());
         }
     }
@@ -382,7 +413,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
     public void mouseRightClick(Vector2 point) {
         buildingToBuild = null;
         Tile tile = map.findTile(point);
-        if(tile.isVacant){
+        if (tile.isVacant) {
             for (Entity entity : selectedEntities) {
                 entity.targetTile(tile);
             }
@@ -390,17 +421,26 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         }
         Entity targetEntity = tile.getEntitiesContained().get(0);
         for (Entity entity : selectedEntities) {
-            System.out.println("FROM:"+entity.tileX()+"/"+entity.tileY());
             entity.targetEntity(targetEntity);
         }
-        System.out.println("To:"+tile.tileX+"/"+tile.tileY);
-        System.out.println("To:"+targetEntity.tileX()+"/"+targetEntity.tileY());
     }
 
 
     public void mouseLeftClick(Vector2 point) {
+        Tile tile = map.findTile(point);
+        if (buildingToBuild != null) {
+            for (Entity entity : selectedEntities) {
+                if (GameFlags.checkComponentFlag(entity, GameFlags.BUILDER)) {
+                    entity.asUnit().build(buildingToBuild, tile);
+                    gameContext.getEventManager()
+                            .raiseEvent(EventType.UNIT_BUILD_ORDER_GIVEN);
+                    buildingToBuild=null;
+                    return;
+                }
+            }
+        }
         deselectEntities(selectedEntities);
-        List<Entity> entitiesSelected = map.findTile(point).getEntitiesContained();
+        List<Entity> entitiesSelected = tile.getEntitiesContained();
         filterEntitiesForSelectability(entitiesSelected);
         selectedEntities.clear();
         selectedEntities.addAll(entitiesSelected);

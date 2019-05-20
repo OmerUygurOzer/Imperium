@@ -50,6 +50,7 @@ public final class BuilderTab extends Table {
             add(existingButtons.get(i)).size(100f,70f)
                     .pad(5f)
                     .expand()
+                    .fill()
                     .center();
         }
         for(int i = buildables.size() ; i < existingButtons.size() ; i++){

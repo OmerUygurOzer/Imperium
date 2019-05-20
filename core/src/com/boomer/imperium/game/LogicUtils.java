@@ -3,6 +3,7 @@ package com.boomer.imperium.game;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.map.Tile;
 

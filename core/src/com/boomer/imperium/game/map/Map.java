@@ -13,7 +13,12 @@ import com.boomer.imperium.game.events.Condition;
 import com.boomer.imperium.game.events.Event;
 import com.boomer.imperium.game.events.Parameters;
 
-public class Map implements Renderable {
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Queue;
+
+public final class Map implements Renderable {
 
     public static final Condition IS_POINT_WITHIN_MAP = new Condition() {
         @Override
@@ -29,6 +34,18 @@ public class Map implements Renderable {
         }
     };
 
+    private static final List<TileVector> ADJACENCY_VECTORS = Arrays.asList(
+            new TileVector(0,1),
+            new TileVector(1,1),
+            new TileVector(1,0),
+            new TileVector(1,-1),
+            new TileVector(0,-1),
+            new TileVector(-1,-1),
+            new TileVector(-1,0),
+            new TileVector(-1,1));
+
+    private final Queue<Tile> tileSearchQueue;
+
     private final GameConfigs configs;
     private final Resources mapResources;
     private final int sizeInTiles;
@@ -36,11 +53,13 @@ public class Map implements Renderable {
     private final Rectangle mapRectangle;
     public final QuadNode<Entity> quadTree;
 
+
     public Map(Resources resources, GameConfigs gameConfigs) {
         this.configs = gameConfigs;
         this.mapResources = resources;
         this.sizeInTiles = (int) ((gameConfigs.worldSize.getRadius(gameConfigs) * 2) / gameConfigs.tileSize);
         this.tiles = new Tile[sizeInTiles * sizeInTiles];
+        this.tileSearchQueue = new ArrayDeque<>();
         float x, y;
         int itr;
         float mapCenter = gameConfigs.worldSize.getRadius(gameConfigs);
@@ -87,4 +106,24 @@ public class Map implements Renderable {
             tiles[i].render(spriteBatch,shapeRenderer);
         }
     }
+
+    public Tile findAdjancentAvailableTile(Tile tile){
+        tileSearchQueue.clear();
+        tileSearchQueue.add(tile);
+        Tile curTile = null;
+        while (!tileSearchQueue.isEmpty()){
+            curTile = tileSearchQueue.poll();
+            if(!curTile.equals(tile)&&curTile.canBeMovedTo()){
+                return curTile;
+            }
+            for(TileVector vector: ADJACENCY_VECTORS){
+                Tile candidate = getTileAt(curTile.tileX+vector.x,curTile.tileY+vector.y);
+                if(candidate!=null){
+                    tileSearchQueue.add(candidate);
+                }
+            }
+        }
+        return null;
+    }
+
 }

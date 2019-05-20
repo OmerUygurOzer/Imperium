@@ -102,6 +102,10 @@ public final class RunningGame extends GameState {
                 .addResult(DefaultActions.ADJUST_CURSOR_FOR_BUILDING)
                 .setCondition(Trigger.ALWAYS_RUN);
 
+        this.eventManager.registerTrigger(EventType.UNIT_BUILD_ORDER_GIVEN)
+                .addResult(DefaultActions.RESET_CURSOR_TO_STANDARD)
+                .setCondition(Trigger.ALWAYS_RUN);
+
         this.eventManager.registerTrigger(EventType.DAY_PASSED)
                 .addResult(DefaultActions.DAYS_PASSED)
                 .setCondition(Trigger.ALWAYS_RUN);

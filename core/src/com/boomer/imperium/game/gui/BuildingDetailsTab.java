@@ -33,4 +33,37 @@ public class BuildingDetailsTab extends Table {
                 .row();
     }
 
+    public void setBuilding(Building building){
+        this.building = building;
+        icon.setDrawable(building.getIcon());
+        healthBar.setRange(0f,building.getMaxHp());
+        healthBar.setValue(building.getHp());
+    }
+
+    public void clearBuilding(){
+        this.building = null;
+        this.curHP = 0f;
+        this.maxHP = 0f;
+
+        this.icon.setDrawable(null);
+        this.healthBar.setRange(0f, maxHP);
+        this.healthBar.setValue(curHP);
+        this.healthLabel.setText((int) maxHP + "/" + (int) curHP);
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        if (building != null) {
+            if (building.getMaxHp() != maxHP || building.getHp() != curHP) {
+                maxHP = building.getMaxHp();
+                curHP = building.getHp();
+                healthBar.setRange(0f, maxHP);
+                healthBar.setValue(curHP);
+                healthLabel.setText((int) maxHP + "/" + (int) curHP);
+            }
+
+        }
+    }
+
 }

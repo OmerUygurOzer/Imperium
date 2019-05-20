@@ -10,6 +10,9 @@ public final class GameConfigs {
     public final int eventsInitialCapacity = 400;
     public final float secondsPerGameDay = 1f;
 
+    public final float maxConstructionPerDay = 40f;
+    public final float constructionGainForEachDay = 0.5f;
+
     public final float yellowHPBarThreshold = 100f;
     public final float purpeHPBarThreshold = 150f;
     public final String gameStartingDate = "";

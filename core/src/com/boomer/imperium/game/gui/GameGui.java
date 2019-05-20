@@ -61,6 +61,7 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
     private final ImageButton detailsButton;
     private final BuilderTab builderTab;
     private final UnitDetailsTab unitDetailsTab;
+    private final BuildingDetailsTab buildingDetailsTab;
 
     private State state;
 
@@ -92,6 +93,7 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
         this.detailsButton.addListener(getDetailsButtonListener());
         this.buildButton.addListener(getBuildButtonListener());
         this.unitDetailsTab = new UnitDetailsTab(skin);
+        this.buildingDetailsTab = new BuildingDetailsTab(skin);
         this.selectedEntities = new ArrayList<>();
         this.state = State.IDLE;
         setGUIActors();
@@ -111,6 +113,10 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
                 .expandX()
                 .fill()
                 .row();
+
+        miniMapPanel.add(miniMap)
+                .expand()
+                .fill();
 
         rightSideTable.add(detailsPanel).height(Value.percentHeight(0.7f,rightSideTable))
                 .expandX()
@@ -192,10 +198,10 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
 
     private void adjustForEntity(Entity entity){
         componentRadioTab.clearButtons();
+        detailsTabHolder.clear();
         if(GameFlags.checkTypeFlag(entity,GameFlags.UNIT)){
             Unit unit = entity.asUnit();
             unitDetailsTab.setUnit(unit);
-            detailsTabHolder.clear();
             detailsTabHolder
                     .add(unitDetailsTab)
                     .expand()
@@ -217,7 +223,13 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
             return;
         }
         if(GameFlags.checkTypeFlag(entity,GameFlags.BUILDING)){
-
+            buildingDetailsTab.setBuilding(entity.asBuilding());
+            detailsTabHolder.clear();
+            detailsTabHolder
+                    .add(buildingDetailsTab)
+                    .expand()
+                    .fill()
+                    .center();
         }
     }
 

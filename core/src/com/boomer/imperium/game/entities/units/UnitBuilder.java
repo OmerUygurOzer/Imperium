@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 import static com.boomer.imperium.game.GameFlags.*;
 
-public class UnitBuilder {
+public final class UnitBuilder {
 
     private final Pool<Unit> unitPool;
     private final GameConfigs gameConfigs;

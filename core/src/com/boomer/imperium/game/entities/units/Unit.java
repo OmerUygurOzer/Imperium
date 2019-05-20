@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.Direction;
+import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.Layer;
 import com.boomer.imperium.game.entities.units.orders.UnitOrders;
 import com.boomer.imperium.game.players.Nation;
@@ -55,6 +56,9 @@ public final class Unit implements Entity {
     private int componentFlags;
     private int stateFlags;
     private String name;
+    private boolean renderable;
+    private boolean selectable;
+    private boolean vulnrable;
 
     private List<Buildable> buildables;
 
@@ -103,7 +107,7 @@ public final class Unit implements Entity {
         this.rangeCircle = new Circle();
         //this.selectedSprite = gameContext.getGameResources().inGameCursor;
         this.pathTracker = new PathTracker(gameContext, this, gameContext.getGameWorld().map, unitMovement);
-        this.unitOrders = new UnitOrders(this);
+        this.unitOrders = new UnitOrders(this,gameContext);
         this.tilesCovered = new ArrayList<Tile>(9);
         this.tileCoverageVectors = new ArrayList<TileVector>(9);
         this.tileCoverageVectors.add(new TileVector(0,0));
@@ -120,10 +124,12 @@ public final class Unit implements Entity {
 
     @Override
     public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
-        hpBar.render(spriteBatch,shapeRenderer);
         //if (selected)
             //spriteBatch.draw(selectedSprite, bounds.x, bounds.y, bounds.width, bounds.height);
-        unitSpriteAnimator.draw(spriteBatch, frameCounter.currentFrame, bounds, facing, state);
+        if(renderable){
+            unitSpriteAnimator.draw(spriteBatch, frameCounter.currentFrame, bounds, facing, state);
+            hpBar.render(spriteBatch,shapeRenderer);
+        }
     }
 
     @Override
@@ -134,6 +140,10 @@ public final class Unit implements Entity {
     @Override
     public void targetEntity(Entity entity){
         unitOrders.attackEntity(entity);
+    }
+
+    public void build(Buildable buildable,Tile tile){
+        this.unitOrders.build(tile,buildable);
     }
 
     @Override
@@ -180,7 +190,7 @@ public final class Unit implements Entity {
 
     @Override
     public void receiveDamage(int damage) {
-        if (!state.equals(UnitState.DYING) | !state.equals(UnitState.DEAD))
+        if (!state.equals(UnitState.DYING) | !state.equals(UnitState.DEAD) | !vulnrable)
             return;
         hp = -damage;
         if (hp <= 0) {
@@ -197,6 +207,10 @@ public final class Unit implements Entity {
         this.tilesCovered.add(tile);
         this.bounds.set(tile.bounds);
         this.rangeCircle.setPosition(getCenter());
+    }
+
+    public void placeOnTile(Tile tile){
+        setPosition(tile.tileX,tile.tileY);
     }
 
     public PathTracker getPathTracker() {
@@ -291,6 +305,9 @@ public final class Unit implements Entity {
     @Override
     public void setStateFlags(int stateFlags) {
         this.stateFlags = stateFlags;
+        this.renderable = GameFlags.checkStateFlag(this,GameFlags.RENDERABLE);
+        this.selectable = GameFlags.checkStateFlag(this,GameFlags.SELECTABLE);
+        this.vulnrable = !GameFlags.checkStateFlag(this,GameFlags.INVULNERABLE);
     }
 
     public void setState(UnitState state) {
@@ -579,7 +596,7 @@ public final class Unit implements Entity {
 
     @Override
     public void dayPassed(int daysPassed) {
-
+        unitOrders.dayPassed(daysPassed);
     }
 
     @Override
@@ -595,5 +612,9 @@ public final class Unit implements Entity {
     @Override
     public void yearPassed(int yearsPassed) {
 
+    }
+
+    public boolean onTile(Tile tile){
+        return tileX == tile.tileX && tileY == tile.tileY;
     }
 }

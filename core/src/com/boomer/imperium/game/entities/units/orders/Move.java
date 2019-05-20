@@ -5,7 +5,7 @@ import com.boomer.imperium.game.entities.units.UnitState;
 import com.boomer.imperium.game.map.PathTracker;
 import com.boomer.imperium.game.map.Tile;
 
-public class Move implements UnitOrder {
+public final class Move implements UnitOrder {
 
     private final Unit unit;
     private Tile target;
@@ -37,5 +37,25 @@ public class Move implements UnitOrder {
         this.target = tile;
         unit.setState(UnitState.MOVING);
         unit.getPathTracker().activate(tile);
+    }
+
+    @Override
+    public void dayPassed(int daysPassed) {
+
+    }
+
+    @Override
+    public void weekPassed(int weeksPassed) {
+
+    }
+
+    @Override
+    public void monthPassed(int monthsPassed) {
+
+    }
+
+    @Override
+    public void yearPassed(int yearsPassed) {
+
     }
 }
