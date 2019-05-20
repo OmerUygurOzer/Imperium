@@ -56,7 +56,7 @@ public final class Build implements UnitOrder,GameCalendarTracker.Listener {
             unit.setState(UnitState.IDLE);
             System.out.println("BUILT");
             tile.removeEntity(unit);
-            unit.setStateFlags(unit.getStateFlags() | (GameFlags.SELECTABLE | GameFlags.RENDERABLE));
+            unit.setStateFlags(unit.getStateFlags() ^ (GameFlags.SELECTABLE | GameFlags.RENDERABLE));
             building = buildable.build();
             building.setPosition(tile);
             building.setState(BuildingState.BEING_CONSTRUCTED);

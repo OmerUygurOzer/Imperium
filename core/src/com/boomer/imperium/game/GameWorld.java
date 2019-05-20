@@ -26,6 +26,7 @@ import com.boomer.imperium.game.players.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public final class GameWorld implements Renderable, TimedUpdateable, GameCalendarTracker.Listener {
@@ -37,20 +38,9 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         }
     };
 
-    private static final int START_INDEX = 0;
-    private static final int COUNT = 1;
-
     private final GameContextInterface gameContext;
-    private final int[][] layerStartAndCounts = new int[][]{
-            {0, 0},
-            {0, 0},
-            {0, 0},
-            {0, 0},
-            {0, 0},
-            {0, 0},
-            {0, 0}
-    };
-    private final Entity[] entities;
+    private final List<Entity>[] entities;
+    private final List<Entity> removal;
     public final Map map;
     private final GameCalendarTracker gameCalendarTracker;
 
@@ -82,15 +72,11 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         gameContext.setGameWorld(this);
         this.gameContext = gameContext;
         this.gameCalendarTracker = new GameCalendarTracker(gameContext);
-        this.entities = new Entity[(int) ((gameContext.getGameConfigs().worldSize.getRadius(gameContext.getGameConfigs()) * 2) *
-                (gameContext.getGameConfigs().worldSize.getRadius(gameContext.getGameConfigs()) * 2) / gameContext.getGameConfigs().tileSize) * 7];
-        layerStartAndCounts[Layer.TILES.getPriority()][START_INDEX] = 0;
-        layerStartAndCounts[Layer.TILES_OVERLAY.getPriority()][START_INDEX] = (entities.length / 7);
-        layerStartAndCounts[Layer.GROUND.getPriority()][START_INDEX] = (entities.length / 7) * 2;
-        layerStartAndCounts[Layer.GROUND_OVERLAY.getPriority()][START_INDEX] = (entities.length / 7) * 3;
-        layerStartAndCounts[Layer.AIR.getPriority()][START_INDEX] = (entities.length / 7) * 4;
-        layerStartAndCounts[Layer.AIR_OVERLAY.getPriority()][START_INDEX] = (entities.length / 7) * 5;
-        layerStartAndCounts[Layer.GUI.getPriority()][START_INDEX] = (entities.length / 7) * 6;
+        this.entities = new List[Layer.values().length];
+        this.removal = new ArrayList<>(100);
+        for (Layer layer : Layer.values()) {
+            entities[layer.getPriority()] = new ArrayList<>(600);
+        }
         this.map = new Map(gameContext.getGameResources(), gameContext.getGameConfigs());
         this.selectedEntities = new ArrayList<Entity>(20);
         this.unitPool = new UnitPool(gameContext);
@@ -290,42 +276,30 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         gameCalendarTracker.update(deltaTime);
         map.quadTree.clear();
         for (int i = 0; i < Layer.values().length; i++) {
-            for (int j = layerStartAndCounts[i][START_INDEX]; j
-                    < layerStartAndCounts[i][START_INDEX] + layerStartAndCounts[i][COUNT]; j++) {
-                if (entities[j] != null)
-                    map.quadTree.attach(entities[j]);
+            for (int j = 0; j
+                    < entities[i].size(); j++) {
+                map.quadTree.attach(entities[i].get(j));
             }
         }
         for (int i = 0; i < Layer.values().length; i++) {
-            int startIndex = layerStartAndCounts[i][START_INDEX];
-            int nullTracker = layerStartAndCounts[i][START_INDEX];
-            int count = layerStartAndCounts[i][COUNT];
-            for (int j = startIndex; j < startIndex + count; j++) {
-                if (entities[j] != null) {
-                    if (dayPassedFlag)
-                        entities[j].dayPassed(daysPassed);
-                    if (weekPassedFlag)
-                        entities[j].weekPassed(weeksPassed);
-                    if (monthPassedFlag)
-                        entities[j].monthPassed(monthsPassed);
-                    if (yearPassedFlag)
-                        entities[j].yearPassed(yearsPassed);
-                    if (entities[j].shouldRemove()) {
-                        removeEntity(entities[j]);
-                    }
-                }
-                if (entities[j] != null && entities[nullTracker] != null) {
-                    entities[j].update(deltaTime);
-                    nullTracker++;
-                } else if (entities[nullTracker] == null) {
-                    entities[j].update(deltaTime);
-                    entities[nullTracker] = entities[j];
-                    entities[nullTracker].setMemoryIndex(nullTracker);
-                    entities[j] = null;
-                    nullTracker++;
+            for(int j = 0 ; j <  entities[i].size() ; j++){
+                Entity entity = entities[i].get(j);
+                entity.update(deltaTime);
+                if (dayPassedFlag)
+                    entity.dayPassed(daysPassed);
+                if (weekPassedFlag)
+                    entity.weekPassed(weeksPassed);
+                if (monthPassedFlag)
+                    entity.monthPassed(monthsPassed);
+                if (yearPassedFlag)
+                    entity.yearPassed(yearsPassed);
+                if (entity.shouldRemove()) {
+                    removal.add(entity);
+                    removeEntity(entity);
                 }
             }
-            layerStartAndCounts[i][COUNT] = nullTracker - layerStartAndCounts[i][START_INDEX];
+            entities[i].removeAll(removal);
+            removal.clear();
         }
         if (dayPassedFlag)
             dayPassedFlag = false;
@@ -341,15 +315,16 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
     public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
         map.render(spriteBatch, shapeRenderer);
         for (int i = 0; i < Layer.values().length; i++) {
-            for (int j = layerStartAndCounts[i][START_INDEX];
-                 j < layerStartAndCounts[i][START_INDEX] + layerStartAndCounts[i][COUNT]; j++) {
-                entities[j].render(spriteBatch, shapeRenderer);
+            for (int j = 0;
+                 j < entities[i].size(); j++) {
+                entities[i].get(j).render(spriteBatch, shapeRenderer);
             }
         }
         if (buildingToBuild != null) {
             shapeRenderer.setProjectionMatrix(spriteBatch.getProjectionMatrix());
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(Color.YELLOW);
+            //shapeRenderer.rect(connectionRadiusRect.x,connectionRadiusRect.y,connectionRadiusRect.width,connectionRadiusRect.height);
             for (Building building : connectionBuildings) {
                 shapeRenderer.line(building.getCenter(), buildDrawRectangle.getCenter(buildDrawCenter));
             }
@@ -358,20 +333,16 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         }
     }
 
-    public int addEntity(Entity entity) {
-        int priority = entity.getLayer().getPriority();
-        entities[layerStartAndCounts[priority][START_INDEX] + layerStartAndCounts[priority][COUNT]] = entity;
-        entity.setMemoryIndex(layerStartAndCounts[priority][START_INDEX] + layerStartAndCounts[priority][COUNT]);
+    public void addEntity(Entity entity) {
+        entities[entity.getLayer().getPriority()].add(entity);
         int x = entity.tileX();
         int y = entity.tileY();
         for (TileVector tileVector : entity.getTileCoverageVectors()) {
             map.getTileAt(x + tileVector.x, y + tileVector.y).addEntity(entity);
         }
-        return layerStartAndCounts[priority][START_INDEX] + layerStartAndCounts[priority][COUNT]++;
     }
 
     public void removeEntity(Entity entity) {
-        entities[entity.getMemoryIndex()] = null;
         for (Tile tile : entity.getTilesCovered()) {
             tile.removeEntity(entity);
         }
@@ -434,7 +405,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                     entity.asUnit().build(buildingToBuild, tile);
                     gameContext.getEventManager()
                             .raiseEvent(EventType.UNIT_BUILD_ORDER_GIVEN);
-                    buildingToBuild=null;
+                    buildingToBuild = null;
                     return;
                 }
             }

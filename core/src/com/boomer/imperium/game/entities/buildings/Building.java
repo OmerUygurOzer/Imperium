@@ -173,7 +173,6 @@ public final class Building implements Entity {
         for(TileVector tileVector : tileCoverageVector){
             tile = gameContext.getGameWorld().map.getTileAt(tileX + tileVector.x,tileY + tileVector.y);
             tilesCovered.add(tile);
-            //tile.addEntity(this);
             x = Math.min(x,tile.bounds.x);
             y = Math.min(y,tile.bounds.y);
             maxX = Math.max(maxX,tile.bounds.x+tile.bounds.width);
@@ -344,7 +343,8 @@ public final class Building implements Entity {
         return state;
     }
 
-    public void setState(BuildingState state) {
+    public void
+    setState(BuildingState state) {
         this.state = state;
     }
 

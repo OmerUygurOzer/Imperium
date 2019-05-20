@@ -3,7 +3,7 @@ package com.boomer.imperium.game.entities.buildings;
 public enum BuildingState {
     IDLE(0),
     ACTIVE(1),
-    BEING_CONSTRUCTED(2),
+    BEING_CONSTRUCTED(0), //Todo(Omer): make this 2
     COLLAPSING(3),
     RUBBLE(4);
 
