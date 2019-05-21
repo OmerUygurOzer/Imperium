@@ -13,5 +13,6 @@ public interface Buildable {
     List<Integer> getConnectableComponents();
     int widthInTiles();
     int heightInTiles();
+    int connectionRadius();
     Building build();
 }

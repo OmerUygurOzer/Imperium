@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.entities.buildings.Buildable;
+import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.map.Tile;
 
@@ -25,7 +26,9 @@ public final class Parameters {
         DAYS,
         WEEKS,
         MONTHS,
-        YEARS
+        YEARS,
+        BUILDING,
+        BUILDER
     }
 
     private Map<Key,Object> paramsMap = new HashMap<Key,Object>();
@@ -47,6 +50,12 @@ public final class Parameters {
         if(!paramsMap.containsKey(key))
             return null;
         return this.<Unit>castOrNull(paramsMap.get(key));
+    }
+
+    public Building getBuilding(Key key){
+        if(!paramsMap.containsKey(key))
+            return null;
+        return this.<Building>castOrNull(paramsMap.get(key));
     }
 
     public List<Entity> getEntities(Key key){

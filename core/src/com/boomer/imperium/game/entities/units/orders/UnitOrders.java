@@ -19,7 +19,7 @@ public final class UnitOrders implements TimedUpdateable,GameCalendarTracker.Lis
     public UnitOrders(Unit unit, GameContextInterface gameContext){
         this.move = new Move(unit);
         this.attack = new Attack(unit,gameContext.getGameConfigs());
-        this.build = new Build(unit,gameContext.getGameConfigs(),gameContext.getGameWorld());
+        this.build = new Build(unit,gameContext);
     }
 
     @Override

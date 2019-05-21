@@ -50,6 +50,8 @@ public final class Building implements Entity {
     private int typeFlags;
     private int componentFlags;
     private int stateFlags;
+    private int connectionRadius;
+
     private int maxHp;
     private int hp;
 
@@ -179,6 +181,14 @@ public final class Building implements Entity {
             maxY = Math.max(maxY,tile.bounds.y+tile.bounds.height);
         }
         bounds.set(x,y,maxX-x,maxY-y);
+    }
+
+    public int getConnectionRadius() {
+        return connectionRadius;
+    }
+
+    public void setConnectionRadius(int connectionRadius) {
+        this.connectionRadius = connectionRadius;
     }
 
     public void setPosition(Tile tile){

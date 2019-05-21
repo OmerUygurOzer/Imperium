@@ -6,7 +6,7 @@ import com.boomer.imperium.game.Direction;
 import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.configs.GameContextInterface;
 
-public class UnitMovement  implements TimedUpdateable {
+public class UnitMovement implements TimedUpdateable {
 
     private static float getMovementLengthForDirection(Direction direction, GameConfigs gameConfigs) {
         switch (direction) {
@@ -28,11 +28,12 @@ public class UnitMovement  implements TimedUpdateable {
     private float lengthAccumulated;
     private float timeAccumulated = 0f;
 
-    public UnitMovement(GameContextInterface gameContext, Unit unit,float secondsPerTile) {
+    public UnitMovement(GameContextInterface gameContext, Unit unit, float secondsPerTile) {
         this.unit = unit;
         this.configs = gameContext.getGameConfigs();
         this.speedVector = new Vector2(0f, 0f);
-        this.speed =  secondsPerTile/configs.tileSize;
+        this.speed = secondsPerTile / configs.tileSize;
+        System.out.println(speed);
     }
 
     public void setDirection(Direction facing) { //seconds per tile
@@ -52,18 +53,20 @@ public class UnitMovement  implements TimedUpdateable {
     public void update(float deltaTime) {
         timeAccumulated = timeAccumulated + deltaTime;
         if (timeAccumulated >= speed) {
-            lengthAccumulated = lengthAccumulated + 1f;
-            unit.getBounds().x = unit.getBounds().x + speedVector.x;
-            unit.getBounds().y = unit.getBounds().y + speedVector.y;
-            timeAccumulated = 0f;
+            while (timeAccumulated >= 0) {
+                lengthAccumulated = lengthAccumulated + 1f;
+                unit.getBounds().x = unit.getBounds().x + speedVector.x;
+                unit.getBounds().y = unit.getBounds().y + speedVector.y;
+                timeAccumulated -= speed;
+            }
         }
     }
 
-    public boolean isComplete(){
+    public boolean isComplete() {
         return lengthAccumulated >= length;
     }
 
-    public boolean hasStarted(){
-        return lengthAccumulated>0f;
+    public boolean hasStarted() {
+        return lengthAccumulated > 0f;
     }
 }

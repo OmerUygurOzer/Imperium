@@ -97,6 +97,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
             building.setComponentFlags(GameFlags.MARKET);
             building.setStateFlags(GameFlags.SELECTABLE);
             building.setHp(MathUtils.random(0, 400));
+            building.setConnectionRadius(700);
             //building.setHp(0);
             building.setMaxHp(400);
             addEntity(building);
@@ -152,6 +153,11 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                 }
 
                 @Override
+                public int connectionRadius() {
+                    return 100;
+                }
+
+                @Override
                 public Building build() {
                     Building building = buildingPool.obtain();
                     building.setLayer(Layer.GROUND);
@@ -162,7 +168,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                     building.setStateFlags(GameFlags.RENDERABLE | GameFlags.SELECTABLE);
                     building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
                     building.setComponentFlags(GameFlags.FORT);
-                    building.setMaxHp(50);
+                    building.setMaxHp(400);
                     return building;
                 }
             }, new Buildable() {
@@ -202,6 +208,11 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                 }
 
                 @Override
+                public int connectionRadius() {
+                    return 100;
+                }
+
+                @Override
                 public Building build() {
                     Building building = buildingPool.obtain();
                     building.setLayer(Layer.GROUND);
@@ -212,7 +223,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                     building.setStateFlags(GameFlags.RENDERABLE | GameFlags.SELECTABLE);
                     building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
                     building.setComponentFlags(GameFlags.FORT);
-                    building.setMaxHp(50);
+                    building.setMaxHp(200);
                     return building;
                 }
             }, new Buildable() {
@@ -252,6 +263,11 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                 }
 
                 @Override
+                public int connectionRadius() {
+                    return 100;
+                }
+
+                @Override
                 public Building build() {
                     Building building = buildingPool.obtain();
                     building.setLayer(Layer.GROUND);
@@ -262,7 +278,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                     building.setStateFlags(GameFlags.RENDERABLE | GameFlags.SELECTABLE);
                     building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
                     building.setComponentFlags(GameFlags.FORT);
-                    building.setMaxHp(50);
+                    building.setMaxHp(100);
                     return building;
                 }
             }));
@@ -346,6 +362,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         for (Tile tile : entity.getTilesCovered()) {
             tile.removeEntity(entity);
         }
+        entities[entity.getLayer().getPriority()].remove(entity);
         if (GameFlags.checkTypeFlag(entity, GameFlags.UNIT)) {
             unitPool.free(entity.asUnit());
         } else if (GameFlags.checkTypeFlag(entity, GameFlags.BUILDING)) {
@@ -442,7 +459,8 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                 for (Entity entity : foundEntities) {
                     if (GameFlags.checkTypeFlag(entity, GameFlags.BUILDING)) {
                         Building building = entity.asBuilding();
-                        if (LogicUtils.distance(hoverLocation, building.getCenter()) < 200d) {
+                        if (LogicUtils.distance(hoverLocation, building.getCenter())
+                                < building.getConnectionRadius()+buildingToBuild.connectionRadius()) {
                             connectionBuildings.add(building);
                         }
                     }

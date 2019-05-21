@@ -72,6 +72,11 @@ public final class DefaultBuildings {
         }
 
         @Override
+        public int connectionRadius() {
+            return 0;
+        }
+
+        @Override
         public Building build() {
             Building building = prepareBuilding(this);
             building.setComponentFlags(GameFlags.FORT);
@@ -121,6 +126,11 @@ public final class DefaultBuildings {
         }
 
         @Override
+        public int connectionRadius() {
+            return 0;
+        }
+
+        @Override
         public Building build() {
             return null;
         }
@@ -167,6 +177,11 @@ public final class DefaultBuildings {
         }
 
         @Override
+        public int connectionRadius() {
+            return 0;
+        }
+
+        @Override
         public Building build() {
             return null;
         }
@@ -210,6 +225,11 @@ public final class DefaultBuildings {
         @Override
         public int heightInTiles() {
             return 2;
+        }
+
+        @Override
+        public int connectionRadius() {
+            return 0;
         }
 
         @Override
@@ -261,6 +281,11 @@ public final class DefaultBuildings {
         }
 
         @Override
+        public int connectionRadius() {
+            return 0;
+        }
+
+        @Override
         public Building build() {
             return null;
         }
@@ -304,6 +329,11 @@ public final class DefaultBuildings {
         @Override
         public int heightInTiles() {
             return 2;
+        }
+
+        @Override
+        public int connectionRadius() {
+            return 0;
         }
 
         @Override
@@ -353,6 +383,11 @@ public final class DefaultBuildings {
         }
 
         @Override
+        public int connectionRadius() {
+            return 0;
+        }
+
+        @Override
         public Building build() {
             return null;
         }
@@ -396,6 +431,11 @@ public final class DefaultBuildings {
         @Override
         public int heightInTiles() {
             return 2;
+        }
+
+        @Override
+        public int connectionRadius() {
+            return 0;
         }
 
         @Override
@@ -450,6 +490,11 @@ public final class DefaultBuildings {
         }
 
         @Override
+        public int connectionRadius() {
+            return 0;
+        }
+
+        @Override
         public Building build() {
             return null;
         }
@@ -493,6 +538,11 @@ public final class DefaultBuildings {
         @Override
         public int heightInTiles() {
             return 2;
+        }
+
+        @Override
+        public int connectionRadius() {
+            return 0;
         }
 
         @Override
@@ -541,6 +591,11 @@ public final class DefaultBuildings {
         @Override
         public int heightInTiles() {
             return 2;
+        }
+
+        @Override
+        public int connectionRadius() {
+            return 0;
         }
 
         @Override

@@ -162,7 +162,6 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
         updateGUIActors();
     }
 
-
     @Override
     public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
         getViewport().apply();
