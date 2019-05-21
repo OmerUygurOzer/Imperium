@@ -168,7 +168,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                     building.setStateFlags(GameFlags.RENDERABLE | GameFlags.SELECTABLE);
                     building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
                     building.setComponentFlags(GameFlags.FORT);
-                    building.setMaxHp(400);
+                    building.setMaxHp(50);
                     return building;
                 }
             }, new Buildable() {
@@ -298,7 +298,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
             }
         }
         for (int i = 0; i < Layer.values().length; i++) {
-            for(int j = 0 ; j <  entities[i].size() ; j++){
+            for (int j = 0; j < entities[i].size(); j++) {
                 Entity entity = entities[i].get(j);
                 entity.update(deltaTime);
                 if (dayPassedFlag)
@@ -422,10 +422,10 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                     entity.asUnit().build(buildingToBuild, tile);
                     gameContext.getEventManager()
                             .raiseEvent(EventType.UNIT_BUILD_ORDER_GIVEN);
-                    buildingToBuild = null;
-                    return;
                 }
             }
+            buildingToBuild = null;
+            return;
         }
         deselectEntities(selectedEntities);
         List<Entity> entitiesSelected = tile.getEntitiesContained();
@@ -470,16 +470,16 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         }
         for (Entity entity : map.findTile(hoverLocation).getEntitiesContained()) {
             if (GameFlags.checkStateFlag(entity, GameFlags.SELECTABLE)) {
-                if (!entity.equals(entityBeingHovered)) {
-                    entityBeingHovered = entity;
-                    gameContext.getEventManager()
-                            .raiseEvent(EventType.ENTITY_HOVERED_OVER)
-                            .getParams()
-                            .putParameter(Parameters.Key.ENTITY, entity);
-                }
-                break;
+                entityBeingHovered = entity;
+                gameContext.getEventManager()
+                        .raiseEvent(EventType.ENTITY_HOVERED_OVER)
+                        .getParams()
+                        .putParameter(Parameters.Key.ENTITY, entity);
+                return;
             }
         }
+        gameContext.getEventManager()
+                .raiseEvent(EventType.ENTITY_HOVERED_OFF);
     }
 
     public void setBuildingToBuild(Buildable buildingToBuild) {

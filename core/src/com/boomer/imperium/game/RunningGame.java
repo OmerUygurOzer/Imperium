@@ -89,6 +89,10 @@ public final class RunningGame extends GameState {
                 .addResult(DefaultActions.ADJUST_CURSOR_IN_GUI)
                 .setCondition(Trigger.ALWAYS_RUN);
 
+        this.eventManager.registerTrigger(EventType.ENTITY_HOVERED_OFF)
+                .addResult(DefaultActions.RESET_CURSOR_TO_STANDARD)
+                .setCondition(Trigger.ALWAYS_RUN);
+
         this.eventManager.registerTrigger(EventType.ENTITIES_SELECTED)
                 .addResult(DefaultActions.SELECT_ENTITIES_IN_GUI)
                 .setCondition(Trigger.ALWAYS_RUN);

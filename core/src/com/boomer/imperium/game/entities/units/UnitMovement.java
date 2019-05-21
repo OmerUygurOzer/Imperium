@@ -33,7 +33,6 @@ public class UnitMovement implements TimedUpdateable {
         this.configs = gameContext.getGameConfigs();
         this.speedVector = new Vector2(0f, 0f);
         this.speed = secondsPerTile / configs.tileSize;
-        System.out.println(speed);
     }
 
     public void setDirection(Direction facing) { //seconds per tile

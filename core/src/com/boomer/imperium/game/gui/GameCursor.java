@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.ScreenSensitive;
+import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.configs.GameContext;
 import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.events.EventType;
@@ -163,7 +164,13 @@ public final class GameCursor implements ScreenSensitive, InputProcessor, Render
     }
 
     public void entityHoveredOver(Entity entity){
-
+        if(!gameContext.getGameGui().getSelectedEntities().isEmpty()){
+            Entity selected = gameContext.getGameGui().getSelectedEntities().get(0);
+            if(GameFlags.checkTypeFlag(selected,GameFlags.UNIT)
+                    && GameFlags.checkTypeFlag(entity,GameFlags.BUILDING)){ //Todo update this logic
+                Gdx.graphics.setCursor(enterBuildingCursor);
+            }
+        }
     }
 
     public void building(){

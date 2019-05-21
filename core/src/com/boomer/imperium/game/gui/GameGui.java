@@ -168,6 +168,9 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
         draw();
     }
 
+    public List<Entity> getSelectedEntities() {
+        return selectedEntities;
+    }
 
     public void selectedEntities(List<Entity> entities) {
         if(entities.isEmpty()) {
