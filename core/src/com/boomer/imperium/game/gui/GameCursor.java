@@ -35,6 +35,8 @@ public final class GameCursor implements ScreenSensitive, InputProcessor, Render
     private final Rectangle dragRectangle;
     private final Vector2 dragStart;
 
+    private int lastButtonPressed;
+
     private Cursor standardCursor;
     private Cursor attackCursor;
     private Cursor enterBuildingCursor;
@@ -53,12 +55,12 @@ public final class GameCursor implements ScreenSensitive, InputProcessor, Render
         this.bounds = new Rectangle(0f, 0f, gameContext.getGameConfigs().tileSize, gameContext.getGameConfigs().tileSize);
         this.dragRectangle = new Rectangle();
         this.dragStart = new Vector2();
-        this.standardCursor = Gdx.graphics.newCursor(gameContext.getGameResources().standardCursorPixmap,0,0);
-        this.attackCursor = Gdx.graphics.newCursor(gameContext.getGameResources().attackCursorPixmap,0,0);
-        this.enterBuildingCursor = Gdx.graphics.newCursor(gameContext.getGameResources().enterBuildingCursorPixmap,0,0);
-        this.tradeCursor = Gdx.graphics.newCursor(gameContext.getGameResources().cantTradeCursorPixmap,0,0);
-        this.buildCursor = Gdx.graphics.newCursor(gameContext.getGameResources().buildCursorPixmap,31,31);
-        this.enterTownCursor = Gdx.graphics.newCursor(gameContext.getGameResources().enterTownCursorPixmap,0,0);
+        this.standardCursor = Gdx.graphics.newCursor(gameContext.getGameResources().standardCursorPixmap, 0, 0);
+        this.attackCursor = Gdx.graphics.newCursor(gameContext.getGameResources().attackCursorPixmap, 0, 0);
+        this.enterBuildingCursor = Gdx.graphics.newCursor(gameContext.getGameResources().enterBuildingCursorPixmap, 0, 0);
+        this.tradeCursor = Gdx.graphics.newCursor(gameContext.getGameResources().cantTradeCursorPixmap, 0, 0);
+        this.buildCursor = Gdx.graphics.newCursor(gameContext.getGameResources().buildCursorPixmap, 31, 31);
+        this.enterTownCursor = Gdx.graphics.newCursor(gameContext.getGameResources().enterTownCursorPixmap, 0, 0);
         Gdx.graphics.setCursor(standardCursor);
     }
 
@@ -94,14 +96,15 @@ public final class GameCursor implements ScreenSensitive, InputProcessor, Render
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         hover(screenX, screenY);
+        this.lastButtonPressed = button;
         if (button == Input.Buttons.LEFT) {
             gameContext.getEventManager().raiseEvent(EventType.MOUSE_LEFT_CLICK)
-                    .getParams().putParameter(Parameters.Key.MOUSE_LOCATION,gameLocation);
+                    .getParams().putParameter(Parameters.Key.MOUSE_LOCATION, gameLocation);
             return true;
         }
         if (button == Input.Buttons.RIGHT) {
             gameContext.getEventManager().raiseEvent(EventType.MOUSE_RIGHT_CLICK)
-                    .getParams().putParameter(Parameters.Key.MOUSE_LOCATION,gameLocation);
+                    .getParams().putParameter(Parameters.Key.MOUSE_LOCATION, gameLocation);
             return true;
         }
 
@@ -111,10 +114,10 @@ public final class GameCursor implements ScreenSensitive, InputProcessor, Render
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         hover(screenX, screenY);
-        if (isDragging) {
+        if (isDragging && button == Input.Buttons.LEFT) {
             isDragging = false;
             gameContext.getEventManager().raiseEvent(EventType.MOUSE_DRAG)
-                    .getParams().putParameter(Parameters.Key.MOUSE_DRAG_RECTANGLE,dragRectangle);
+                    .getParams().putParameter(Parameters.Key.MOUSE_DRAG_RECTANGLE, dragRectangle);
         }
         return false;
     }
@@ -122,7 +125,7 @@ public final class GameCursor implements ScreenSensitive, InputProcessor, Render
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         hover(screenX, screenY);
-        if (!isDragging) {
+        if (!isDragging && lastButtonPressed == Input.Buttons.LEFT) {
             isDragging = true;
             dragStart.x = gameLocation.x;
             dragStart.y = gameLocation.y;
@@ -141,7 +144,7 @@ public final class GameCursor implements ScreenSensitive, InputProcessor, Render
     public boolean mouseMoved(int screenX, int screenY) {
         hover(screenX, screenY);
         gameContext.getEventManager().raiseEvent(EventType.MOUSE_MOVE)
-                .getParams().putParameter(Parameters.Key.MOUSE_LOCATION,gameLocation);
+                .getParams().putParameter(Parameters.Key.MOUSE_LOCATION, gameLocation);
 
         return false;
     }
@@ -163,21 +166,21 @@ public final class GameCursor implements ScreenSensitive, InputProcessor, Render
         }
     }
 
-    public void entityHoveredOver(Entity entity){
-        if(!gameContext.getGameGui().getSelectedEntities().isEmpty()){
+    public void entityHoveredOver(Entity entity) {
+        if (!gameContext.getGameGui().getSelectedEntities().isEmpty()) {
             Entity selected = gameContext.getGameGui().getSelectedEntities().get(0);
-            if(GameFlags.checkTypeFlag(selected,GameFlags.UNIT)
-                    && GameFlags.checkTypeFlag(entity,GameFlags.BUILDING)){ //Todo update this logic
+            if (GameFlags.checkTypeFlag(selected, GameFlags.UNIT)
+                    && GameFlags.checkTypeFlag(entity, GameFlags.BUILDING)) { //Todo update this logic
                 Gdx.graphics.setCursor(enterBuildingCursor);
             }
         }
     }
 
-    public void building(){
+    public void building() {
         Gdx.graphics.setCursor(buildCursor);
     }
 
-    public void clearCursor(){
+    public void clearCursor() {
         Gdx.graphics.setCursor(standardCursor);
     }
 

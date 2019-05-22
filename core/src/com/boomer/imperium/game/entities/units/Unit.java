@@ -95,7 +95,7 @@ public final class Unit implements Entity {
 
     public Unit(GameContextInterface gameContext) {
         this.gameContext = gameContext;
-        UnitMovement unitMovement = new UnitMovement(gameContext, this, 1f);
+        UnitMovement unitMovement = new UnitMovement(gameContext, this, 0.1f);
         this.tileX = 0;
         this.tileY = 0;
         this.frameCounter = new FrameCounter(8f, 8);
