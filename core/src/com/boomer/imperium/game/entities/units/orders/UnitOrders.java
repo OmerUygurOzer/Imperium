@@ -26,8 +26,10 @@ public final class UnitOrders implements TimedUpdateable,GameCalendarTracker.Lis
     public void update(float deltaTime) {
         if(currentOrder!=null){
             currentOrder.update(deltaTime);
-            if(currentOrder.completed())
+            if(currentOrder.completed()){
+                currentOrder.reset();
                 currentOrder = null;
+            }
         }
     }
 

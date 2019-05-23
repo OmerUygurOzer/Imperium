@@ -67,4 +67,25 @@ public class Tile implements Renderable {
         return minimapColor;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Tile tile = (Tile) o;
+
+        if (tileX != tile.tileX) return false;
+        if (tileY != tile.tileY) return false;
+        if (!bounds.equals(tile.bounds)) return false;
+        return center.equals(tile.center);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = bounds.hashCode();
+        result = 31 * result + tileX;
+        result = 31 * result + tileY;
+        result = 31 * result + center.hashCode();
+        return result;
+    }
 }

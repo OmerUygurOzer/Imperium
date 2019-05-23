@@ -2,7 +2,6 @@ package com.boomer.imperium.game.entities.units.orders;
 
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.entities.units.UnitState;
-import com.boomer.imperium.game.map.PathTracker;
 import com.boomer.imperium.game.map.Tile;
 
 public final class Move implements UnitOrder {
@@ -16,21 +15,18 @@ public final class Move implements UnitOrder {
 
     @Override
     public boolean completed() {
-        return unit.getPathTracker().getState().equals(PathTracker.State.IDLE);
+        return unit.onTile(target);
     }
 
     @Override
     public void reset() {
         target = null;
+        unit.setState(UnitState.IDLE);
     }
 
     @Override
     public void update(float deltaTime) {
         unit.getPathTracker().update(deltaTime);
-        if(completed()){
-            unit.setState(UnitState.IDLE);
-            reset();
-        }
     }
 
     public void targetTile(Tile tile){

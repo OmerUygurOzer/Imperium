@@ -9,9 +9,9 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-public final class PathFinder {
+final class PathFinder {
 
-    private static class Node implements Pool.Poolable {
+    private class Node implements Pool.Poolable {
         Node previous;
         Direction direction;
         Tile tile;
@@ -23,18 +23,17 @@ public final class PathFinder {
         }
     }
 
-    private static final Set<Tile> VISITED = new HashSet<Tile>(100);
+    private final Set<Tile> visited = new HashSet<Tile>(100);
 
-    private static final Pool<Node> NODE_POOL = new Pool<Node>(100) {
+    private final Pool<Node> nodePool = new Pool<Node>(100) {
         @Override
         protected Node newObject() {
             return new Node();
         }
     };
 
-    private static final QueueComparator QUEUE_COMPARATOR = new QueueComparator();
-
-    private static class QueueComparator implements Comparator<Node>{
+    private final QueueComparator queueComparator = new QueueComparator();
+    private class QueueComparator implements Comparator<Node>{
 
         Tile to;
 
@@ -44,25 +43,27 @@ public final class PathFinder {
         }
     }
 
-    private static final PriorityQueue<Node> QUEUE = new PriorityQueue<Node>(200, QUEUE_COMPARATOR);
-    private static final Path TEMP_PATH = new Path(200);
+    private final PriorityQueue<Node> queue = new PriorityQueue<Node>(200, queueComparator);
+    private final Path tempPath = new Path(200);
 
-    public static Direction getNextMoveForTarget(Map map,Tile from,Tile to){
-        TEMP_PATH.tasks.clear();
-        findPath(TEMP_PATH,map,from,to);
-        if(TEMP_PATH.tasks.isEmpty())
+    PathFinder() {}
+
+    Direction getNextMoveForTarget(Map map,Tile from,Tile to){
+        tempPath.tasks.clear();
+        findPath(tempPath,map,from,to);
+        if(tempPath.tasks.isEmpty())
             return Direction.O;
-        return TEMP_PATH.tasks.get(0);
+        return tempPath.tasks.get(0);
     }
 
-    public static void findPath(Path path, Map map, Tile from, Tile to) {
+    void findPath(Path path, Map map, Tile from, Tile to) {
         path.tasks.clear();
-        PriorityQueue<Node> tiles = QUEUE;
-        QUEUE_COMPARATOR.to = to;
+        PriorityQueue<Node> tiles = queue;
+        queueComparator.to = to;
 
-        Node node = NODE_POOL.obtain();
+        Node node = nodePool.obtain();
         node.tile = from;
-        VISITED.add(from);
+        visited.add(from);
         tiles.offer(node);
 
         while (!tiles.isEmpty()) {
@@ -81,23 +82,23 @@ public final class PathFinder {
                     break;
                 }
                 if (neighbor != null && neighbor.canBeMovedTo()) {
-                    if (!VISITED.contains(neighbor)) {
+                    if (!visited.contains(neighbor)) {
                         tiles.offer(inject(neighbor, direction, curNode));
-                        VISITED.add(neighbor);
+                        visited.add(neighbor);
                     }
                 }
             }
         }
 
         for(Node nodeTiles: tiles){
-            NODE_POOL.free(nodeTiles);
+            nodePool.free(nodeTiles);
         }
 
-        QUEUE.clear();
-        VISITED.clear();
+        queue.clear();
+        visited.clear();
     }
 
-    private static void deConstructPath(Path path,Node node){
+    private void deConstructPath(Path path,Node node){
         Node cur = node;
          while (cur.previous!=null){
             path.addTask(cur.direction);
@@ -107,14 +108,13 @@ public final class PathFinder {
     }
 
 
-    private static Node inject(Tile tile, Direction direction, Node previous) {
-        Node node = NODE_POOL.obtain();
+    private Node inject(Tile tile, Direction direction, Node previous) {
+        Node node = nodePool.obtain();
         node.tile = tile;
         node.direction = direction;
         node.previous = previous;
         return node;
     }
 
-    private PathFinder() {
-    }
+
 }

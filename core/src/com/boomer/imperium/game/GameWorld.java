@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Pool;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.configs.GameContext;
@@ -15,6 +16,7 @@ import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.entities.buildings.Buildable;
 import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.entities.buildings.BuildingPool;
+import com.boomer.imperium.game.entities.units.GroupUnitMovement;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.entities.units.UnitPool;
 import com.boomer.imperium.game.events.*;
@@ -28,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public final class GameWorld implements Renderable, TimedUpdateable, GameCalendarTracker.Listener {
 
@@ -43,6 +47,9 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
     private final List<Entity> removal;
     public final Map map;
     private final GameCalendarTracker gameCalendarTracker;
+    private final Pool<GroupUnitMovement> groupUnitMovementPool;
+    private final List<GroupUnitMovement> groupUnitMovements;
+    private final List<GroupUnitMovement> completeGroupMovements;
 
     private final ArrayList<Entity> selectedEntities;
 
@@ -78,6 +85,14 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
             entities[layer.getPriority()] = new ArrayList<>(600);
         }
         this.map = new Map(gameContext.getGameResources(), gameContext.getGameConfigs());
+        this.groupUnitMovementPool = new Pool<GroupUnitMovement>() {
+            @Override
+            protected GroupUnitMovement newObject() {
+                return new GroupUnitMovement(map);
+            }
+        };
+        this.groupUnitMovements = new ArrayList<>(20);
+        this.completeGroupMovements = new ArrayList<>(20);
         this.selectedEntities = new ArrayList<Entity>(20);
         this.unitPool = new UnitPool(gameContext);
         this.buildingPool = new BuildingPool(gameContext);
@@ -87,7 +102,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         this.connectionRadiusRect = new Rectangle(0f, 0f, 300f, 300f);//Todo: get radius from configs
         this.connectionBuildings = new ArrayList<>();
         this.foundEntities = new ArrayList<>(60);
-        for (int i = 0; i < 0; i++) {
+        for (int i = 0; i <1; i++) {
             Building building = buildingPool.obtain();
             building.setLayer(Layer.GROUND);
             building.setTypeFlags(GameFlags.BUILDING);
@@ -102,13 +117,14 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
             building.setMaxHp(400);
             addEntity(building);
         }
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 10; i++) {
             Unit unit = unitPool.obtain();
             unit.setTypeFlags(GameFlags.UNIT);
             unit.setUnitSpriteAnimator(gameContext.getGameResources().man);
             unit.setLayer(Layer.GROUND);
             unit.setFacing(Direction.NE);
-            unit.setPosition(MathUtils.random(0, 1), MathUtils.random(0, 1));
+            unit.setTileCoverageVectors(Arrays.asList(new TileVector(0, 0)));
+            unit.setPosition(MathUtils.random(0, 10), MathUtils.random(0, 10));
             unit.setIcon(LogicUtils.randomSelect(Arrays.asList(gameContext.getGameResources().normanIcon, gameContext.getGameResources().grokkenIcon,
                     gameContext.getGameResources().mayanIcon, gameContext.getGameResources().greekIcon, gameContext.getGameResources().vikingIcon)));
             unit.setMaxHp(200);
@@ -297,6 +313,15 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                 map.quadTree.attach(entities[i].get(j));
             }
         }
+        for(GroupUnitMovement groupUnitMovement : groupUnitMovements){
+            groupUnitMovement.update(deltaTime);
+            if(groupUnitMovement.complete()){
+                completeGroupMovements.add(groupUnitMovement);
+                groupUnitMovementPool.free(groupUnitMovement);
+            }
+        }
+        groupUnitMovements.removeAll(completeGroupMovements);
+        completeGroupMovements.clear();
         for (int i = 0; i < Layer.values().length; i++) {
             for (int j = 0; j < entities[i].size(); j++) {
                 Entity entity = entities[i].get(j);
@@ -401,7 +426,13 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
     public void mouseRightClick(Vector2 point) {
         buildingToBuild = null;
         Tile tile = map.findTile(point);
-        if (tile.isVacant) {
+        if (tile.canBeMovedTo()) {
+            if(selectedEntities.size()>1){
+                GroupUnitMovement  groupUnitMovement = groupUnitMovementPool.obtain();
+                groupUnitMovement.moveUnitsTo(getSelectedUnits(),tile);
+                groupUnitMovements.add(groupUnitMovement);
+                return;
+            }
             for (Entity entity : selectedEntities) {
                 entity.targetTile(tile);
             }
@@ -480,6 +511,10 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         }
         gameContext.getEventManager()
                 .raiseEvent(EventType.ENTITY_HOVERED_OFF);
+    }
+
+    private List<Unit> getSelectedUnits(){
+        return selectedEntities.stream().map(entity -> entity.asUnit()).collect(Collectors.toList());
     }
 
     public void setBuildingToBuild(Buildable buildingToBuild) {

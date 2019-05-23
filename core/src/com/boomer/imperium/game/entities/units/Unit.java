@@ -95,7 +95,7 @@ public final class Unit implements Entity {
 
     public Unit(GameContextInterface gameContext) {
         this.gameContext = gameContext;
-        UnitMovement unitMovement = new UnitMovement(gameContext, this, 0.1f);
+        UnitMovement unitMovement = new UnitMovement(gameContext, this, 0.5f);
         this.tileX = 0;
         this.tileY = 0;
         this.frameCounter = new FrameCounter(8f, 8);
@@ -142,6 +142,7 @@ public final class Unit implements Entity {
         unitOrders.attackEntity(entity);
     }
 
+
     public void build(Buildable buildable,Tile tile){
         this.unitOrders.build(tile,buildable);
     }
@@ -184,7 +185,8 @@ public final class Unit implements Entity {
 
     @Override
     public void setTileCoverageVectors(List<TileVector> tileCoverageVectors) {
-        //Do nothing. units only ever occupy a single tile
+       this.tileCoverageVectors.clear();
+       this.tileCoverageVectors.addAll(tileCoverageVectors);
     }
 
 
@@ -204,7 +206,11 @@ public final class Unit implements Entity {
         this.tileX = tile.tileX;
         this.tileY = tile.tileY;
         this.tilesCovered.clear();
-        this.tilesCovered.add(tile);
+        for(TileVector tileVector : tileCoverageVectors){
+            Tile tileToAdd = gameContext.getGameWorld().map.getTileAt(tileX+tileVector.x,tileY+tileVector.y);
+            tileToAdd.addEntity(this);
+            tilesCovered.add(tileToAdd);
+        }
         this.bounds.set(tile.bounds);
         this.rangeCircle.setPosition(getCenter());
     }
@@ -285,6 +291,10 @@ public final class Unit implements Entity {
     @Override
     public int getComponentFlags() {
         return this.componentFlags;
+    }
+
+    public UnitState getState() {
+        return state;
     }
 
     @Override

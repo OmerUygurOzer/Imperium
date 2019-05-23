@@ -1,6 +1,7 @@
 package com.boomer.imperium.game;
 
 import com.badlogic.gdx.math.Vector2;
+import com.boomer.imperium.game.map.TileVector;
 
 public enum Direction {
     N(0, (float) Math.sin(Math.toRadians(90)), (float) Math.cos(Math.toRadians(90)), 0, 1),
@@ -16,13 +17,13 @@ public enum Direction {
     public final float sin;
     public final float cos;
     public final int animationIndex;
-    public final Vector2 directionVector;
+    public final TileVector directionVector;
 
     Direction(int animationIndex, float sin, float cos, int x, int y) {
         this.animationIndex = animationIndex;
         this.sin = sin;
         this.cos = cos;
-        this.directionVector = new Vector2(x, y);
+        this.directionVector = new TileVector(x, y);
     }
 
     public Direction getReverse() {
