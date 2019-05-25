@@ -21,8 +21,8 @@ public class PathTracker implements TimedUpdateable {
     private int curPath;
     private int tileX, tileY;
     private State state;
-    private boolean midTile;
     private Direction currentDirection;
+    private boolean midTile;
 
     public enum State {
         ACTIVE_PATH,
@@ -39,19 +39,17 @@ public class PathTracker implements TimedUpdateable {
         this.unitMovement = unitMovement;
         this.curPath = 0;
         this.state = State.IDLE;
+        this.midTile = false;
     }
 
     @Override
     public void update(float deltaTime) {
         if (state.equals(State.IDLE))
             return;
-        unitMovement.update(deltaTime);
         if (!midTile) {
             midTile = true;
             Tile fromTile = map.getTileAt(unit.tileX(), unit.tileY());
-            fromTile.removeEntity(unit);
             Tile toTile = map.getTileAt(tileX, tileY);
-            toTile.addEntity(unit);
             for(Tile tile : unit.getTilesCovered()){
                 tile.removeEntity(unit);
                 map.getTileAt(tile.tileX+currentDirection.directionVector.x,
@@ -64,8 +62,8 @@ public class PathTracker implements TimedUpdateable {
                     .putParameter(Parameters.Key.TO_TILE, toTile);
         } else if (unitMovement.isComplete()) {
             midTile = false;
-            unit.setTile(tileX, tileY);
             unitMovement.setLength(0);
+            unit.setPosition(tileX, tileY);
             Direction direction = null;
             if (state.equals(State.ACTIVE_PATH)) {
                 curPath++;
@@ -76,7 +74,7 @@ public class PathTracker implements TimedUpdateable {
                 }
                 direction = path.tasks.get(curPath);
             } else if (state.equals(State.ACTIVE_TILE)) {
-                if (map.getTileAt(tileX, tileY).equals(targetTile)) {
+                if (unit.onTile(targetTile)) {
                     unit.setState(UnitState.IDLE);
                     state = State.IDLE;
                     return;
@@ -90,8 +88,6 @@ public class PathTracker implements TimedUpdateable {
             } else {
                 direction = Direction.O;
             }
-
-            unit.setPosition(tileX, tileY);
             if (!direction.equals(Direction.O)) {
                 startMovingTowardsDirection(direction);
             }
@@ -99,10 +95,7 @@ public class PathTracker implements TimedUpdateable {
                     .getParams()
                     .putParameter(Parameters.Key.TILE, map.getTileAt(unit.tileX(), unit.tileY()));
         }
-    }
-
-    public boolean isMidTile() {
-        return midTile;
+        unitMovement.update(deltaTime);
     }
 
     public State getState() {
@@ -114,8 +107,9 @@ public class PathTracker implements TimedUpdateable {
     }
 
     public void stop(){
-        state = State.IDLE;
-        midTile = false;
+        this.state = State.IDLE;
+        this.unitMovement.setLength(0);
+        this.currentDirection = null;
     }
 
     public void activate(Path path) {

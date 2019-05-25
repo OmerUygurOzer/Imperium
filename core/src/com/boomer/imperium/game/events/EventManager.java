@@ -55,7 +55,7 @@ public final class EventManager implements TimedUpdateable {
                 Trigger trigger = triggerIterator.next();
                 if (trigger.runEvent(event)) {
                     for(Action action : trigger.results()){
-                        System.out.println(event.getEventType());
+                       // System.out.println(event.getEventType());
                        boolean done = action.perform(gameContext,event.getParams(),deltaTime);
                        if(done){
                            triggerPool.free(trigger);

@@ -207,9 +207,7 @@ public final class Unit implements Entity {
         this.tileY = tile.tileY;
         this.tilesCovered.clear();
         for(TileVector tileVector : tileCoverageVectors){
-            Tile tileToAdd = gameContext.getGameWorld().map.getTileAt(tileX+tileVector.x,tileY+tileVector.y);
-            tileToAdd.addEntity(this);
-            tilesCovered.add(tileToAdd);
+            tilesCovered.add(gameContext.getGameWorld().map.getTileAt(tileX+tileVector.x,tileY+tileVector.y));
         }
         this.bounds.set(tile.bounds);
         this.rangeCircle.setPosition(getCenter());

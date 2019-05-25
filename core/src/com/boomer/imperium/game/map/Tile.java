@@ -36,7 +36,8 @@ public class Tile implements Renderable {
 
     @Override
     public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
-        spriteBatch.draw(tileSprite, bounds.x, bounds.y, bounds.width, bounds.height);
+        if(entitiesContained.isEmpty())
+            spriteBatch.draw(tileSprite, bounds.x, bounds.y, bounds.width, bounds.height);
     }
 
     public ArrayList<Entity> getEntitiesContained(){
@@ -45,14 +46,16 @@ public class Tile implements Renderable {
 
     public void addEntity(Entity entity){
         entitiesContained.add(entity);
-        if(!GameFlags.checkStateFlag(entity,GameFlags.NO_ROOM))
-            isVacant = false;
+        isVacant = false;
+//        if(!GameFlags.checkStateFlag(entity,GameFlags.NO_ROOM))
+//            isVacant = false;
     }
 
     public void removeEntity(Entity entity){
         entitiesContained.remove(entity);
-        if(!GameFlags.checkStateFlag(entity,GameFlags.NO_ROOM))
-            isVacant = true;
+        isVacant = true;
+//        if(!GameFlags.checkStateFlag(entity,GameFlags.NO_ROOM))
+//            isVacant = true;
     }
 
     public Vector2 getCenter(){
