@@ -42,7 +42,7 @@ public class Tile implements Renderable,MiniMapEntity {
 
     @Override
     public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
-       spriteBatch.draw(tileSprite, bounds.x, bounds.y, bounds.width, bounds.height);
+        spriteBatch.draw(tileSprite, bounds.x, bounds.y, bounds.width, bounds.height);
     }
 
     public ArrayList<Entity> getEntitiesContained(){

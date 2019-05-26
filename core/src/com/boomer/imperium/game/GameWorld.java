@@ -26,9 +26,7 @@ import com.boomer.imperium.game.players.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class GameWorld implements Renderable, TimedUpdateable, GameCalendarTracker.Listener {
@@ -106,10 +104,11 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
             building.setTypeFlags(GameFlags.BUILDING);
             building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
             building.setMinimapDrawable(gameContext.getGameResources().anotherTemple);
+            building.setIcon(gameContext.getGameResources().anotherTemple);
             building.setTileCoverageVectors(Arrays.asList(new TileVector(0, 0), new TileVector(-1, 0), new TileVector(-1, 1), new TileVector(0, 1)));
             building.setPosition(MathUtils.random(2, 24), MathUtils.random(2, 24));
             building.setComponentFlags(GameFlags.MARKET);
-            building.setStateFlags(GameFlags.SELECTABLE);
+            building.setStateFlags(GameFlags.SELECTABLE | GameFlags.RENDERABLE);
             building.setHp(MathUtils.random(0, 400));
             building.setConnectionRadius(700);
             //building.setHp(0);
@@ -150,7 +149,11 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
                 @Override
                 public List<TileVector> getTileCoverage() {
-                    return null;
+                    return Arrays.asList(
+                            new TileVector(0,0),
+                            new TileVector(-1,0),
+                            new TileVector(-1,1),
+                            new TileVector(0,1));
                 }
 
                 @Override
@@ -211,7 +214,11 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
                 @Override
                 public List<TileVector> getTileCoverage() {
-                    return null;
+                    return Arrays.asList(
+                            new TileVector(0,0),
+                            new TileVector(-1,0),
+                            new TileVector(-1,1),
+                            new TileVector(0,1));
                 }
 
                 @Override
@@ -272,7 +279,11 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
                 @Override
                 public List<TileVector> getTileCoverage() {
-                    return null;
+                    return Arrays.asList(
+                            new TileVector(0,0),
+                            new TileVector(-1,0),
+                            new TileVector(-1,1),
+                            new TileVector(0,1));
                 }
 
                 @Override
@@ -465,7 +476,8 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
     public void mouseLeftClick(Vector2 point) {
         Tile tile = map.findTile(point);
-        if (buildingToBuild != null) {
+        if (buildingToBuild != null && buildingToBuild.getMapScanner().scan(map,tile.tileX,tile.tileY,
+                buildingToBuild.getTileCoverage())) {
             for (Entity entity : selectedEntities) {
                 if (GameFlags.checkComponentFlag(entity, GameFlags.BUILDER)) {
                     entity.asUnit().build(buildingToBuild, tile);

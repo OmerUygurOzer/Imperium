@@ -35,7 +35,7 @@ public class GameRunner extends ApplicationAdapter {
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
         this.gameStateManager = new GameStateManager();
-        this.gameStateManager.pushGameState(new RunningGame(batch,shapeRenderer,new GameConfigs(62f,0f,WorldSize.SMALL)));
+        this.gameStateManager.pushGameState(new RunningGame(batch,shapeRenderer,new GameConfigs(62f,0f,WorldSize.MEDIUM)));
     }
 
     @Override
