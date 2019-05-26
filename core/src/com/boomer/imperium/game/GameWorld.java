@@ -20,10 +20,7 @@ import com.boomer.imperium.game.entities.units.GroupUnitMovement;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.entities.units.UnitPool;
 import com.boomer.imperium.game.events.*;
-import com.boomer.imperium.game.map.Map;
-import com.boomer.imperium.game.map.MapScanner;
-import com.boomer.imperium.game.map.Tile;
-import com.boomer.imperium.game.map.TileVector;
+import com.boomer.imperium.game.map.*;
 import com.boomer.imperium.game.players.Nation;
 import com.boomer.imperium.game.players.Player;
 
@@ -158,7 +155,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
                 @Override
                 public MapScanner getMapScanner() {
-                    return null;
+                    return DefaultScanners.IS_LAND_AVAILABLE;
                 }
 
                 @Override
@@ -219,7 +216,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
                 @Override
                 public MapScanner getMapScanner() {
-                    return null;
+                    return DefaultScanners.IS_LAND_AVAILABLE;
                 }
 
                 @Override
@@ -280,7 +277,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
                 @Override
                 public MapScanner getMapScanner() {
-                    return null;
+                    return DefaultScanners.IS_LAND_AVAILABLE;
                 }
 
                 @Override
