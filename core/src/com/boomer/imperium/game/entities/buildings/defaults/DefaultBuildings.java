@@ -2,6 +2,7 @@ package com.boomer.imperium.game.entities.buildings.defaults;
 
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.GameFlags;
+import com.boomer.imperium.game.map.MapScanner;
 import com.boomer.imperium.game.players.Nation;
 import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.buildings.Buildable;
@@ -54,6 +55,11 @@ public final class DefaultBuildings {
                     new TileVector(-1,0),
                     new TileVector(-1,1),
                     new TileVector(0,1));
+        }
+
+        @Override
+        public MapScanner getMapScanner() {
+            return null;
         }
 
         @Override
@@ -111,6 +117,11 @@ public final class DefaultBuildings {
         }
 
         @Override
+        public MapScanner getMapScanner() {
+            return null;
+        }
+
+        @Override
         public List<Integer> getConnectableComponents() {
             return Arrays.asList(GameFlags.TOWN);
         }
@@ -162,6 +173,11 @@ public final class DefaultBuildings {
         }
 
         @Override
+        public MapScanner getMapScanner() {
+            return null;
+        }
+
+        @Override
         public List<Integer> getConnectableComponents() {
             return Arrays.asList(GameFlags.TOWN, GameFlags.GUILD);
         }
@@ -210,6 +226,11 @@ public final class DefaultBuildings {
                     new TileVector(-1,0),
                     new TileVector(-1,1),
                     new TileVector(0,1));
+        }
+
+        @Override
+        public MapScanner getMapScanner() {
+            return null;
         }
 
         @Override
@@ -266,6 +287,11 @@ public final class DefaultBuildings {
         }
 
         @Override
+        public MapScanner getMapScanner() {
+            return null;
+        }
+
+        @Override
         public List<Integer> getConnectableComponents() {
             return Arrays.asList(GameFlags.TOWN, GameFlags.MINE, GameFlags.MARKET);
         }
@@ -314,6 +340,11 @@ public final class DefaultBuildings {
                     new TileVector(-1,0),
                     new TileVector(-1,1),
                     new TileVector(0,1));
+        }
+
+        @Override
+        public MapScanner getMapScanner() {
+            return null;
         }
 
         @Override
@@ -368,6 +399,11 @@ public final class DefaultBuildings {
         }
 
         @Override
+        public MapScanner getMapScanner() {
+            return null;
+        }
+
+        @Override
         public List<Integer> getConnectableComponents() {
             return Arrays.asList(GameFlags.TOWN, GameFlags.MINE, GameFlags.MARKET, GameFlags.GUILD);
         }
@@ -416,6 +452,11 @@ public final class DefaultBuildings {
                     new TileVector(-1,0),
                     new TileVector(-1,1),
                     new TileVector(0,1));
+        }
+
+        @Override
+        public MapScanner getMapScanner() {
+            return null;
         }
 
         @Override
@@ -475,6 +516,11 @@ public final class DefaultBuildings {
         }
 
         @Override
+        public MapScanner getMapScanner() {
+            return null;
+        }
+
+        @Override
         public List<Integer> getConnectableComponents() {
             return Arrays.asList(GameFlags.TOWN);
         }
@@ -523,6 +569,11 @@ public final class DefaultBuildings {
                     new TileVector(-1,0),
                     new TileVector(-1,1),
                     new TileVector(0,1));
+        }
+
+        @Override
+        public MapScanner getMapScanner() {
+            return null;
         }
 
         @Override
@@ -576,6 +627,11 @@ public final class DefaultBuildings {
                     new TileVector(0,1),
                     new TileVector(-2,0),
                     new TileVector(-2,1));
+        }
+
+        @Override
+        public MapScanner getMapScanner() {
+            return null;
         }
 
         @Override

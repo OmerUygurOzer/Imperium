@@ -1,14 +1,18 @@
 package com.boomer.imperium.game.players;
 
+import com.badlogic.gdx.graphics.Color;
+
 public class Player {
     private final String name;
     private final boolean isAI;
     private final Nation nation;
+    private final Color color;
 
-    public Player(String name, boolean isAI,Nation nation){
+    public Player(String name, boolean isAI, Nation nation, Color color) {
         this.name = name;
         this.isAI = isAI;
         this.nation = nation;
+        this.color = color;
     }
 
     public String getName() {
@@ -21,6 +25,10 @@ public class Player {
 
     public Nation getNation() {
         return nation;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     @Override

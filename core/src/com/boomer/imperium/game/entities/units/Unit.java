@@ -1,5 +1,6 @@
 package com.boomer.imperium.game.entities.units;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -11,6 +12,7 @@ import com.boomer.imperium.game.Direction;
 import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.Layer;
 import com.boomer.imperium.game.entities.units.orders.UnitOrders;
+import com.boomer.imperium.game.gui.MiniMap;
 import com.boomer.imperium.game.players.Nation;
 import com.boomer.imperium.game.players.Player;
 import com.boomer.imperium.game.configs.GameContextInterface;
@@ -30,6 +32,7 @@ public final class Unit implements Entity {
 
     private final GameContextInterface gameContext;
     private final Rectangle bounds;
+    private final Rectangle minimapBounds;
     private final Vector2 center;
 
     private final UnitOrders unitOrders;
@@ -42,6 +45,7 @@ public final class Unit implements Entity {
     private Drawable icon;
     private UnitSpriteAnimator unitSpriteAnimator;
     private FrameCounter frameCounter;
+    private Drawable minimapDrawable;
     private Direction facing;
     private int tileX, tileY;
 
@@ -95,14 +99,14 @@ public final class Unit implements Entity {
 
     public Unit(GameContextInterface gameContext) {
         this.gameContext = gameContext;
-        UnitMovement unitMovement = new UnitMovement(gameContext, this, 0.5f);
+        UnitMovement unitMovement = new UnitMovement(gameContext, this, 0.1f);
         this.tileX = 0;
         this.tileY = 0;
         this.frameCounter = new FrameCounter(8f, 8);
         this.state = UnitState.IDLE;
         Tile tile = gameContext.getGameWorld().map.getTileAt(0, 0);
-        this.bounds = new Rectangle(tile.bounds.x, tile.bounds.y, gameContext.getGameConfigs().tileSize,
-                gameContext.getGameConfigs().tileSize);
+        this.bounds = new Rectangle();
+        this.minimapBounds = new Rectangle();
         this.center = new Vector2();
         this.rangeCircle = new Circle();
         //this.selectedSprite = gameContext.getGameResources().inGameCursor;
@@ -205,11 +209,7 @@ public final class Unit implements Entity {
         Tile tile = gameContext.getGameWorld().map.getTileAt(tileX, tileY);
         this.tileX = tile.tileX;
         this.tileY = tile.tileY;
-        this.tilesCovered.clear();
-        for(TileVector tileVector : tileCoverageVectors){
-            tilesCovered.add(gameContext.getGameWorld().map.getTileAt(tileX+tileVector.x,tileY+tileVector.y));
-        }
-        this.bounds.set(tile.bounds);
+        Entity.adjustEntityBounds(tilesCovered,this,gameContext,tileX,tileY);
         this.rangeCircle.setPosition(getCenter());
     }
 
@@ -275,6 +275,31 @@ public final class Unit implements Entity {
 
     @Override
     public void setIcon(Drawable drawable) { this.icon = drawable; }
+
+    @Override
+    public void setMinimapDrawable(Drawable minimapDrawable) {
+        this.minimapDrawable = minimapDrawable;
+    }
+
+    @Override
+    public Drawable getMinimapDrawable() {
+        return minimapDrawable;
+    }
+
+    @Override
+    public Rectangle getMinimapBounds() {
+        return minimapBounds;
+    }
+
+    @Override
+    public void setMinimapBounds(float x, float y, float width, float height) {
+        this.minimapBounds.set(x,y,width,height);
+    }
+
+    @Override
+    public void renderOnMinimap(Batch batch, int parentAlpha) {
+        this.icon.draw(batch,minimapBounds.x,minimapBounds.y,minimapBounds.width,minimapBounds.height);
+    }
 
     @Override
     public Nation getNation() {

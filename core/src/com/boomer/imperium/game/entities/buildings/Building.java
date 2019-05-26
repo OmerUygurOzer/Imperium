@@ -1,5 +1,6 @@
 package com.boomer.imperium.game.entities.buildings;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -28,6 +29,7 @@ public final class Building implements Entity {
     private int tileX;
     private int tileY;
     private final Rectangle bounds;
+    private final Rectangle minimapBounds;
     private final Vector2 center;
     private final GameContextInterface gameContext;
 
@@ -40,6 +42,7 @@ public final class Building implements Entity {
 
     private BuildingSpriteAnimator buildingSpriteAnimator;
     private final FrameCounter frameCounter;
+    private Drawable minimapDrawable;
 
     private final List<TileVector> tileCoverageVector;
     private final List<Tile> tilesCovered;
@@ -59,6 +62,7 @@ public final class Building implements Entity {
         this.gameContext = gameContext;
         this.state = BuildingState.IDLE;
         this.bounds = new Rectangle();
+        this.minimapBounds = new Rectangle();
         this.center = new Vector2();
         this.tileX = 0;
         this.tileY = 0;
@@ -169,18 +173,7 @@ public final class Building implements Entity {
         for(Tile tile : tilesCovered){
             tile.removeEntity(this);
         }
-        tilesCovered.clear();
-        Tile tile = gameContext.getGameWorld().map.getTileAt(tileX,tileY);
-        float x = tile.bounds.x,y = tile.bounds.y,maxX = 0f,maxY = 0f;
-        for(TileVector tileVector : tileCoverageVector){
-            tile = gameContext.getGameWorld().map.getTileAt(tileX + tileVector.x,tileY + tileVector.y);
-            tilesCovered.add(tile);
-            x = Math.min(x,tile.bounds.x);
-            y = Math.min(y,tile.bounds.y);
-            maxX = Math.max(maxX,tile.bounds.x+tile.bounds.width);
-            maxY = Math.max(maxY,tile.bounds.y+tile.bounds.height);
-        }
-        bounds.set(x,y,maxX-x,maxY-y);
+        Entity.adjustEntityBounds(tilesCovered,this,gameContext,tileX,tileY);
     }
 
     public int getConnectionRadius() {
@@ -258,6 +251,31 @@ public final class Building implements Entity {
     @Override
     public void setIcon(Drawable drawable) {
         this.icon = drawable;
+    }
+
+    @Override
+    public void setMinimapDrawable(Drawable minimapDrawable) {
+        this.minimapDrawable = minimapDrawable;
+    }
+
+    @Override
+    public Drawable getMinimapDrawable() {
+        return minimapDrawable;
+    }
+
+    @Override
+    public Rectangle getMinimapBounds() {
+        return minimapBounds;
+    }
+
+    @Override
+    public void setMinimapBounds(float x, float y, float width, float height) {
+        this.minimapBounds.set(x,y,width,height);
+    }
+
+    @Override
+    public void renderOnMinimap(Batch batch, int parentAlpha) {
+        minimapDrawable.draw(batch,minimapBounds.x,minimapBounds.y,minimapBounds.width,minimapBounds.height);
     }
 
     @Override

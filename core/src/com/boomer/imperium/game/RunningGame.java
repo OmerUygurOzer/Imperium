@@ -60,10 +60,10 @@ public final class RunningGame extends GameState {
                         return new Trigger();
                     }
                 });
+        this.gameWorld = new GameWorld(gameContext);
         this.guiHolder = new GuiHolder(gameContext,viewPort, spriteBatch);
         this.gameContext.setGameGui(guiHolder.getGUI());
         this.gameContext.setGameCursor(guiHolder.getCursor());
-        this.gameWorld = new GameWorld(gameContext);
 
         this.eventManager.registerTrigger(EventType.MOUSE_LEFT_CLICK)
                 .addResult(DefaultActions.MOUSE_LEFT_CLICK_IN_GAME_WORLD)

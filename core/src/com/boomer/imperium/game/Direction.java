@@ -1,9 +1,9 @@
 package com.boomer.imperium.game;
 
-import com.badlogic.gdx.math.Vector2;
 import com.boomer.imperium.game.map.TileVector;
 
 public enum Direction {
+
     N(0, (float) Math.sin(Math.toRadians(90)), (float) Math.cos(Math.toRadians(90)), 0, 1),
     NE(1, (float) Math.sin(Math.toRadians(45)), (float) Math.cos(Math.toRadians(45)), 1, 1),
     E(2, (float) Math.sin(Math.toRadians(0)), (float) Math.cos(Math.toRadians(0)), 1, 0),

@@ -1,5 +1,6 @@
 package com.boomer.imperium.game.gui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -86,7 +87,7 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
         this.miniMapPanel = new Table(skin);
         this.detailsPanel = new Table(skin);
         this.detailsTabHolder = new Table(skin);
-        this.miniMap = new MiniMap(gameContext.getGameWorld());
+        this.miniMap = new MiniMap(gameContext);
         this.builderTab = new BuilderTab(skin,this);
         this.buildButton = new ImageButton(resources.buildButton);
         this.detailsButton = new ImageButton(resources.townButton);
@@ -109,14 +110,14 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
         detailsPanel.setDebug(true);
         detailsTabHolder.setDebug(true);
 
+//        miniMapPanel.add(miniMap)
+//                .expand()
+//                .fill();
+
         rightSideTable.add(miniMapPanel).height(Value.percentHeight(0.3f,rightSideTable))
-                .expandX()
+                .expand()
                 .fill()
                 .row();
-
-        miniMapPanel.add(miniMap)
-                .expand()
-                .fill();
 
         rightSideTable.add(detailsPanel).height(Value.percentHeight(0.7f,rightSideTable))
                 .expandX()
@@ -137,11 +138,13 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
 
         addActor(leftSideTable);
         addActor(rightSideTable);
+        addActor(miniMap);
     }
 
     public void updateGUIActors() {
         leftSideTable.setBounds(leftSideGUIBounds.x, leftSideGUIBounds.y, leftSideGUIBounds.width, leftSideGUIBounds.height);
         rightSideTable.setBounds(rightSideGUIBounds.x,rightSideGUIBounds.y,rightSideGUIBounds.width,rightSideGUIBounds.height);
+        miniMap.setBounds(rightSideTable.getX(),(rightSideTable.getHeight()*0.7f),rightSideTable.getWidth(),(rightSideTable.getHeight()*0.3f));
     }
 
     @Override
@@ -268,4 +271,9 @@ public final class GameGui extends Stage implements TimedUpdateable, ScreenSensi
         eventManager.raiseEvent(EventType.BUILDABLE_PICKED)
                 .getParams().putParameter(BUILDABLE_TO_BUILD,buildable);
     }
+
+    public MiniMap getMiniMap() {
+        return miniMap;
+    }
 }
+

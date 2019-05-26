@@ -5,8 +5,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.core.Renderable;
-import com.boomer.imperium.game.*;
+import com.boomer.imperium.game.LogicUtils;
+import com.boomer.imperium.game.Resources;
 import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.events.Condition;
@@ -69,12 +71,16 @@ public final class Map implements Renderable {
                 x = (j * gameConfigs.tileSize) + (gameConfigs.tileSize / 2);
 
                 Sprite sprite = resources.grassland;
+                Drawable minimapDrawable = resources.grasslandMinimapDrawable;
                 if (LogicUtils.distance(x, y, mapCenter, mapCenter) > mapCenter) {
                     sprite = resources.desert;
+                    minimapDrawable = resources.desertMinimapDrawable;
                 }
 
                 itr = j + (i * sizeInTiles);
-                tiles[itr] = new Tile(gameConfigs,sprite,null,x, y);
+                tiles[itr] = new Tile(gameConfigs,sprite,minimapDrawable,x, y);
+//                if(j==8)
+//                    tiles[itr].isVacant = false;
             }
         }
         this.mapRectangle = new Rectangle(0, 0, gameConfigs.worldSize.getRadius(gameConfigs) * 2, gameConfigs.worldSize.getRadius(gameConfigs) * 2);
@@ -126,4 +132,11 @@ public final class Map implements Renderable {
         return null;
     }
 
+    public Rectangle getMapRectangle() {
+        return mapRectangle;
+    }
+
+    public Tile[] getTiles() {
+        return tiles;
+    }
 }

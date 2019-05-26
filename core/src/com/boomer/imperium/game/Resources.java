@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.PixmapTextureData;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.boomer.imperium.game.graphics.BuildingSpriteAnimator;
@@ -16,6 +17,9 @@ import com.boomer.imperium.game.graphics.UnitSpriteAnimator;
 public class Resources implements Disposable {
 
     public final Texture tilesTexture;
+    public final Drawable grasslandMinimapDrawable;
+    public final Drawable desertMinimapDrawable;
+
     public final TextureRegion[][] manTextureRegions;
     public final Texture cursors;
     public final Pixmap cursorsPixMap;
@@ -66,6 +70,8 @@ public class Resources implements Disposable {
 
     public Resources() {
         this.tilesTexture = new Texture("tiles_grid.png");
+
+
         this.buttonsTexture = new Texture("buttons.png");
         this.manTextureRegions = new TextureRegion(new Texture("test_man.png")).split(138, 138);
         this.cursors = new Texture("cursors.png");
@@ -75,7 +81,9 @@ public class Resources implements Disposable {
         this.unitIcons = new TextureRegion(new Texture("unit_icons.png")).split(46, 38);
         this.temples = new TextureRegion(new Texture("temples.png")).split(141, 146);
         this.grassland = new Sprite(tilesTexture, 0, 0, 64, 64);
+        this.grasslandMinimapDrawable = new SpriteDrawable(grassland);
         this.desert = new Sprite(tilesTexture, 64, 0, 64, 64);
+        this.desertMinimapDrawable = new SpriteDrawable(desert);
         this.water = new Sprite(tilesTexture, 128, 0, 64, 64);
         this.man = new UnitSpriteAnimator(manTextureRegions);
         this.building = new BuildingSpriteAnimator(temples); //(Todo)change this to a real spritesheet

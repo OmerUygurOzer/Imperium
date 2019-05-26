@@ -3,6 +3,8 @@ package com.boomer.imperium.game.entities.units;
 import com.badlogic.gdx.utils.Pool;
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.Direction;
+import com.boomer.imperium.game.LogicUtils;
+import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.map.Map;
 import com.boomer.imperium.game.map.Tile;
 import com.boomer.imperium.game.map.TileVector;
@@ -11,17 +13,36 @@ import java.util.*;
 
 public class GroupUnitMovement implements TimedUpdateable, Pool.Poolable {
 
+    private class DistanceComparator implements Comparator<Entity>{
+
+        private final Map map;
+
+        public DistanceComparator(Map map){
+            this.map = map;
+        }
+
+        Tile to;
+
+        @Override
+        public int compare(Entity o1, Entity o2) {
+            return Double.compare(LogicUtils.distance(map.getTileAt(o1.tileX(),o1.tileY()),to),
+                    LogicUtils.distance(map.getTileAt(o2.tileX(),o2.tileY()),to));
+        }
+    }
+
     private final Map map;
     private final List<Unit> unitList;
     private final Set<Tile> tileSet;
     private Tile targetTile;
     private final Queue<Tile> tilesQueue;
+    private final DistanceComparator distanceComparator;
 
     public GroupUnitMovement(Map map) {
         this.map = map;
         this.unitList = new ArrayList<>(50);
         this.tileSet = new LinkedHashSet<>(50);
         this.tilesQueue = new ArrayDeque<>(50);
+        this.distanceComparator = new DistanceComparator(map);
     }
 
     public boolean complete() {
@@ -51,6 +72,8 @@ public class GroupUnitMovement implements TimedUpdateable, Pool.Poolable {
     }
 
     private void adjustForNewOrder(Tile tile) {
+        distanceComparator.to = tile;
+        Collections.sort(unitList,distanceComparator);
         tilesQueue.add(tile);
         int unitIndex = 0;
         while (!tilesQueue.isEmpty() && unitIndex < unitList.size()) {
@@ -90,5 +113,6 @@ public class GroupUnitMovement implements TimedUpdateable, Pool.Poolable {
         this.unitList.clear();
         this.tileSet.clear();
         this.targetTile = null;
+        this.distanceComparator.to = null;
     }
 }

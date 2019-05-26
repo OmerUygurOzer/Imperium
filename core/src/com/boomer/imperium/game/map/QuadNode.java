@@ -108,6 +108,7 @@ public class QuadNode<T extends Bound> {
             botLeftNode.findObjectsWithinRect(rectangle, nextWidth, found);
         }
     }
+    
 
     public void clear() {
         objects.clear();

@@ -21,6 +21,7 @@ import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.entities.units.UnitPool;
 import com.boomer.imperium.game.events.*;
 import com.boomer.imperium.game.map.Map;
+import com.boomer.imperium.game.map.MapScanner;
 import com.boomer.imperium.game.map.Tile;
 import com.boomer.imperium.game.map.TileVector;
 import com.boomer.imperium.game.players.Nation;
@@ -107,6 +108,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
             building.setLayer(Layer.GROUND);
             building.setTypeFlags(GameFlags.BUILDING);
             building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
+            building.setMinimapDrawable(gameContext.getGameResources().anotherTemple);
             building.setTileCoverageVectors(Arrays.asList(new TileVector(0, 0), new TileVector(-1, 0), new TileVector(-1, 1), new TileVector(0, 1)));
             building.setPosition(MathUtils.random(2, 24), MathUtils.random(2, 24));
             building.setComponentFlags(GameFlags.MARKET);
@@ -132,6 +134,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
             unit.setConstruction(MathUtils.random(0, 100));
             unit.setComponentFlags(GameFlags.BUILDER);
             unit.setStateFlags(GameFlags.SELECTABLE | GameFlags.RENDERABLE);
+
             unit.setBuildables(Arrays.<Buildable>asList(new Buildable() {
                 @Override
                 public String getName() {
@@ -150,6 +153,11 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
                 @Override
                 public List<TileVector> getTileCoverage() {
+                    return null;
+                }
+
+                @Override
+                public MapScanner getMapScanner() {
                     return null;
                 }
 
@@ -183,6 +191,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                     building.setIcon(gameContext.getGameResources().anotherTemple);
                     building.setStateFlags(GameFlags.RENDERABLE | GameFlags.SELECTABLE);
                     building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
+                    building.setMinimapDrawable(gameContext.getGameResources().anotherTemple);
                     building.setComponentFlags(GameFlags.FORT);
                     building.setMaxHp(50);
                     return building;
@@ -209,6 +218,11 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                 }
 
                 @Override
+                public MapScanner getMapScanner() {
+                    return null;
+                }
+
+                @Override
                 public List<Integer> getConnectableComponents() {
                     return null;
                 }
@@ -238,6 +252,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                     building.setIcon(gameContext.getGameResources().anotherTemple);
                     building.setStateFlags(GameFlags.RENDERABLE | GameFlags.SELECTABLE);
                     building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
+                    building.setMinimapDrawable(gameContext.getGameResources().temple);
                     building.setComponentFlags(GameFlags.FORT);
                     building.setMaxHp(200);
                     return building;
@@ -260,6 +275,11 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
                 @Override
                 public List<TileVector> getTileCoverage() {
+                    return null;
+                }
+
+                @Override
+                public MapScanner getMapScanner() {
                     return null;
                 }
 
@@ -292,6 +312,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
                     building.setTileCoverageVectors(Arrays.asList(new TileVector(0, 0), new TileVector(-1, 0), new TileVector(-1, 1), new TileVector(0, 1)));
                     building.setIcon(gameContext.getGameResources().anotherTemple);
                     building.setStateFlags(GameFlags.RENDERABLE | GameFlags.SELECTABLE);
+                    building.setMinimapDrawable(gameContext.getGameResources().dragonTemple);
                     building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
                     building.setComponentFlags(GameFlags.FORT);
                     building.setMaxHp(100);
@@ -438,10 +459,10 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
             }
             return;
         }
-        Entity targetEntity = tile.getEntitiesContained().get(0);
-        for (Entity entity : selectedEntities) {
-            entity.targetEntity(targetEntity);
-        }
+//        Entity targetEntity = tile.getEntitiesContained().get(0);
+//        for (Entity entity : selectedEntities) {
+//            entity.targetEntity(targetEntity);
+//        }
     }
 
 
@@ -583,5 +604,9 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
 
     public BuildingPool getBuildingPool() {
         return buildingPool;
+    }
+
+    public List<Entity>[] getEntities() {
+        return entities;
     }
 }
