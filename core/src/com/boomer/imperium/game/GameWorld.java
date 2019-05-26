@@ -134,7 +134,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
             unit.setConstruction(MathUtils.random(0, 100));
             unit.setComponentFlags(GameFlags.BUILDER);
             unit.setStateFlags(GameFlags.SELECTABLE | GameFlags.RENDERABLE);
-
+            unit.setMinimapDrawable(unit.getIcon());
             unit.setBuildables(Arrays.<Buildable>asList(new Buildable() {
                 @Override
                 public String getName() {

@@ -78,4 +78,5 @@ public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable,G
     Building asBuilding();
     Projectile asProjectile();
     Town asTown();
+    GameResource asResource();
 }

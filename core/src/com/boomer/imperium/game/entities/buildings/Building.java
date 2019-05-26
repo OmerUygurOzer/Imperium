@@ -275,7 +275,7 @@ public final class Building implements Entity {
 
     @Override
     public void renderOnMinimap(Batch batch, int parentAlpha) {
-        minimapDrawable.draw(batch,minimapBounds.x,minimapBounds.y,minimapBounds.width,minimapBounds.height);
+         minimapDrawable.draw(batch,minimapBounds.x,minimapBounds.y,minimapBounds.width,minimapBounds.height);
     }
 
     @Override
@@ -330,6 +330,11 @@ public final class Building implements Entity {
 
     @Override
     public Town asTown() {
+        return null;
+    }
+
+    @Override
+    public GameResource asResource() {
         return null;
     }
 

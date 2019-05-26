@@ -51,16 +51,12 @@ public class Tile implements Renderable,MiniMapEntity {
 
     public void addEntity(Entity entity){
         entitiesContained.add(entity);
-        isVacant = false;
-//        if(!GameFlags.checkStateFlag(entity,GameFlags.NO_ROOM))
-//            isVacant = false;
+        isVacant = isVacantStill();
     }
 
     public void removeEntity(Entity entity){
         entitiesContained.remove(entity);
-        isVacant = true;
-//        if(!GameFlags.checkStateFlag(entity,GameFlags.NO_ROOM))
-//            isVacant = true;
+        isVacant = isVacantStill();
     }
 
     public Vector2 getCenter(){
@@ -71,6 +67,14 @@ public class Tile implements Renderable,MiniMapEntity {
         return isPassable && isVacant;
     }
 
+    private boolean isVacantStill(){
+        for(Entity entity : entitiesContained){
+            if(!GameFlags.checkStateFlag(entity,GameFlags.NO_ROOM)){
+                return false;
+            }
+        }
+        return true;
+    }
 
 
     @Override

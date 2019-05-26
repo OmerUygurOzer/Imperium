@@ -12,7 +12,6 @@ import com.boomer.imperium.game.Direction;
 import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.Layer;
 import com.boomer.imperium.game.entities.units.orders.UnitOrders;
-import com.boomer.imperium.game.gui.MiniMap;
 import com.boomer.imperium.game.players.Nation;
 import com.boomer.imperium.game.players.Player;
 import com.boomer.imperium.game.configs.GameContextInterface;
@@ -298,7 +297,8 @@ public final class Unit implements Entity {
 
     @Override
     public void renderOnMinimap(Batch batch, int parentAlpha) {
-        this.icon.draw(batch,minimapBounds.x,minimapBounds.y,minimapBounds.width,minimapBounds.height);
+        if(renderable)
+            minimapDrawable.draw(batch,minimapBounds.x,minimapBounds.y,minimapBounds.width,minimapBounds.height);
     }
 
     @Override
@@ -389,6 +389,11 @@ public final class Unit implements Entity {
 
     @Override
     public Town asTown() {
+        return null;
+    }
+
+    @Override
+    public GameResource asResource() {
         return null;
     }
 

@@ -95,7 +95,6 @@ public final class GameCursor implements ScreenSensitive, InputProcessor, Render
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println("CURSOR CLICK");
         hover(screenX, screenY);
         this.lastButtonPressed = button;
         if (button == Input.Buttons.LEFT) {

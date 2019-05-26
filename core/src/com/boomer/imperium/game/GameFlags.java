@@ -18,6 +18,7 @@ public final class GameFlags {
     public static final int GOD         = 1 << 7;
     public static final int EFFECT      = 1 << 8;
     public static final int PROJECTILE  = 1 << 9;
+    public static final int RESOURCE    = 1 << 10;
 
     //Component Flags
     public static final int MELEE_ATTACK    = 1;
