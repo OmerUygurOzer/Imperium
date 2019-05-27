@@ -6,6 +6,7 @@ import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.core.TimedUpdateable;
 import com.boomer.imperium.game.Layer;
 import com.boomer.imperium.game.configs.GameContextInterface;
+import com.boomer.imperium.game.entities.resources.GameResource;
 import com.boomer.imperium.game.gui.MiniMapEntity;
 import com.boomer.imperium.game.players.Nation;
 import com.boomer.imperium.game.players.Player;

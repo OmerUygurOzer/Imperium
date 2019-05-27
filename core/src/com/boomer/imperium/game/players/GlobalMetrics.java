@@ -18,8 +18,8 @@ public final class GlobalMetrics {
     private final List<Unit> generals;
 
     //Economy
-    private float currentWealth;
-    private float monthlyIncome;
+    private int currentWealth;
+    private int monthlyIncome;
 
     //Research
 

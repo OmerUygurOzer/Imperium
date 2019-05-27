@@ -1,4 +1,4 @@
-package com.boomer.imperium.game.entities;
+package com.boomer.imperium.game.entities.resources;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,6 +10,10 @@ import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.Layer;
 import com.boomer.imperium.game.configs.GameContext;
 import com.boomer.imperium.game.configs.GameContextInterface;
+import com.boomer.imperium.game.entities.Doodad;
+import com.boomer.imperium.game.entities.Entity;
+import com.boomer.imperium.game.entities.Projectile;
+import com.boomer.imperium.game.entities.Town;
 import com.boomer.imperium.game.entities.buildings.Building;
 import com.boomer.imperium.game.entities.units.Unit;
 import com.boomer.imperium.game.map.Tile;

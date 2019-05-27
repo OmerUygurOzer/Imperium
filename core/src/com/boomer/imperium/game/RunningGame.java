@@ -41,7 +41,7 @@ public final class RunningGame extends GameState {
         this.shapeRenderer = shapeRenderer;
         this.configs = gameConfigs;
         this.camera = new OrthographicCamera();
-        this.viewPort = new FitViewport(SCREEN_WIDTH_IN_TILES * gameConfigs.tileSize, SCREEN_HEIGHT_IN_TILES * gameConfigs.tileSize, camera);
+        this.viewPort = new FitViewport(SCREEN_WIDTH_IN_TILES * 64, SCREEN_HEIGHT_IN_TILES * 64, camera);
         this.camera.position.x = viewPort.getWorldWidth() / 2f;
         this.camera.position.y = viewPort.getWorldHeight() / 2f;
         this.gameContext = new GameContext();

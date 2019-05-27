@@ -115,14 +115,14 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
             building.setMaxHp(400);
             addEntity(building);
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             Unit unit = unitPool.obtain();
             unit.setTypeFlags(GameFlags.UNIT);
             unit.setUnitSpriteAnimator(gameContext.getGameResources().man);
             unit.setLayer(Layer.GROUND);
             unit.setFacing(Direction.NE);
             unit.setTileCoverageVectors(Arrays.asList(new TileVector(0, 0)));
-            unit.setPosition(MathUtils.random(0, 10), MathUtils.random(0, 10));
+            unit.setPosition(MathUtils.random(0, 30), MathUtils.random(0, 30));
             unit.setIcon(LogicUtils.randomSelect(Arrays.asList(gameContext.getGameResources().normanIcon, gameContext.getGameResources().grokkenIcon,
                     gameContext.getGameResources().mayanIcon, gameContext.getGameResources().greekIcon, gameContext.getGameResources().vikingIcon)));
             unit.setMaxHp(200);

@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.Layer;
+import com.boomer.imperium.game.entities.resources.GameResource;
 import com.boomer.imperium.game.players.Nation;
 import com.boomer.imperium.game.players.Player;
 import com.boomer.imperium.game.configs.GameContextInterface;

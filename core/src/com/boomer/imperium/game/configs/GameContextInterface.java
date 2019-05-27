@@ -6,6 +6,8 @@ import com.boomer.imperium.game.events.EventManager;
 import com.boomer.imperium.game.gui.GameCursor;
 import com.boomer.imperium.game.gui.GameGui;
 
+import java.util.concurrent.ExecutorService;
+
 public interface GameContextInterface {
     GameConfigs getGameConfigs();
     EventManager getEventManager();
@@ -13,4 +15,5 @@ public interface GameContextInterface {
     GameGui getGameGui();
     Resources getGameResources();
     GameCursor gameCursor();
+    ExecutorService getWorkerThread();
 }

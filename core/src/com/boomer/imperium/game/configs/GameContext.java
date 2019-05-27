@@ -6,6 +6,9 @@ import com.boomer.imperium.game.events.EventManager;
 import com.boomer.imperium.game.gui.GameCursor;
 import com.boomer.imperium.game.gui.GameGui;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public final class GameContext implements GameContextInterface {
 
     private GameWorld gameWorld;
@@ -14,7 +17,7 @@ public final class GameContext implements GameContextInterface {
     private EventManager eventManager;
     private GameConfigs gameConfigs;
     private Resources gameResources;
-
+    private ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     @Override
     public GameWorld getGameWorld() {
@@ -61,6 +64,9 @@ public final class GameContext implements GameContextInterface {
     public GameCursor gameCursor() {
         return gameCursor;
     }
+
+    @Override
+    public ExecutorService getWorkerThread() { return executorService; }
 
     public void setGameCursor(GameCursor gameCursor){
         this.gameCursor = gameCursor;

@@ -71,7 +71,6 @@ public class Resources implements Disposable {
     public Resources() {
         this.tilesTexture = new Texture("tiles_grid.png");
 
-
         this.buttonsTexture = new Texture("buttons.png");
         this.manTextureRegions = new TextureRegion(new Texture("test_man.png")).split(138, 138);
         this.cursors = new Texture("cursors.png");

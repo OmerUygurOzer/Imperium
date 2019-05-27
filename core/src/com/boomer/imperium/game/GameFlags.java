@@ -57,6 +57,17 @@ public final class GameFlags {
     public static final int NO_ROOM         = 1 << 3;
     public static final int MOVABLE         = 1 << 4;
 
+    //Tile Flags
+    public static final int LAND            = 1;
+    public static final int WATER           = 1 << 1;
+    public static final int DESERT          = 1 << 2;
+    public static final int SNOW            = 1 << 3;
+    public static final int ICE             = 1 << 4;
+    public static final int GRASSLAND       = 1 << 5;
+    public static final int ROCKS           = 1 << 6;
+    public static final int MUD             = 1 << 7;
+
+
     public static final int UNCONTAINED     = RENDERABLE | SELECTABLE | NO_ROOM;
     public static final int CONTAINED       = Integer.MAX_VALUE ^ UNCONTAINED;
 

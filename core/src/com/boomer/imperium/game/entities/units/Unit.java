@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.game.Direction;
 import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.Layer;
+import com.boomer.imperium.game.entities.resources.GameResource;
 import com.boomer.imperium.game.entities.units.orders.UnitOrders;
 import com.boomer.imperium.game.players.Nation;
 import com.boomer.imperium.game.players.Player;
