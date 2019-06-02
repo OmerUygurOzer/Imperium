@@ -14,6 +14,8 @@ import java.util.Map;
 
 public final class Parameters {
     public enum Key{
+        WIDTH,
+        HEIGHT,
         SELECTED_ENTITIES,
         MOUSE_LOCATION,
         MOUSE_DRAG_RECTANGLE,

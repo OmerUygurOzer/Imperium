@@ -14,6 +14,7 @@ import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.events.Condition;
 import com.boomer.imperium.game.events.Event;
 import com.boomer.imperium.game.events.Parameters;
+import com.boomer.imperium.game.gui.MiniMap;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public final class Map implements Renderable {
     public final QuadNode<Entity> quadTree;
 
 
-    public Map(Resources resources, GameConfigs gameConfigs) {
+    public Map(MiniMap minimap, Resources resources, GameConfigs gameConfigs) {
         this.configs = gameConfigs;
         this.mapResources = resources;
         this.sizeInTiles = (int) ((gameConfigs.worldSize.getRadius(gameConfigs) * 2) / gameConfigs.tileSize);
@@ -65,6 +66,7 @@ public final class Map implements Renderable {
         float x, y;
         int itr;
         float mapCenter = gameConfigs.worldSize.getRadius(gameConfigs);
+        this.mapRectangle = new Rectangle(0, 0, gameConfigs.worldSize.getRadius(gameConfigs) * 2, gameConfigs.worldSize.getRadius(gameConfigs) * 2);
         for (int i = 0; i < sizeInTiles; i++) {
             for (int j = 0; j < sizeInTiles; j++) {
                 y = (i * gameConfigs.tileSize) + (gameConfigs.tileSize / 2);
@@ -78,12 +80,9 @@ public final class Map implements Renderable {
                 }
 
                 itr = j + (i * sizeInTiles);
-                tiles[itr] = new Tile(gameConfigs,sprite,minimapDrawable,x, y);
-//                if(j==8)
-//                    tiles[itr].isVacant = false;
+                tiles[itr] = new Tile(minimap,gameConfigs,sprite,minimapDrawable,x, y,mapRectangle.width,mapRectangle.height);
             }
         }
-        this.mapRectangle = new Rectangle(0, 0, gameConfigs.worldSize.getRadius(gameConfigs) * 2, gameConfigs.worldSize.getRadius(gameConfigs) * 2);
         this.quadTree = new QuadNode<Entity>(mapRectangle, gameConfigs.tileSize);
     }
 

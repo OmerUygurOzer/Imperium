@@ -80,7 +80,7 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         for (Layer layer : Layer.values()) {
             entities[layer.getPriority()] = new ArrayList<>(600);
         }
-        this.map = new Map(gameContext.getGameResources(), gameContext.getGameConfigs());
+        this.map = new Map(gameContext.getGameGui().getMiniMap(),gameContext.getGameResources(), gameContext.getGameConfigs());
         this.groupUnitMovementPool = new Pool<GroupUnitMovement>() {
             @Override
             protected GroupUnitMovement newObject() {
@@ -541,6 +541,20 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         }
         gameContext.getEventManager()
                 .raiseEvent(EventType.ENTITY_HOVERED_OFF);
+    }
+
+    public void adjustEntitiesMinimap(float screenWidth,float screenHeight){
+        for(Tile tile : map.getTiles()){
+            Vector2 center = tile.getCenter();
+            tile.setPosition(center.x,center.y);
+        }
+        for (int i = 0; i < Layer.values().length; i++) {
+            for (int j = 0;
+                 j < entities[i].size(); j++) {
+                Entity entity = entities[i].get(j);
+                entity.setPosition(entity.tileX(),entity.tileY());
+            }
+        }
     }
 
     private List<Unit> getSelectedUnits(){

@@ -13,12 +13,17 @@ import com.boomer.imperium.game.configs.GameConfigs;
 import com.boomer.imperium.game.configs.GameContext;
 import com.boomer.imperium.game.configs.GameContextInterface;
 import com.boomer.imperium.game.entities.Entity;
+import com.boomer.imperium.game.gui.MiniMap;
 import com.boomer.imperium.game.gui.MiniMapEntity;
 
 import java.util.ArrayList;
 
 public class Tile implements Renderable,MiniMapEntity {
 
+    private final GameConfigs gameConfigs;
+    private final MiniMap minimap;
+    private final float mapWidth;
+    private final float mapHeight;
     public final Rectangle bounds;
     private final Rectangle minimapBounds;
     private final Sprite tileSprite;
@@ -29,15 +34,26 @@ public class Tile implements Renderable,MiniMapEntity {
     public boolean isVacant = true;
     private final Vector2 center;
 
-    public Tile(GameConfigs gameConfigs, Sprite sprite, Drawable minimapDrawable , float posX, float posY) {
+    public Tile(MiniMap minimap, GameConfigs gameConfigs, Sprite sprite, Drawable minimapDrawable , float posX, float posY,float mapWidth,float mapHeight) {
+        this.minimap = minimap;
+        this.gameConfigs = gameConfigs;
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
         this.tileSprite = sprite;
         this.minimapDrawable = minimapDrawable;
         this.entitiesContained = new ArrayList<Entity>();
         this.tileX = (int)Math.floor(posX/gameConfigs.tileSize);
         this.tileY = (int)Math.floor(posY/gameConfigs.tileSize);
-        this.bounds = new Rectangle(posX-(gameConfigs.tileSize/2f),posY-(gameConfigs.tileSize/2f),gameConfigs.tileSize,gameConfigs.tileSize);
+        this.bounds = new Rectangle();
         this.minimapBounds = new Rectangle();
+        setPosition(posX,posY);
         this.center = new Vector2();
+    }
+
+    public void setPosition(float posX, float posY){
+        bounds.set(posX-(gameConfigs.tileSize/2f),posY-(gameConfigs.tileSize/2f),gameConfigs.tileSize,gameConfigs.tileSize);
+        minimapBounds.set(minimap.getX() + (bounds.x * minimap.getWidthScale(mapWidth)), minimap.getY() + (bounds.y * minimap.getHeightScale(mapHeight)),
+                bounds.width * minimap.getWidthScale(mapWidth) ,bounds.height * minimap.getHeightScale(mapHeight));
     }
 
     @Override

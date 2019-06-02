@@ -29,6 +29,7 @@ public class GuiHolder implements TimedUpdateable, ScreenSensitive, Renderable{
         this.gameGui = new GameGui(gameContext,this,gameViewport,spriteBatch);
         this.gameGui.setEventManager(gameContext.getEventManager());
         this.cursor = new GameCursor(gameContext,this,gameViewport);
+        resize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
     }
 
     public GameCursor getCursor(){

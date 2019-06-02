@@ -35,6 +35,12 @@ public interface Entity extends Renderable,TimedUpdateable,Bound,Pool.Poolable,G
             maxY = Math.max(maxY, tile.bounds.y + tile.bounds.height);
         }
         entity.getBounds().set(x, y, maxX - x, maxY - y);
+        float minimapX,minimapY;
+        minimapX = gameContext.getGameGui().getMiniMap().getX();
+        minimapY = gameContext.getGameGui().getMiniMap().getY();
+        float widthScale = gameContext.getGameGui().getMiniMap().getWidthScale();
+        float heightScale = gameContext.getGameGui().getMiniMap().getHeightScale();
+        entity.setMinimapBounds(minimapX + (x*widthScale),minimapY + (y*heightScale),(maxX-x)*widthScale,(maxY-y)*heightScale);
     }
 
     void targetTile(Tile tile);

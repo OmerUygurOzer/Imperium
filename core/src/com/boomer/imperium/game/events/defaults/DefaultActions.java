@@ -1,17 +1,22 @@
 package com.boomer.imperium.game.events.defaults;
 
-import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.configs.GameContextInterface;
-import com.boomer.imperium.game.entities.Entity;
 import com.boomer.imperium.game.events.Action;
 import com.boomer.imperium.game.events.Parameters;
-
-import java.util.List;
 
 import static com.boomer.imperium.game.LogicUtils.unbox;
 import static com.boomer.imperium.game.events.Parameters.Key.*;
 
 public final class DefaultActions {
+
+
+    public static final Action ADJUST_GAMEWORLD_MINIMAP = new Action() {
+        @Override
+        public boolean perform(GameContextInterface gameContext, Parameters parameters,float deltaTime) {
+           gameContext.getGameWorld().adjustEntitiesMinimap(parameters.getInt(Parameters.Key.WIDTH),parameters.getInt(HEIGHT));
+            return false;
+        }
+    };
 
     public static final Action SELECT_ENTITIES_IN_GUI = new Action() {
         @Override

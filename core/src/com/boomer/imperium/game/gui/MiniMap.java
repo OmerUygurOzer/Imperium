@@ -49,26 +49,6 @@ public class MiniMap extends Table {
     }
 
     @Override
-    public void setBounds(float x, float y, float width, float height) {
-        super.setBounds(x, y, width, height);
-        adjustScale();
-    }
-
-    @Override
-    public void act(float delta) {
-        super.act(delta);
-        for (int i = 0; i < gameContext.getGameWorld().map.getTiles().length; i++) {
-            adjustMinimapBounds(gameContext.getGameWorld().map.getTiles()[i]);
-        }
-        for (int i = 0; i < Layer.values().length; i++) {
-            for (int j = 0;
-                 j < gameContext.getGameWorld().getEntities()[i].size(); j++) {
-                adjustMinimapBounds(gameContext.getGameWorld().getEntities()[i].get(j));
-            }
-        }
-    }
-
-    @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
         for (int i = 0; i < gameContext.getGameWorld().map.getTiles().length; i++) {
@@ -83,29 +63,28 @@ public class MiniMap extends Table {
 
     }
 
-    private void adjustScale() {
-        this.widthScale = getWidth() / gameContext.getGameWorld().map.getMapRectangle().width;
-        this.heightScale = getHeight() / gameContext.getGameWorld().map.getMapRectangle().height;
-    }
-
-    public void adjustMinimapBounds(Entity entity) {
-        Rectangle mapBounds = entity.getBounds();
-        entity.setMinimapBounds(getX() + mapBounds.x * widthScale, getY() + mapBounds.y * heightScale,
-                mapBounds.width * widthScale, mapBounds.height * heightScale);
-    }
-
-    public void adjustMinimapBounds(Tile tile) {
-        Rectangle mapBounds = tile.getBounds();
-        tile.setMinimapBounds(getX() + mapBounds.x * widthScale, getY() + mapBounds.y * heightScale,
-                mapBounds.width * widthScale, mapBounds.height * heightScale);
-    }
-
 
     public float getWidthScale() {
+        if(widthScale==0f)
+            widthScale = getWidth() / gameContext.getGameWorld().map.getMapRectangle().width;
         return widthScale;
     }
 
     public float getHeightScale() {
+        if(heightScale==0f)
+            heightScale = getHeight() / gameContext.getGameWorld().map.getMapRectangle().height;
+        return heightScale;
+    }
+
+    public float getWidthScale(float mapWidth) {
+        if(widthScale==0f)
+            widthScale = getWidth() / mapWidth;
+        return widthScale;
+    }
+
+    public float getHeightScale(float mapHeight) {
+        if(heightScale==0f)
+            heightScale = getHeight() / mapHeight;
         return heightScale;
     }
 }

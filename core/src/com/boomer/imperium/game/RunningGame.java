@@ -60,10 +60,10 @@ public final class RunningGame extends GameState {
                         return new Trigger();
                     }
                 });
-        this.gameWorld = new GameWorld(gameContext);
         this.guiHolder = new GuiHolder(gameContext,viewPort, spriteBatch);
         this.gameContext.setGameGui(guiHolder.getGUI());
         this.gameContext.setGameCursor(guiHolder.getCursor());
+        this.gameWorld = new GameWorld(gameContext);
 
         this.eventManager.registerTrigger(EventType.MOUSE_LEFT_CLICK)
                 .addResult(DefaultActions.MOUSE_LEFT_CLICK_IN_GAME_WORLD)
@@ -126,6 +126,10 @@ public final class RunningGame extends GameState {
                 .addResult(DefaultActions.YEARS_PASSED)
                 .setCondition(Trigger.ALWAYS_RUN);
 
+        this.eventManager.registerTrigger(EventType.SCREEN_RESIZE)
+                .addResult(DefaultActions.ADJUST_GAMEWORLD_MINIMAP)
+                .setCondition(Trigger.ALWAYS_RUN);
+
 
         addProcessor(guiHolder.getGUI());
         addProcessor(guiHolder.getCursor());
@@ -175,6 +179,10 @@ public final class RunningGame extends GameState {
 //        System.out.println(height);
 //        System.out.println(worldSize.getRadius(configs) * 2f);
 //        System.out.println(scale);
+        eventManager.raiseEvent(EventType.SCREEN_RESIZE)
+                .getParams()
+                .putParameter(Parameters.Key.WIDTH,width)
+                .putParameter(Parameters.Key.HEIGHT,height);
     }
 
     @Override

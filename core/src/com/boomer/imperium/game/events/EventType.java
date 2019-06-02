@@ -2,6 +2,7 @@ package com.boomer.imperium.game.events;
 
 public enum EventType {
     NULL,
+    SCREEN_RESIZE,
     MOUSE_LEFT_CLICK,
     MOUSE_RIGHT_CLICK,
     MOUSE_MOVE,
