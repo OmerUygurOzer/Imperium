@@ -98,24 +98,24 @@ public final class GameWorld implements Renderable, TimedUpdateable, GameCalenda
         this.connectionRadiusRect = new Rectangle(0f, 0f, 300f, 300f);//Todo: get radius from configs
         this.connectionBuildings = new ArrayList<>();
         this.foundEntities = new ArrayList<>(60);
-        for (int i = 0; i <1; i++) {
+        for (int i = 0; i <10; i++) {
             Building building = buildingPool.obtain();
             building.setLayer(Layer.GROUND);
             building.setTypeFlags(GameFlags.BUILDING);
             building.setBuildingSpriteAnimator(gameContext.getGameResources().building);
             building.setMinimapDrawable(gameContext.getGameResources().anotherTemple);
             building.setIcon(gameContext.getGameResources().anotherTemple);
-            building.setTileCoverageVectors(Arrays.asList(new TileVector(0, 0), new TileVector(-1, 0), new TileVector(-1, 1), new TileVector(0, 1)));
             building.setPosition(MathUtils.random(2, 24), MathUtils.random(2, 24));
-            building.setComponentFlags(GameFlags.MARKET);
+            building.setTileCoverageVectors(Arrays.asList(new TileVector(0, 0), new TileVector(-1, 0), new TileVector(-1, 1), new TileVector(0, 1)));
+            building.setComponentFlags(GameFlags.FORT);
             building.setStateFlags(GameFlags.SELECTABLE | GameFlags.RENDERABLE);
+            building.setMaxHp(400);
             building.setHp(MathUtils.random(0, 400));
             building.setConnectionRadius(700);
             //building.setHp(0);
-            building.setMaxHp(400);
             addEntity(building);
         }
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             Unit unit = unitPool.obtain();
             unit.setTypeFlags(GameFlags.UNIT);
             unit.setUnitSpriteAnimator(gameContext.getGameResources().man);

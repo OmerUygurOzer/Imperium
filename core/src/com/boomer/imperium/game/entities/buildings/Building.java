@@ -171,9 +171,9 @@ public final class Building implements Entity {
     public void setPosition(int tileX, int tileY) {
         this.tileX = tileX;
         this.tileY = tileY;
-        for(Tile tile : tilesCovered){
-            tile.removeEntity(this);
-        }
+//        for(Tile tile : tilesCovered){
+//            tile.removeEntity(this);
+//        }
         Entity.adjustEntityBounds(tilesCovered,this,gameContext,tileX,tileY);
     }
 
