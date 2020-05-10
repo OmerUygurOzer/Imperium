@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.*;
 import com.boomer.imperium.core.GameStateManager;
 import com.boomer.imperium.game.GameFlags;
 import com.boomer.imperium.game.RunningGame;
@@ -31,7 +32,7 @@ public class GameRunner extends ApplicationAdapter {
 
     @Override
     public void create() {
-//        Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        //Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
         this.gameStateManager = new GameStateManager();

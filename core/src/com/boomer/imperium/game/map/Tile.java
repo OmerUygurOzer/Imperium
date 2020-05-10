@@ -1,11 +1,15 @@
 package com.boomer.imperium.game.map;
 
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.boomer.imperium.core.Renderable;
 import com.boomer.imperium.game.GameFlags;
