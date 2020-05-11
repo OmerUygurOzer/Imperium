@@ -1,7 +1,7 @@
 package com.boomer.imperium.model;
 
 import com.google.common.collect.ImmutableList;
-import com.boomer.imperium.model.attribute.Attribute;
+import com.boomer.imperium.scripts.mirrors.Attribute;
 
 import java.util.ArrayList;
 import java.util.List;

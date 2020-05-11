@@ -1,11 +1,11 @@
 package com.boomer.imperium.gui;
 
+import com.boomer.imperium.scripts.mirrors.*;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.boomer.imperium.model.Context;
-import com.boomer.imperium.model.attribute.*;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

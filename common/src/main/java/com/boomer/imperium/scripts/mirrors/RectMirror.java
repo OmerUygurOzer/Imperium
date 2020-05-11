@@ -1,4 +1,4 @@
-package com.boomer.imperium.model.attribute;
+package com.boomer.imperium.scripts.mirrors;
 
 public final class RectMirror {
 

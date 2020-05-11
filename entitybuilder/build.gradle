@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    project(":common")
+    compile project(":common")
     testCompile group: 'junit', name: 'junit', version: '4.12'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation("com.google.guava:guava:29.0-jre")

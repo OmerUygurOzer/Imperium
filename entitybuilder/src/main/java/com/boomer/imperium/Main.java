@@ -1,11 +1,6 @@
 package com.boomer.imperium;
 
-import com.google.common.collect.ImmutableList;
 import com.boomer.imperium.gui.MainContainer;
-import com.boomer.imperium.model.Context;
-import com.boomer.imperium.model.Entity;
-import com.boomer.imperium.model.EntityList;
-import com.boomer.imperium.model.attribute.AttributeList;
 
 public class Main {
     public static void main(String[] args) {
@@ -27,6 +22,5 @@ public class Main {
 //                System.currentTimeMillis());
 
         new MainContainer();//.receiveContext(sampleContext);
-        System.out.println("ASDSADSADSAD");
     }
 }

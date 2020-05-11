@@ -1,13 +1,13 @@
 package com.boomer.imperium.gui;
 
+import com.boomer.imperium.scripts.mirrors.Attribute;
+import com.boomer.imperium.scripts.mirrors.AttributeType;
 import com.google.common.base.Joiner;
 import com.boomer.imperium.gui.util.TextUtils;
 import com.boomer.imperium.model.Context;
 import com.boomer.imperium.model.ContextReceiver;
 import com.boomer.imperium.model.Entity;
 import com.boomer.imperium.model.EntityReceiver;
-import com.boomer.imperium.model.attribute.Attribute;
-import com.boomer.imperium.model.attribute.AttributeType;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

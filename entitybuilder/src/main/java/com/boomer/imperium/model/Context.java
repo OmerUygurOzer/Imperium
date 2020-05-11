@@ -1,6 +1,6 @@
 package com.boomer.imperium.model;
 
-import com.boomer.imperium.model.attribute.AttributeList;
+import com.boomer.imperium.scripts.mirrors.AttributeList;
 
 /**
  * Context is the internal representation of a Project. All data required by a Project will be loaded and stored here.
