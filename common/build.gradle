@@ -10,5 +10,6 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    //implementation "com.badlogicgames.gdx:gdx:1.9.9"
     implementation("com.google.guava:guava:29.0-jre")
 }

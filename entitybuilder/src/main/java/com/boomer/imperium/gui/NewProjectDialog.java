@@ -1,11 +1,12 @@
 package com.boomer.imperium.gui;
 
-import com.boomer.imperium.model.NewContextData;
+import com.boomer.imperium.NewContextData;
 import com.boomer.imperium.model.NewContextDataReceiver;
 import com.boomer.imperium.gui.util.TextUtils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 final class NewProjectDialog {
@@ -47,18 +48,30 @@ final class NewProjectDialog {
         final JTextField filePathTextField = new JTextField( 60 );
         filePathTextField.setEnabled(false);
         JButton filePathButton = new JButton("Find");
-        filePathButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser chooser = new JFileChooser();
-                chooser.setCurrentDirectory(new java.io.File("."));
-                chooser.setDialogTitle("Where should your new project be created?");
-                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                int option = chooser.showOpenDialog(containerFrame);
-                if(option == JFileChooser.APPROVE_OPTION){
-                    File file = chooser.getSelectedFile();
-                    filePathTextField.setText(file.getAbsolutePath());
-                }
+        filePathButton.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new File("."));
+            chooser.setDialogTitle("Where should your new project be created?");
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int option = chooser.showOpenDialog(containerFrame);
+            if(option == JFileChooser.APPROVE_OPTION){
+                File file = chooser.getSelectedFile();
+                filePathTextField.setText(file.getAbsolutePath());
+            }
+        });
+        JLabel scriptsPathLabel = new JLabel( "Scripts Path:" );
+        final JTextField scriptsPathTextField = new JTextField( 60 );
+        scriptsPathTextField.setEnabled(false);
+        JButton scriptsPathButton = new JButton("Find");
+        scriptsPathButton.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new java.io.File("."));
+            chooser.setDialogTitle("Where are your scripts located?");
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int option = chooser.showOpenDialog(containerFrame);
+            if(option == JFileChooser.APPROVE_OPTION){
+                File file = chooser.getSelectedFile();
+                scriptsPathTextField.setText(file.getAbsolutePath());
             }
         });
         JButton createProjectButton = new JButton("Create Project");
@@ -77,10 +90,15 @@ final class NewProjectDialog {
                     JOptionPane.showMessageDialog(containerFrame,"You need to select a folder to create your project in!");
                     return;
                 }
+                if(TextUtils.isEmpty(scriptsPathTextField)){
+                    JOptionPane.showMessageDialog(containerFrame,"You need to specify your scripts folder!");
+                    return;
+                }
                 newContextDataReceiver.receiveNewContextData(new NewContextData(
                         filePathTextField.getText(),
                         javaPackageNameTextField.getText(),
-                        nameTextField.getText()));
+                        nameTextField.getText(),
+                        scriptsPathTextField.getText()));
                 dialogPane.setVisible(false);
                 dialogPane.dispose();
             }
@@ -99,14 +117,17 @@ final class NewProjectDialog {
                         .addComponent(nameLabel)
                         .addComponent(javaPackageNameLabel)
                         .addComponent(filePathLabel)
+                        .addComponent(scriptsPathLabel)
                         .addComponent(cancelButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(nameTextField)
                         .addComponent(javaPackageNameTextField)
                         .addComponent(filePathTextField)
+                        .addComponent(scriptsPathTextField)
                         .addComponent(createProjectButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(filePathButton)));
+                        .addComponent(filePathButton)
+                        .addComponent(scriptsPathButton)));
         layout.setVerticalGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(nameLabel)
@@ -118,6 +139,10 @@ final class NewProjectDialog {
                         .addComponent(filePathLabel)
                         .addComponent(filePathTextField)
                         .addComponent(filePathButton))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(scriptsPathLabel)
+                        .addComponent(scriptsPathTextField)
+                        .addComponent(scriptsPathButton))
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(cancelButton)
                         .addComponent(createProjectButton)));

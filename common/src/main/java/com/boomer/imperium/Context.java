@@ -1,6 +1,6 @@
-package com.boomer.imperium.model;
+package com.boomer.imperium;
 
-import com.boomer.imperium.scripts.mirrors.AttributeList;
+import com.boomer.imperium.scripts.mirrors.ScriptList;
 
 /**
  * Context is the internal representation of a Project. All data required by a Project will be loaded and stored here.
@@ -12,26 +12,26 @@ public final class Context {
     }
 
     private String filePath;
+    private String scriptsPath;
     private String name;
     private String projectPackageName;
     private EntityList entities;
-    private AttributeList createdAttributes;
-    private EnumList enumList;
+    private ScriptList scriptList;
     private long lastEditedEpochTime;
 
     public Context(String filePath,
+                   String scriptsPath,
                    String name,
                    String projectPackageName,
                    EntityList entityList,
-                   AttributeList attributeList,
-                   EnumList enumList,
+                   ScriptList scriptList,
                    long lastEditedEpochTime) {
         this.filePath = filePath;
+        this.scriptsPath = scriptsPath;
         this.name = name;
         this.projectPackageName = projectPackageName;
         this.entities = entityList;
-        this.createdAttributes = attributeList;
-        this.enumList = enumList;
+        this.scriptList = scriptList;
         this.lastEditedEpochTime = lastEditedEpochTime;
     }
 
@@ -42,13 +42,15 @@ public final class Context {
         this.name = newContextData.getName();
         this.projectPackageName = newContextData.getJavaPackage();
         this.entities = new EntityList();
-        this.createdAttributes = new AttributeList();
-        this.enumList = new EnumList();
+        this.scriptList = new ScriptList();
+        this.scriptsPath = newContextData.getScriptPath();
         this.lastEditedEpochTime = System.currentTimeMillis();
     }
 
 
     public String getFilePath() { return this.filePath;}
+
+    public String getScriptsPath() { return scriptsPath; }
 
     public String getName() {
         return this.name;
@@ -66,7 +68,5 @@ public final class Context {
         return this.entities;
     }
 
-    public AttributeList getCreatedAttributes() { return createdAttributes; }
-
-    public EnumList getEnumList() { return enumList; }
+    public ScriptList getScriptList() { return scriptList; }
 }

@@ -1,17 +1,15 @@
 package com.boomer.imperium.gui;
 
+import com.boomer.imperium.Context;
 import com.boomer.imperium.scripts.mirrors.*;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.boomer.imperium.model.Context;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,10 +94,8 @@ public class AttributeEditingPanel extends JPanel {
             .put(AttributeType.DOUBLE, () -> new SpinnerNumberModel(0d, null, null, 0.1d))
             .put(AttributeType.LONG, () -> new SpinnerNumberModel(0L, null, null, 1L))
             .put(AttributeType.VECTOR2, () -> new SpinnerNumberModel(0f, null, null, 0.1f))
-            .put(AttributeType.VECTOR3,
-                    () -> new SpinnerNumberModel(0f, null, null, 0.1f))
-            .put(AttributeType.RECT,
-                    () -> new SpinnerNumberModel(0f, null, null, 0.1f))
+            .put(AttributeType.VECTOR3, () -> new SpinnerNumberModel(0f, null, null, 0.1f))
+            .put(AttributeType.RECT, () -> new SpinnerNumberModel(0f, null, null, 0.1f))
             .put(AttributeType.CIRCLE, () -> new SpinnerNumberModel(0f, null, null, 0.1f))
             .build();
 
@@ -107,7 +103,6 @@ public class AttributeEditingPanel extends JPanel {
     private final Context context;
     private final Attribute attribute;
     private final List<JLabel> attributeCreationValueLabels;
-    private final AttributeEditingPanelListener attributeEditingPanelListener;
     private final JTextField value1TextField;
     private final JComboBox<Boolean> booleanJComboBox;
     private final JComboBox<String> enumNameJComboBox;
@@ -120,12 +115,11 @@ public class AttributeEditingPanel extends JPanel {
     private final JSpinner value3Spinner;
     private final JSpinner value4Spinner;
 
-    AttributeEditingPanel(Context context, AttributeEditingPanelListener attributeEditingPanelListener,Attribute attribute){
+    AttributeEditingPanel(Context context,Attribute attribute){
         super(new FlowLayout());
         this.context = context;
         setAlignmentX(Component.LEFT_ALIGNMENT);
         this.attribute = attribute;
-        this.attributeEditingPanelListener = attributeEditingPanelListener;
         setBorder(new LineBorder(Color.LIGHT_GRAY,2));
         this.attributeCreationValueLabels = new ArrayList<>();
         JLabel attributeNameLabel = new JLabel("Name:");
@@ -152,17 +146,14 @@ public class AttributeEditingPanel extends JPanel {
         enumNameComboBoxModel = new DefaultComboBoxModel<>();
         enumValueComboBoxModel = new DefaultComboBoxModel<>();
         enumNameJComboBox = new JComboBox<String>();
-        enumNameJComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(enumNameJComboBox.getSelectedItem() == null){
-                    return;
-                }
-                enumValueComboBoxModel.removeAllElements();
-                for(String enumValue : context.getEnumList().getValue().get(enumNameJComboBox)){
-                    enumValueComboBoxModel.addElement(enumValue);
-                }
+        enumNameJComboBox.addActionListener(e -> {
+            if(enumNameJComboBox.getSelectedItem() == null){
+                return;
             }
+            enumValueComboBoxModel.removeAllElements();
+//            for(String enumValue : context.getEnumList().getValue().get(enumNameJComboBox)){
+//                enumValueComboBoxModel.addElement(enumValue);
+//            }
         });
         populateEnums();
 
@@ -174,9 +165,6 @@ public class AttributeEditingPanel extends JPanel {
 
         value3Spinner = new JSpinner();
         value4Spinner = new JSpinner();
-
-        JButton removeButton = new JButton("Remove");
-        add(removeButton);
 
         add(attributeNameLabel);
         add(attributeNameTextField);
@@ -219,9 +207,6 @@ public class AttributeEditingPanel extends JPanel {
         adjustUIForType();
         extractValues();
 
-        removeButton.addActionListener(e ->{
-            attributeEditingPanelListener.removedAttribute(attribute);
-        });
         setMaximumSize(getPreferredSize());
     }
 
@@ -454,9 +439,9 @@ public class AttributeEditingPanel extends JPanel {
 
 
     private void populateEnums(){
-        enumNameComboBoxModel.removeAllElements();
-        for(String enumName : context.getEnumList().getValue().keySet()){
-            enumNameComboBoxModel.addElement(enumName);
-        }
+//        enumNameComboBoxModel.removeAllElements();
+//        for(String enumName : context.getEnumList().getValue().keySet()){
+//            enumNameComboBoxModel.addElement(enumName);
+//        }
     }
 }

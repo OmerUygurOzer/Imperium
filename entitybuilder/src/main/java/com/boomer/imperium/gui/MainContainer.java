@@ -1,9 +1,13 @@
 package com.boomer.imperium.gui;
 
+import com.boomer.imperium.Context;
+import com.boomer.imperium.Entity;
+import com.boomer.imperium.NewContextData;
 import com.boomer.imperium.model.*;
 import com.boomer.imperium.model.io.ContextIOListener;
 import com.boomer.imperium.model.io.ContextReader;
 import com.boomer.imperium.model.io.ContextWriter;
+import com.boomer.imperium.model.io.NewContextGenerator;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -93,7 +97,7 @@ public class MainContainer extends JFrame implements ContextReceiver,EntityTreeL
 
     @Override
     public void receiveNewContextData(NewContextData newContextData) {
-        new ContextWriter(Context.fromData(newContextData),this).execute();
+        new NewContextGenerator(newContextData,this).execute();
     }
 
     @Override
@@ -104,5 +108,10 @@ public class MainContainer extends JFrame implements ContextReceiver,EntityTreeL
     @Override
     public void contextRead(Context context) {
         receiveContext(context);
+    }
+
+    @Override
+    public void contextGenerated(Context context) {
+        //receiveContext(context);
     }
 }

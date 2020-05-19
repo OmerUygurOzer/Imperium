@@ -1,6 +1,6 @@
 package com.boomer.imperium.gui;
 
-import com.boomer.imperium.model.Entity;
+import com.boomer.imperium.Entity;
 import com.boomer.imperium.model.EntityReceiver;
 
 import javax.swing.*;

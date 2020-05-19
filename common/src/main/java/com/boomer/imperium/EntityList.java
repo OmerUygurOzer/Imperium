@@ -1,4 +1,4 @@
-package com.boomer.imperium.model;
+package com.boomer.imperium;
 
 import java.util.ArrayList;
 import java.util.List;

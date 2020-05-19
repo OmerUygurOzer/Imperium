@@ -1,7 +1,7 @@
 package com.boomer.imperium.model.io;
 
 import com.google.gson.Gson;
-import com.boomer.imperium.model.Context;
+import com.boomer.imperium.Context;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 

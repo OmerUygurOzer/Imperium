@@ -1,9 +1,9 @@
 package com.boomer.imperium.gui;
 
 import com.google.common.base.Splitter;
-import com.boomer.imperium.model.Context;
+import com.boomer.imperium.Context;
 import com.boomer.imperium.model.ContextReceiver;
-import com.boomer.imperium.model.Entity;
+import com.boomer.imperium.Entity;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;

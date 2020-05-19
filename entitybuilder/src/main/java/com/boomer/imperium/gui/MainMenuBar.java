@@ -1,6 +1,6 @@
 package com.boomer.imperium.gui;
 
-import com.boomer.imperium.model.Context;
+import com.boomer.imperium.Context;
 import com.boomer.imperium.model.ContextReceiver;
 
 import javax.swing.*;
