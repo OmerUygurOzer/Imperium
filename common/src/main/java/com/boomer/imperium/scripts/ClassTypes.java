@@ -6,6 +6,8 @@ import java.util.Set;
 
 public final class ClassTypes {
 
+    public static final String COMPONENT_CLASS_NAME = "com.mygdx.game.game.scripts.core.Component";
+
     public static Set<String> LIBGDX_PRIMITIVES = ImmutableSet.of(
             "com.badlogic.gdx.math.Vector2",
             "com.badlogic.gdx.math.Vector3",

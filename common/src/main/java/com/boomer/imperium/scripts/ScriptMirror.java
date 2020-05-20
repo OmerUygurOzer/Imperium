@@ -57,7 +57,7 @@ public class ScriptMirror {
         return Objects.hashCode(name,script,attributeList);
     }
 
-    enum Type{
+    public enum Type{
         PREMADE,
         CUSTOM
     }

@@ -2,16 +2,21 @@ package com.boomer.imperium.model.io;
 
 import com.boomer.imperium.Context;
 import com.boomer.imperium.NewContextData;
+import com.boomer.imperium.scripts.ClassTypes;
 import com.boomer.imperium.scripts.ScriptMirror;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.io.Files;
+import com.boomer.imperium.scripts.mirrors.Attribute;
+import com.boomer.imperium.scripts.mirrors.AttributeList;
+import com.boomer.imperium.scripts.mirrors.ScriptList;
+import org.w3c.dom.Attr;
 
 import javax.swing.*;
-import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.concurrent.ExecutionException;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class NewContextGenerator extends SwingWorker<Context,Void> {
 
@@ -27,56 +32,57 @@ public class NewContextGenerator extends SwingWorker<Context,Void> {
 
     @Override
     protected Context doInBackground() throws Exception {
-        File projectRoot = new File(getProjectRoot());
-        File scriptsFolder = new File(newContextData.getScriptPath());
-        System.out.println(projectRoot.getAbsolutePath());
-        URL url = projectRoot.toURI().toURL();
-        URL[] urls = new URL[]{url};
-        ClassLoader classLoader = new URLClassLoader(urls);
-        Iterable<File> classfiles = Iterables.filter(ImmutableList.copyOf(scriptsFolder.listFiles()),
-                input -> Files.getFileExtension(input.getName()).equals(CLASS_EXTENSION));
-        for(File classFile : classfiles){
-            createScriptMirrorFromClass(classLoader,classFile);
+        JarFile jarFile = new JarFile(newContextData.getScriptPath());
+        Enumeration<JarEntry> e = jarFile.entries();
+        URL[] urls = { new URL("jar:file:" + newContextData.getScriptPath()+"!/") };
+        URLClassLoader cl = URLClassLoader.newInstance(urls);
+
+        ScriptList scriptList = new ScriptList();
+        while (e.hasMoreElements()) {
+            JarEntry je = e.nextElement();
+            if(je.isDirectory() || !je.getName().endsWith(".class")){
+                continue;
+            }
+            // -6 because of .class
+            String className = je.getName().substring(0,je.getName().length()-6);
+            className = className.replace('/', '.');
+            Class scriptCandidate = cl.loadClass(className);
+           if(isComponent(scriptCandidate)){
+               ScriptMirror scriptMirror = extractScriptMirrorForComponent(scriptCandidate);
+               scriptList.getValue().put(scriptMirror.getName(),scriptMirror);
+           }
         }
         return null;
     }
 
-    @Override
-    protected void done() {
-        super.done();
-        try {
-            contextIOListener.contextGenerated(get());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+    private ScriptMirror extractScriptMirrorForComponent(Class scriptClass){
+        AttributeList attributeList = new AttributeList();
+        for(Field field : scriptClass.getFields()){
+            if(Modifier.isPublic(field.getModifiers())
+                && !Modifier.isFinal(field.getModifiers()) &&
+                    (ClassTypes.SUPPORTED_PRIMITIVES.contains(field.getType()) ||
+                    ClassTypes.LIBGDX_PRIMITIVES.contains(field.getType().getCanonicalName()))){
+                Attribute attribute = createAttributeFromField(field);
+                attributeList.getValue().put(attribute.getName(),attribute);
+            }
         }
+        return new ScriptMirror(scriptClass.getName(),null,attributeList,
+                ScriptMirror.Type.PREMADE,scriptClass.getCanonicalName());
     }
 
-    private ScriptMirror createScriptMirrorFromClass(ClassLoader classLoader, File classFile) throws ClassNotFoundException {
-        String name = getClassName(classFile);
-        Class clazz = classLoader.loadClass(getClassName(classFile));
-        System.out.println(clazz.getName());
+    private Attribute createAttributeFromField(Field field){
+        Attribute attribute = new Attribute(field.getName().toUpperCase());
+        if(field.getType().eq){}
 
-
-        return null;
+        return attribute;
     }
 
-    private String getProjectRoot(){
-        String javaRootPath = getJavaPackagePath(newContextData.getJavaPackage());
-        int rootIndex = newContextData.getScriptPath().lastIndexOf(javaRootPath);
-        return newContextData.getScriptPath().substring(0,rootIndex);
-    }
-
-    private String getClassName(File classFile){
-        String javaRootPath = getJavaPackagePath(newContextData.getJavaPackage());
-        int rootIndex = classFile.getAbsolutePath().lastIndexOf(javaRootPath);
-        String clazzPath = classFile.getAbsolutePath().substring(rootIndex,classFile.getAbsolutePath().length());
-        int extensionIndex = clazzPath.lastIndexOf("."+CLASS_EXTENSION);
-        return clazzPath.substring(0,extensionIndex).replaceAll("\\\\",".");
-    }
-
-    private String getJavaPackagePath(String javaPackage){
-        return javaPackage.replaceAll("\\.","\\\\");
+    private boolean isComponent(Class clazz){
+        if(clazz.getSuperclass()==null){
+            return false;
+        }else if(clazz.getSuperclass().getCanonicalName().contains(COMPONENT_CLASS_NAME)){
+            return true;
+        }
+        return isComponent(clazz.getSuperclass());
     }
 }

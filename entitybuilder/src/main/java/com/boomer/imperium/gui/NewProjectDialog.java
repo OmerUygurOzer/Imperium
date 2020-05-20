@@ -1,12 +1,14 @@
 package com.boomer.imperium.gui;
 
 import com.boomer.imperium.NewContextData;
-import com.boomer.imperium.model.NewContextDataReceiver;
 import com.boomer.imperium.gui.util.TextUtils;
+import com.boomer.imperium.model.NewContextDataReceiver;
+import com.boomer.imperium.model.io.ContextReader;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 final class NewProjectDialog {
@@ -64,10 +66,11 @@ final class NewProjectDialog {
         scriptsPathTextField.setEnabled(false);
         JButton scriptsPathButton = new JButton("Find");
         scriptsPathButton.addActionListener(e -> {
+            FileFilter jsonFilter = new FileNameExtensionFilter("Jar File","jar");
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new java.io.File("."));
-            chooser.setDialogTitle("Where are your scripts located?");
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setDialogTitle("Where is the jar file that contains the scripts?");
+            chooser.setFileFilter(jsonFilter);
             int option = chooser.showOpenDialog(containerFrame);
             if(option == JFileChooser.APPROVE_OPTION){
                 File file = chooser.getSelectedFile();
