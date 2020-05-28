@@ -7,7 +7,7 @@ import com.boomer.imperium.scripts.ScriptMirror;
 import com.boomer.imperium.scripts.mirrors.Attribute;
 import com.boomer.imperium.scripts.mirrors.AttributeList;
 import com.boomer.imperium.scripts.mirrors.ScriptList;
-import org.w3c.dom.Attr;
+import org.checkerframework.checker.units.qual.C;
 
 import javax.swing.*;
 import java.lang.reflect.Field;
@@ -15,6 +15,7 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
+import java.util.concurrent.ExecutionException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -37,7 +38,7 @@ public class NewContextGenerator extends SwingWorker<Context,Void> {
         URL[] urls = { new URL("jar:file:" + newContextData.getScriptPath()+"!/") };
         URLClassLoader cl = URLClassLoader.newInstance(urls);
 
-        ScriptList scriptList = new ScriptList();
+        Context context = Context.fromData(newContextData);
         while (e.hasMoreElements()) {
             JarEntry je = e.nextElement();
             if(je.isDirectory() || !je.getName().endsWith(".class")){
@@ -46,13 +47,21 @@ public class NewContextGenerator extends SwingWorker<Context,Void> {
             // -6 because of .class
             String className = je.getName().substring(0,je.getName().length()-6);
             className = className.replace('/', '.');
-            Class scriptCandidate = cl.loadClass(className);
-           if(isComponent(scriptCandidate)){
-               ScriptMirror scriptMirror = extractScriptMirrorForComponent(scriptCandidate);
-               scriptList.getValue().put(scriptMirror.getName(),scriptMirror);
-           }
+            System.out.println(className);
+            if(!className.startsWith(newContextData.getJavaPackage())){
+                continue;
+            }
+            try {
+                Class scriptCandidate = cl.loadClass(className);
+                if (ClassTypes.isComponent(scriptCandidate)) {
+                    ScriptMirror scriptMirror = extractScriptMirrorForComponent(scriptCandidate);
+                    context.getScriptList().getValue().put(scriptMirror.getName(), scriptMirror);
+                }
+            }catch (NoClassDefFoundError classDefFoundError){
+                continue;
+            }
         }
-        return null;
+        return context;
     }
 
     private ScriptMirror extractScriptMirrorForComponent(Class scriptClass){
@@ -62,7 +71,7 @@ public class NewContextGenerator extends SwingWorker<Context,Void> {
                 && !Modifier.isFinal(field.getModifiers()) &&
                     (ClassTypes.SUPPORTED_PRIMITIVES.contains(field.getType()) ||
                     ClassTypes.LIBGDX_PRIMITIVES.contains(field.getType().getCanonicalName()))){
-                Attribute attribute = createAttributeFromField(field);
+                Attribute attribute = ClassTypes.initializeAttributeForField(field);
                 attributeList.getValue().put(attribute.getName(),attribute);
             }
         }
@@ -70,19 +79,15 @@ public class NewContextGenerator extends SwingWorker<Context,Void> {
                 ScriptMirror.Type.PREMADE,scriptClass.getCanonicalName());
     }
 
-    private Attribute createAttributeFromField(Field field){
-        Attribute attribute = new Attribute(field.getName().toUpperCase());
-        if(field.getType().eq){}
-
-        return attribute;
-    }
-
-    private boolean isComponent(Class clazz){
-        if(clazz.getSuperclass()==null){
-            return false;
-        }else if(clazz.getSuperclass().getCanonicalName().contains(COMPONENT_CLASS_NAME)){
-            return true;
+    @Override
+    protected void done() {
+        super.done();
+        try {
+            contextIOListener.contextGenerated(get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
-        return isComponent(clazz.getSuperclass());
     }
 }

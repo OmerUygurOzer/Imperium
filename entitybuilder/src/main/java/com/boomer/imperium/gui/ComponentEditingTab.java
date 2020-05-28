@@ -5,7 +5,6 @@ import com.boomer.imperium.Entity;
 import com.boomer.imperium.model.ContextReceiver;
 import com.boomer.imperium.model.EntityReceiver;
 import com.boomer.imperium.scripts.ScriptMirror;
-import com.boomer.imperium.scripts.mirrors.Attribute;
 import com.google.common.collect.Iterables;
 
 import javax.swing.*;
@@ -16,14 +15,14 @@ import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-class ComponentEditingTab extends JPanel implements EntityReceiver,ContextReceiver,ListSelectionListener {
+class ComponentEditingTab extends JPanel implements EntityReceiver,ContextReceiver, ListSelectionListener {
 
 
     private Context context;
     private Entity entity;
     private final JList<ScriptMirror> scriptMirrorJList;
     private final DefaultListModel<ScriptMirror> defaultListModel;
-    private final Map<Attribute,AttributeEditingPanel> attributeToEditingPanelMap;
+    private final Map<ScriptMirror,ScriptAttributesPanel> attributeToEditingPanelMap;
     private JPanel entityAttributesPanel;
 
     ComponentEditingTab(){
@@ -39,21 +38,17 @@ class ComponentEditingTab extends JPanel implements EntityReceiver,ContextReceiv
     @Override
     public void receiveEntity(Entity entity) {
         if(entity == null){return;}
-        scriptMirrorJList.removeListSelectionListener(this);
         this.entity = entity;
         defaultListModel.clear();
         populateUI();
-        scriptMirrorJList.addListSelectionListener(this);
     }
 
     @Override
     public void receiveContext(Context context) {
         if(context==null){return;}
-        scriptMirrorJList.removeListSelectionListener(this);
         this.context = context;
         defaultListModel.clear();
         populateUI();
-        scriptMirrorJList.addListSelectionListener(this);
     }
 
     private void populateUI(){
@@ -81,7 +76,7 @@ class ComponentEditingTab extends JPanel implements EntityReceiver,ContextReceiv
 
         JButton addButton = new JButton("Add");
         addButton.addActionListener(e ->{
-            ScriptMirror scriptMirror = (ScriptMirror) scriptMirrorJComboBox.getSelectedItem();
+            ScriptMirror scriptMirror = new ScriptMirror((ScriptMirror) scriptMirrorJComboBox.getSelectedItem());
             if(entity == null){
                 JOptionPane.showMessageDialog(this,"Must select an entity first!");
                 return;
@@ -108,6 +103,7 @@ class ComponentEditingTab extends JPanel implements EntityReceiver,ContextReceiv
         JScrollPane attributeListPanel = new JScrollPane();
         attributeListPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         attributeListPanel.setViewportView(scriptMirrorJList);
+        scriptMirrorJList.addListSelectionListener(this);
         containerPanel.add(BorderLayout.CENTER,attributeListPanel);
 
         JPanel buttonContainer = new JPanel(new BorderLayout());
@@ -134,13 +130,6 @@ class ComponentEditingTab extends JPanel implements EntityReceiver,ContextReceiv
         return containerPanel;
     }
 
-    @Override
-    public void valueChanged(ListSelectionEvent e) {
-        if(!e.getValueIsAdjusting()){
-            populateScriptAttributes(scriptMirrorJList.getSelectedValue());
-        }
-    }
-
     private JScrollPane createEntityComponentsPanel(){
         JScrollPane containerScrollPane = new JScrollPane();
         containerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -148,7 +137,6 @@ class ComponentEditingTab extends JPanel implements EntityReceiver,ContextReceiv
         BoxLayout containerLayout = new BoxLayout(containerViewPanel,BoxLayout.PAGE_AXIS);
         containerViewPanel.setLayout(containerLayout);
         containerScrollPane.setViewportView(containerViewPanel);
-
         entityAttributesPanel = new JPanel();
         BoxLayout entityAttributesLayout = new BoxLayout(entityAttributesPanel,BoxLayout.PAGE_AXIS);
         entityAttributesPanel.setLayout(entityAttributesLayout);
@@ -157,20 +145,25 @@ class ComponentEditingTab extends JPanel implements EntityReceiver,ContextReceiv
     }
 
     public void storeEditions(){
-        for(AttributeEditingPanel attributeEditingPanel : attributeToEditingPanelMap.values()){
-            attributeEditingPanel.storeValues();
-        }
+//        for(AttributeEditingPanel attributeEditingPanel : attributeToEditingPanelMap.values()){
+//            attributeEditingPanel.storeValues();
+//        }
     }
 
     private void populateScriptAttributes(ScriptMirror scriptMirror){
+        ScriptMirror newMirror = new ScriptMirror(scriptMirror);
         entityAttributesPanel.removeAll();
         attributeToEditingPanelMap.clear();
-        for(Attribute attribute: scriptMirror.getAttributeList().getValue().values()){
-            attributeToEditingPanelMap.put(attribute,new AttributeEditingPanel(context,attribute));
-            entityAttributesPanel.add(attributeToEditingPanelMap.get(attribute));
-            scriptMirrorJList.setSelectedIndex(0);
-        }
+        attributeToEditingPanelMap.put(newMirror,new ScriptAttributesPanel(context,newMirror));
+        entityAttributesPanel.add(attributeToEditingPanelMap.get(newMirror));
         revalidate();
 
+    }
+
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        if(!e.getValueIsAdjusting()){
+            populateScriptAttributes(scriptMirrorJList.getSelectedValue());
+        }
     }
 }

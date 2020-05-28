@@ -112,6 +112,6 @@ public class MainContainer extends JFrame implements ContextReceiver,EntityTreeL
 
     @Override
     public void contextGenerated(Context context) {
-        //receiveContext(context);
+        receiveContext(context);
     }
 }

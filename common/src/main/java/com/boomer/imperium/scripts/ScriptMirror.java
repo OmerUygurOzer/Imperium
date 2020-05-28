@@ -1,7 +1,10 @@
 package com.boomer.imperium.scripts;
 
+import com.boomer.imperium.scripts.mirrors.Attribute;
 import com.boomer.imperium.scripts.mirrors.AttributeList;
+import com.boomer.imperium.scripts.mirrors.AttributeValue;
 import com.google.common.base.Objects;
+import org.checkerframework.checker.units.qual.A;
 
 public class ScriptMirror {
 
@@ -17,6 +20,17 @@ public class ScriptMirror {
         this.attributeList = attributeList;
         this.type = type;
         this.className = className;
+    }
+
+    public ScriptMirror(ScriptMirror scriptMirror){
+        this.name = scriptMirror.name;
+        this.script =scriptMirror. script;
+        this.attributeList = new AttributeList();
+        for(Attribute attribute : scriptMirror.getAttributeList().getValue().values()){
+            this.attributeList.getValue().put(attribute.getName(),new Attribute(attribute));
+        }
+        this.type = scriptMirror.type;
+        this.className = scriptMirror.className;
     }
 
     public String getName() {
